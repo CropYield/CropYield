@@ -1,22 +1,21 @@
 package com.example.edu.ksu.crop;
 
 import android.app.Activity;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
+import android.content.Intent;
+import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.content.Context;
-import android.os.Build;
-import android.os.Bundle;
-import android.view.Gravity;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.support.v4.widget.DrawerLayout;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
+import android.widget.Button;
 
 public class MainActivity extends ActionBarActivity implements
 		NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -213,6 +212,9 @@ public class MainActivity extends ActionBarActivity implements
 		 * The fragment argument representing the section number for this
 		 * fragment.
 		 */
+		Button button;
+		
+		
 		private static final String ARG_SECTION_NUMBER = "section_number";
 
 		/**
@@ -227,13 +229,30 @@ public class MainActivity extends ActionBarActivity implements
 		}
 
 		public PictureFragment() {
-		}
 
+		}
+		static final int REQUEST_IMAGE_CAPTURE = 1;
+
+
+		
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_picture,
 					container, false);
+			
+			button = (Button) rootView.findViewById(R.id.button_camera);
+			
+			button.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+				    if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+				        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+				    }				}
+			});
+			
+					
 			return rootView;
 		}
 
