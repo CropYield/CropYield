@@ -65,6 +65,13 @@ public class MainActivity extends ActionBarActivity implements
 					WeatherFragment.newInstance(position + 1))
 			.commit();
 		}
+		else if(position == 3){
+			fragmentManager
+			.beginTransaction()
+			.replace(R.id.container,
+					PictureFragment.newInstance(position + 1))
+			.commit();
+		}
 		else {
 			fragmentManager
 			.beginTransaction()
@@ -84,6 +91,9 @@ public class MainActivity extends ActionBarActivity implements
 			break;
 		case 3:
 			mTitle = getString(R.string.title_section3);
+			break;
+		case 4:
+			mTitle = getString(R.string.title_section4);
 			break;
 		}
 	}
@@ -196,5 +206,45 @@ public class MainActivity extends ActionBarActivity implements
 					ARG_SECTION_NUMBER));
 		}
 	}
+	
+	
+	public static class PictureFragment extends Fragment {
+		/**
+		 * The fragment argument representing the section number for this
+		 * fragment.
+		 */
+		private static final String ARG_SECTION_NUMBER = "section_number";
 
+		/**
+		 * Returns a new instance of this fragment for the given section number.
+		 */
+		public static PictureFragment newInstance(int sectionNumber) {
+			PictureFragment fragment = new PictureFragment();
+			Bundle args = new Bundle();
+			args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+			fragment.setArguments(args);
+			return fragment;
+		}
+
+		public PictureFragment() {
+		}
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+				Bundle savedInstanceState) {
+			View rootView = inflater.inflate(R.layout.fragment_picture,
+					container, false);
+			return rootView;
+		}
+
+		@Override
+		public void onAttach(Activity activity) {
+			super.onAttach(activity);
+			((MainActivity) activity).onSectionAttached(getArguments().getInt(
+					ARG_SECTION_NUMBER));
+		}
+	}
+
+	
+	
 }
