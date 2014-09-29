@@ -207,7 +207,7 @@ public class MainActivity extends ActionBarActivity implements
 	}
 	
 	
-	public static class PictureFragment extends Fragment {
+	public static class PictureFragment extends Fragment implements Button.OnClickListener {
 		/**
 		 * The fragment argument representing the section number for this
 		 * fragment.
@@ -243,17 +243,16 @@ public class MainActivity extends ActionBarActivity implements
 			
 			button = (Button) rootView.findViewById(R.id.button_camera);
 			
-			button.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View view) {
-					Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-				    if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-				        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-				    }				}
-			});
-			
+			button.setOnClickListener(this);
 					
 			return rootView;
+		}
+		
+		public void onClick(View v) {
+			Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		    if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+		        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+		    }				
 		}
 
 		@Override
