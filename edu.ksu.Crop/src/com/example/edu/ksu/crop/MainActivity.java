@@ -1,7 +1,27 @@
 package com.example.edu.ksu.crop;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
+
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -16,6 +36,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity implements
 		NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -179,15 +201,104 @@ public class MainActivity extends ActionBarActivity implements
 		/**
 		 * Returns a new instance of this fragment for the given section number.
 		 */
+		
+		private static final String ZIPCODE = "66502";
+		private String location, date, temperature = "";
+		private List<String> listOfInputData = new ArrayList<String>();
+		private TextView tv_WeatherText, tv_DateText, tv_Temperature;
+		
 		public static WeatherFragment newInstance(int sectionNumber) {
 			WeatherFragment fragment = new WeatherFragment();
 			Bundle args = new Bundle();
 			args.putInt(ARG_SECTION_NUMBER, sectionNumber);
 			fragment.setArguments(args);
+			
 			return fragment;
+		}
+		
+		protected class retrieve_weatherTask extends AsyncTask<Void, String, List<String>>{
+			@Override
+			public List<String> doInBackground(Void... arg0) {
+				
+				String qResult = "";
+				HttpClient httpClient = new DefaultHttpClient();
+				HttpContext localContext = new BasicHttpContext();
+				HttpGet httpGet = new HttpGet("http://weather.yahooapis.com/forecastrss?p="+ZIPCODE+"&u=f");
+				try {
+					HttpResponse response = httpClient.execute(httpGet,localContext);
+					HttpEntity entity = response.getEntity();
+	   
+					DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+	   
+					if (localContext != null) {
+						InputStream inputStream = entity.getContent();
+						Reader in = new InputStreamReader(inputStream);
+						BufferedReader bufferedreader = new BufferedReader(in);
+						StringBuilder stringBuilder = new StringBuilder();
+						String stringReadLine = null;
+						while ((stringReadLine = bufferedreader.readLine()) != null) {
+							stringBuilder.append(stringReadLine + "\n");
+						}
+						qResult = stringBuilder.toString();
+						Pattern pat1 = Pattern.compile("<title>(.*?)</title>");
+						Matcher mat1 = pat1.matcher(qResult);
+						Pattern pat2 = Pattern.compile("<title>(.*?)</title>");
+						Matcher mat2 = pat1.matcher(qResult);
+						Pattern pat3 = Pattern.compile("temp=\"(.*?)\"");
+						Matcher mat3 = pat3.matcher(qResult);
+						if(mat1.find()){
+							location = mat1.group(1);
+							listOfInputData.add(location);
+						}
+						if(mat2.find()){
+							mat2.find();
+							mat2.find();
+							date = mat2.group(1);
+							listOfInputData.add(date);
+						}
+						if(mat3.find()){
+							temperature = mat3.group();
+							temperature = temperature.replaceAll("\\D+","");
+							listOfInputData.add(temperature);
+						}
+					}
+	   
+	   
+	    /*Document dest = null;
+	    DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+	    DocumentBuilder parser;
+	    try{
+	    parser = dbFactory.newDocumentBuilder();
+	    dest = parser.parse(new ByteArrayInputStream(qResult.getBytes("UTF8")));*/
+	    /*DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+	    DocumentBuilder db = dbFactory.newDocumentBuilder();
+	    org.w3c.dom.Document doc = db.parse(new InputSource(getUrl.openStream()));
+	    doc.getDocumentElement().normalize();
+	   
+	    NodeList nodeList = doc.getElementsByTagName("rss");
+	*/
+					return listOfInputData;
+				} catch (Exception e) {
+					Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_LONG).show();
+					e.printStackTrace();
+					return listOfInputData; 
+				}
+			}
+			protected void onPostExecute(List<String> listUpdateTextBox){
+				try{
+					tv_WeatherText.setText(listUpdateTextBox.get(0));
+					tv_DateText.setText(listUpdateTextBox.get(1));
+					tv_Temperature.setText(listUpdateTextBox.get(2));
+					
+				}catch (Exception e){
+					Toast.makeText(getActivity(), e.toString(), Toast.LENGTH_LONG).show();
+					e.printStackTrace();
+				}
+			}
 		}
 
 		public WeatherFragment() {
+			
 		}
 
 		@Override
@@ -195,6 +306,11 @@ public class MainActivity extends ActionBarActivity implements
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_weather,
 					container, false);
+			
+			tv_WeatherText = (TextView)rootView.findViewById(R.id.weather_title);
+			tv_DateText = (TextView)rootView.findViewById(R.id.dateText);
+			tv_Temperature = (TextView)rootView.findViewById(R.id.temperature);
+			new retrieve_weatherTask().execute();
 			return rootView;
 		}
 
