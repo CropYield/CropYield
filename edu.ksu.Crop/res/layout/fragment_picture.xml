@@ -3,13 +3,45 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    
     <Button 
         android:id="@+id/button_camera"
         android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/button_take_picture" />
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
+        android:contentDescription="@string/add_pic_img_view_desc"
+        android:src="@drawable/abc_ab_bottom_transparent_dark_holo" />
     
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
+        android:contentDescription="@string/add_pic_img_view_desc"
+        android:src="@drawable/abc_ab_bottom_transparent_dark_holo" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
+        android:contentDescription="@string/add_pic_img_view_desc"
+        android:src="@drawable/abc_ab_bottom_transparent_dark_holo" />
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
+        android:contentDescription="@string/add_pic_img_view_desc"
+        android:src="@drawable/abc_ab_bottom_transparent_dark_holo" />
     
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
+        android:contentDescription="@string/add_pic_img_view_desc"
+        android:src="@drawable/abc_ab_bottom_transparent_dark_holo" />
 </LinearLayout>

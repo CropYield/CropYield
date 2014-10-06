@@ -1,8 +1,20 @@
 package com.example.edu.ksu.crop;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -13,9 +25,10 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity implements
 		NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -207,13 +220,18 @@ public class MainActivity extends ActionBarActivity implements
 	}
 	
 	
-	public static class PictureFragment extends Fragment implements Button.OnClickListener {
+	public static class PictureFragment extends Fragment {
 		/**
 		 * The fragment argument representing the section number for this
 		 * fragment.
 		 */
+		ImageView imageViewArray[] = new ImageView[5];
+		String currentPhotoPath[] = new String[5];
+		static final int REQUEST_IMAGE_CAPTURE = 1;
+		static final int REQUEST_IMAGE_SELECT = 2;
 		Button button;
-		
+		int nextPhoto = 0;
+
 		
 		private static final String ARG_SECTION_NUMBER = "section_number";
 
@@ -231,30 +249,149 @@ public class MainActivity extends ActionBarActivity implements
 		public PictureFragment() {
 
 		}
-		static final int REQUEST_IMAGE_CAPTURE = 1;
 
-
-		
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_picture,
 					container, false);
 			
-			button = (Button) rootView.findViewById(R.id.button_camera);
+			imageViewArray[0] = (ImageView) rootView.findViewById(R.id.imageView1);
+			imageViewArray[1] = (ImageView) rootView.findViewById(R.id.imageView2);
+			imageViewArray[2] = (ImageView) rootView.findViewById(R.id.imageView3);
+			imageViewArray[3] = (ImageView) rootView.findViewById(R.id.imageView4);
+			imageViewArray[4] = (ImageView) rootView.findViewById(R.id.imageView5);
+			button =            (Button)    rootView.findViewById(R.id.button_camera);
 			
-			button.setOnClickListener(this);
-					
+	         button.setOnClickListener(new View.OnClickListener() {
+	             public void onClick(View v) {
+	                 cameraOrGallery(v);
+	             }
+	         });
+			
 			return rootView;
 		}
+	
+		private void cameraOrGallery(View v) {
+			CharSequence options[] = new CharSequence[] { "Take a Photo", "Choose from Gallery"};
+			
+			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			builder.setTitle("Choose Photo Selection Method");
+			builder.setItems(options,  new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int picked) {
+					switch (picked) {
+					case 0:
+						TakeNewPhoto();
+						break;
+					case 1:
+						SelectGalleryPhoto();
+						break;
+					
+					}
+				}
+			});
+			builder.show();
+		}
+		private void SelectGalleryPhoto() {
+			Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+			           android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+			startActivityForResult(pickPhoto , REQUEST_IMAGE_SELECT);
+		}
 		
-		public void onClick(View v) {
+		private void TakeNewPhoto() {			
 			Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		    if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-		        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-		    }				
+		    	File photoFile = null;
+		    	try {
+		    		photoFile = createImageFile();
+		    	} catch (IOException EX) {
+		    		// Error
+		    		
+		    		Activity context = getActivity();
+		    		CharSequence text = "Error Creating Image File";
+		    		int duration = Toast.LENGTH_SHORT;
+		    		
+		    		Toast toast = Toast.makeText(context, text, duration);
+		    		toast.show();
+		    		// Anything better to do with this error?
+		    	}
+		    	if(photoFile != null) {
+		    		takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+		    				Uri.fromFile(photoFile));
+		    		startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+		    		galleryAddPic();
+		    		addPreviewPic();
+		    		nextPhoto++;
+		    	}
+		    }	
 		}
+		// Currently working on the below code to ensure ease for scaling
+		
+//		@Override
+//		public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+//			if( requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK ) {
+//			    Uri u = intent.getData();
+//			}
+//			else if( requestCode == REQUEST_IMAGE_SELECT && resultCode == RESULT_OK ) {
+//				
+//			}
+//		}
+		
+		
+		private void galleryAddPic() {
+			Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+			File f = new File(currentPhotoPath[nextPhoto]);
+			Uri contentUri = Uri.fromFile(f);
+			mediaScanIntent.setData(contentUri);
+			getActivity().sendBroadcast(mediaScanIntent);
+		}
+		
+		private void addPreviewPic() {			
+		    // Get the dimensions of the View
+		    int targetW = imageViewArray[nextPhoto].getWidth();
+		    int targetH = imageViewArray[nextPhoto].getHeight();
 
+		    // Get the dimensions of the bitmap
+		    BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+		    bmOptions.inJustDecodeBounds = true;
+		    BitmapFactory.decodeFile(currentPhotoPath[nextPhoto], bmOptions);
+		    int photoW = bmOptions.outWidth;
+		    int photoH = bmOptions.outHeight;
+
+		    // Determine how much to scale down the image
+		    int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+
+		    // Decode the image file into a Bitmap sized to fill the View
+		    bmOptions.inJustDecodeBounds = false;
+		    bmOptions.inSampleSize = scaleFactor;
+		    bmOptions.inPurgeable = true;
+
+		    Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath[nextPhoto], bmOptions);
+		    imageViewArray[nextPhoto].setImageBitmap(bitmap);
+		}
+		
+		
+		@SuppressLint("SimpleDateFormat") // This removes the warning thrown about creating the date format.
+		                                  // Normally, you should use a different call but it provides a date
+									      // in a format not suitable for saving as a file name, so I used this.
+		private File createImageFile() throws IOException {
+		    // Create an image file name
+		    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+		    String imageFileName = "JPEG_" + timeStamp + "_";
+		    File storageDir = Environment.getExternalStoragePublicDirectory(
+		            Environment.DIRECTORY_DCIM + "/Camera"); //Add the pictures to the default DCIM/Camera folder. 
+		    File image = File.createTempFile(
+		        imageFileName,  /* prefix */
+		        ".jpg",         /* suffix */
+		        storageDir      /* directory */
+		    );
+
+		    // Save a file: path for use with ACTION_VIEW intents
+		    currentPhotoPath[nextPhoto] = "file:" + image.getAbsolutePath();
+		    return image;
+		}
+		
+		
 		@Override
 		public void onAttach(Activity activity) {
 			super.onAttach(activity);
