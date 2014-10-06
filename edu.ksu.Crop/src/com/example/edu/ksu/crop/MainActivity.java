@@ -31,6 +31,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -231,14 +232,14 @@ public class MainActivity extends ActionBarActivity implements
 		 * fragment.
 		 */
 		ImageView imageView;
-		TextView latitude;
-		TextView longitude;
-		TextView focalLength;
 		String currentPhotoPath[] = new String[5];
 		static final int REQUEST_IMAGE_CAPTURE = 1;
 		static final int REQUEST_IMAGE_SELECT = 2;
-		Button button;
+		Button takePicture;
+		ImageButton nextPicture;
+		ImageButton previousPicture;
 		int nextPhoto = 0;
+		int currentPhotoDisplayed = 0;
 
 		
 		private static final String ARG_SECTION_NUMBER = "section_number";
@@ -264,19 +265,30 @@ public class MainActivity extends ActionBarActivity implements
 			View rootView = inflater.inflate(R.layout.fragment_picture,
 					container, false);
 			
-			imageView   = (ImageView) rootView.findViewById(R.id.imageView1);
-			button      = (Button)    rootView.findViewById(R.id.button_camera);
-			longitude   = (TextView)  rootView.findViewById(R.id.exifLongitudeTextView);
-			latitude    = (TextView)  rootView.findViewById(R.id.exifLatitudeTextView);
-			focalLength = (TextView)  rootView.findViewById(R.id.exifFocalLengthTextView);
+			imageView        = (ImageView)  rootView.findViewById(R.id.imageView1);
+			takePicture      = (Button)     rootView.findViewById(R.id.button_camera);			
+			nextPicture      = (ImageButton)rootView.findViewById(R.id.nextImageButton);
+			previousPicture  = (ImageButton)rootView.findViewById(R.id.previousImageButton);
 			
+			setPreviousNextButtonEnabledStatus();
 			
-	         button.setOnClickListener(new View.OnClickListener() {
+			takePicture.setOnClickListener(new View.OnClickListener() {
 	             public void onClick(View v) {
 	                 cameraOrGallery(v);
 	             }
 	         });
 			
+			nextPicture.setOnClickListener(new View.OnClickListener() {
+				public void onClick(View v) {
+					nextPicture(v);
+				}
+			});
+			
+			previousPicture.setOnClickListener(new View.OnClickListener() {
+				public void onClick(View v) {
+					previousPicture(v);
+				}
+			});	
 			return rootView;
 		}
 	
@@ -300,10 +312,39 @@ public class MainActivity extends ActionBarActivity implements
 			});
 			builder.show();
 		}
+		
+		private void previousPicture(View v) {
+			currentPhotoDisplayed--;
+			addPreviewPic();
+			setPreviousNextButtonEnabledStatus();
+		}
+
+		private void nextPicture(View v) {
+			currentPhotoDisplayed++;
+			addPreviewPic();
+			setPreviousNextButtonEnabledStatus();
+		}
+		
 		private void SelectGalleryPhoto() {
 			Intent pickPhoto = new Intent(Intent.ACTION_PICK,
 			           android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 			startActivityForResult(pickPhoto , REQUEST_IMAGE_SELECT);
+		}
+		
+		private void setPreviousNextButtonEnabledStatus() {
+			if( nextPhoto > 1 && ( currentPhotoDisplayed < ( nextPhoto - 1 ) ) ) {
+				nextPicture.setEnabled(true);
+			} else {
+				nextPicture.setEnabled(false);
+			}
+			if(currentPhotoDisplayed > 0) {
+				previousPicture.setEnabled(true);
+			} else {
+				previousPicture.setEnabled(false);
+			}
+			if( nextPhoto > 4 ) {
+				takePicture.setEnabled(false);
+			}
 		}
 		
 		private void TakeNewPhoto() {			
@@ -332,10 +373,12 @@ public class MainActivity extends ActionBarActivity implements
 		@Override
 		public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 			if( requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK ) {
+				currentPhotoDisplayed = nextPhoto;
 	    		galleryAddPic();
 	    		addPreviewPic();
 	    		retrieveExifData();
 	    		nextPhoto++; 
+	    		setPreviousNextButtonEnabledStatus();
 			}
 			else if( requestCode == REQUEST_IMAGE_SELECT && resultCode == RESULT_OK ) {
 				Uri selectedImage = intent.getData();
@@ -347,10 +390,14 @@ public class MainActivity extends ActionBarActivity implements
 
 	            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
 	            currentPhotoPath[nextPhoto] = cursor.getString(columnIndex);
+				currentPhotoDisplayed = nextPhoto;
+
 	            cursor.close();				
 	            addPreviewPic();
+
 				retrieveExifData();
 				nextPhoto++;
+				setPreviousNextButtonEnabledStatus();
 			}
 		}
 		
@@ -361,7 +408,7 @@ public class MainActivity extends ActionBarActivity implements
 				if( exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE) == null || exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE) == null ) {
 					sendToast("Cannot access latitude and longitude data, please input location on Weather screen.", Toast.LENGTH_LONG);
 				}
-				focalLength.setText((CharSequence) tempString);
+//				focalLength.setText((CharSequence) tempString);
 			} catch(Exception EX) {
 	    		// Error
 				sendToast("Error Retrieving Data From Picture", Toast.LENGTH_SHORT);
@@ -394,7 +441,7 @@ public class MainActivity extends ActionBarActivity implements
 		    // Get the dimensions of the bitmap
 		    BitmapFactory.Options bmOptions = new BitmapFactory.Options();
 		    bmOptions.inJustDecodeBounds = true;
-		    BitmapFactory.decodeFile(currentPhotoPath[nextPhoto], bmOptions);
+		    BitmapFactory.decodeFile(currentPhotoPath[currentPhotoDisplayed], bmOptions);
 		    int photoW = bmOptions.outWidth;
 		    int photoH = bmOptions.outHeight;
 
@@ -406,7 +453,7 @@ public class MainActivity extends ActionBarActivity implements
 		    bmOptions.inSampleSize = scaleFactor;
 		    bmOptions.inPurgeable = true;
 
-		    Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath[nextPhoto], bmOptions);
+		    Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath[currentPhotoDisplayed], bmOptions);
 		    Matrix matrix = new Matrix();
 		    matrix.postRotate(90);
 		    Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bmOptions.outWidth, bmOptions.outHeight, matrix, true);
