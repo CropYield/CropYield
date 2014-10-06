@@ -2,6 +2,7 @@ package com.example.edu.ksu.crop;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -10,8 +11,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -28,6 +32,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity implements
@@ -225,7 +230,10 @@ public class MainActivity extends ActionBarActivity implements
 		 * The fragment argument representing the section number for this
 		 * fragment.
 		 */
-		ImageView imageViewArray[] = new ImageView[5];
+		ImageView imageView;
+		TextView latitude;
+		TextView longitude;
+		TextView focalLength;
 		String currentPhotoPath[] = new String[5];
 		static final int REQUEST_IMAGE_CAPTURE = 1;
 		static final int REQUEST_IMAGE_SELECT = 2;
@@ -256,12 +264,12 @@ public class MainActivity extends ActionBarActivity implements
 			View rootView = inflater.inflate(R.layout.fragment_picture,
 					container, false);
 			
-			imageViewArray[0] = (ImageView) rootView.findViewById(R.id.imageView1);
-			imageViewArray[1] = (ImageView) rootView.findViewById(R.id.imageView2);
-			imageViewArray[2] = (ImageView) rootView.findViewById(R.id.imageView3);
-			imageViewArray[3] = (ImageView) rootView.findViewById(R.id.imageView4);
-			imageViewArray[4] = (ImageView) rootView.findViewById(R.id.imageView5);
-			button =            (Button)    rootView.findViewById(R.id.button_camera);
+			imageView   = (ImageView) rootView.findViewById(R.id.imageView1);
+			button      = (Button)    rootView.findViewById(R.id.button_camera);
+			longitude   = (TextView)  rootView.findViewById(R.id.exifLongitudeTextView);
+			latitude    = (TextView)  rootView.findViewById(R.id.exifLatitudeTextView);
+			focalLength = (TextView)  rootView.findViewById(R.id.exifFocalLengthTextView);
+			
 			
 	         button.setOnClickListener(new View.OnClickListener() {
 	             public void onClick(View v) {
@@ -304,39 +312,71 @@ public class MainActivity extends ActionBarActivity implements
 		    	File photoFile = null;
 		    	try {
 		    		photoFile = createImageFile();
+				    currentPhotoPath[nextPhoto] = photoFile.getAbsolutePath();
+
 		    	} catch (IOException EX) {
 		    		// Error
-		    		
-		    		Activity context = getActivity();
-		    		CharSequence text = "Error Creating Image File";
-		    		int duration = Toast.LENGTH_SHORT;
-		    		
-		    		Toast toast = Toast.makeText(context, text, duration);
-		    		toast.show();
+					sendToast("Error Creating Image File", Toast.LENGTH_SHORT);
 		    		// Anything better to do with this error?
 		    	}
 		    	if(photoFile != null) {
 		    		takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
 		    				Uri.fromFile(photoFile));
 		    		startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-		    		galleryAddPic();
-		    		addPreviewPic();
-		    		nextPhoto++;
+
 		    	}
 		    }	
 		}
 		// Currently working on the below code to ensure ease for scaling
 		
-//		@Override
-//		public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-//			if( requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK ) {
-//			    Uri u = intent.getData();
-//			}
-//			else if( requestCode == REQUEST_IMAGE_SELECT && resultCode == RESULT_OK ) {
-//				
-//			}
-//		}
+		@Override
+		public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+			if( requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK ) {
+	    		galleryAddPic();
+	    		addPreviewPic();
+	    		retrieveExifData();
+	    		nextPhoto++; 
+			}
+			else if( requestCode == REQUEST_IMAGE_SELECT && resultCode == RESULT_OK ) {
+				Uri selectedImage = intent.getData();
+	            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+	            Cursor cursor = getActivity().getContentResolver().query(
+	                               selectedImage, filePathColumn, null, null, null);
+	            cursor.moveToFirst();
+
+	            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+	            currentPhotoPath[nextPhoto] = cursor.getString(columnIndex);
+	            cursor.close();				
+	            addPreviewPic();
+				retrieveExifData();
+				nextPhoto++;
+			}
+		}
 		
+		private void retrieveExifData() {
+			try {
+				ExifInterface exif = new ExifInterface(currentPhotoPath[nextPhoto]);
+				String tempString = exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH);
+				if( exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE) == null || exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE) == null ) {
+					sendToast("Cannot access latitude and longitude data, please input location on Weather screen.", Toast.LENGTH_LONG);
+				}
+				focalLength.setText((CharSequence) tempString);
+			} catch(Exception EX) {
+	    		// Error
+				sendToast("Error Retrieving Data From Picture", Toast.LENGTH_SHORT);
+	    		// Anything better to do with this error?
+	    	}
+		}
+		private void sendToast(String message, int length) {
+    		
+    		Activity context = getActivity();
+    		CharSequence text = (CharSequence) message;
+    		int duration = length;
+    		
+    		Toast toast = Toast.makeText(context, text, duration);
+    		toast.show();
+		}
 		
 		private void galleryAddPic() {
 			Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
@@ -348,8 +388,8 @@ public class MainActivity extends ActionBarActivity implements
 		
 		private void addPreviewPic() {			
 		    // Get the dimensions of the View
-		    int targetW = imageViewArray[nextPhoto].getWidth();
-		    int targetH = imageViewArray[nextPhoto].getHeight();
+		    int targetW = imageView.getWidth();
+		    int targetH = imageView.getHeight();
 
 		    // Get the dimensions of the bitmap
 		    BitmapFactory.Options bmOptions = new BitmapFactory.Options();
@@ -359,7 +399,7 @@ public class MainActivity extends ActionBarActivity implements
 		    int photoH = bmOptions.outHeight;
 
 		    // Determine how much to scale down the image
-		    int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+		    int scaleFactor = Math.min(photoW/targetH, photoH/targetW);
 
 		    // Decode the image file into a Bitmap sized to fill the View
 		    bmOptions.inJustDecodeBounds = false;
@@ -367,7 +407,10 @@ public class MainActivity extends ActionBarActivity implements
 		    bmOptions.inPurgeable = true;
 
 		    Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath[nextPhoto], bmOptions);
-		    imageViewArray[nextPhoto].setImageBitmap(bitmap);
+		    Matrix matrix = new Matrix();
+		    matrix.postRotate(90);
+		    Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bmOptions.outWidth, bmOptions.outHeight, matrix, true);
+		    imageView.setImageBitmap(rotatedBitmap);
 		}
 		
 		
@@ -387,7 +430,7 @@ public class MainActivity extends ActionBarActivity implements
 		    );
 
 		    // Save a file: path for use with ACTION_VIEW intents
-		    currentPhotoPath[nextPhoto] = "file:" + image.getAbsolutePath();
+//		    currentPhotoPath[nextPhoto] = "file:" + image.getAbsolutePath();
 		    return image;
 		}
 		
