@@ -306,6 +306,9 @@ public class MainActivity extends ActionBarActivity implements
 	                 selectLocationOrRetrieveCurrent(v);
 	             }
 	         });
+			
+			imageView.setImageDrawable(null);
+
 			return rootView;
 		}
 	
@@ -330,7 +333,7 @@ public class MainActivity extends ActionBarActivity implements
 		}
 		
 		private void selectLocationOrRetrieveCurrent(View v) {
-			CharSequence options[] = new CharSequence[] { "Retrieve Current Location", "Select A Location"};
+			CharSequence options[] = new CharSequence[] { "Retrieve Current Location", "Select A Location", "Use GPS Location Off Current Photo"};
 			
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			builder.setTitle("Choose GPS Location Method");
@@ -343,6 +346,8 @@ public class MainActivity extends ActionBarActivity implements
 					case 1:
 						selectLocation();
 						break;
+					case 2: retrieveExifData();
+					break;
 					
 					}
 				}
@@ -452,7 +457,6 @@ public class MainActivity extends ActionBarActivity implements
 				currentPhotoDisplayed = 0;
 				imageView.setImageBitmap(currentPictures.get(0));
 	    		galleryAddPic();
-	    		retrieveExifData();
 	    		setPreviousNextButtonEnabledStatus();
 			}
 			else if( requestCode == REQUEST_IMAGE_SELECT && resultCode == RESULT_OK ) {
@@ -472,7 +476,6 @@ public class MainActivity extends ActionBarActivity implements
 				imageView.setImageBitmap(currentPictures.get(0));
 
 
-				retrieveExifData();
 				setPreviousNextButtonEnabledStatus();
 			}
 		}
@@ -483,11 +486,12 @@ public class MainActivity extends ActionBarActivity implements
 				ExifInterface exif = new ExifInterface(currentPhotoPath.peek());
 				String tempString = exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH);
 				if( exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE) == null || exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE) == null ) {
+					sendToast("Unable To Retrieve GPS Data, Please Try Other Option", Toast.LENGTH_LONG);
 				}
 //				focalLength.setText((CharSequence) tempString);
 			} catch(Exception EX) {
 	    		// Error
-				sendToast("Error Retrieving Data From Picture", Toast.LENGTH_SHORT);
+				sendToast("No Picture Available", Toast.LENGTH_SHORT);
 	    		// Anything better to do with this error?
 	    	}
 		}

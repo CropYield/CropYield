@@ -32,6 +32,8 @@
         android:layout_toRightOf="@+id/previousImageButton"
         android:layout_toStartOf="@+id/button_camera"
         android:contentDescription="@string/add_pic_img_view_desc"
+        android:background="#000000"
+        android:padding="1dp"
         android:src="@drawable/abc_ab_bottom_transparent_dark_holo" />
 
     <Button
