@@ -297,7 +297,7 @@ public class MainActivity extends ActionBarActivity implements
 			
 			deletePicture.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
-					removePicFromLinkedList();
+					deletePictureSelected(v);
 				}
 			});
 			
@@ -347,7 +347,31 @@ public class MainActivity extends ActionBarActivity implements
 					}
 				}
 			});
-			builder.show();		}
+			builder.show();		
+		}
+		
+		private void deletePictureSelected(View v) {
+			CharSequence options[] = new CharSequence[] { "Yes", "No"};
+			
+			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			builder.setTitle("Remove Current Picture?");
+			builder.setItems(options,  new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int picked) {
+					switch (picked) {
+					case 0:
+						removePicFromLinkedList();
+						sendToast("Picture Removed", Toast.LENGTH_SHORT);
+						break;
+					case 1:
+						sendToast("Picture Not Removed", Toast.LENGTH_SHORT);
+						break;
+					
+					}
+				}
+			});
+			builder.show();
+		}
+		
 		
 		private void obtainLocation() {
 			
@@ -459,7 +483,6 @@ public class MainActivity extends ActionBarActivity implements
 				ExifInterface exif = new ExifInterface(currentPhotoPath.peek());
 				String tempString = exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH);
 				if( exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE) == null || exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE) == null ) {
-					sendToast("Cannot access latitude and longitude data, please input location on Weather screen.", Toast.LENGTH_LONG);
 				}
 //				focalLength.setText((CharSequence) tempString);
 			} catch(Exception EX) {
@@ -517,6 +540,7 @@ public class MainActivity extends ActionBarActivity implements
 		}
 		
 		private void removePicFromLinkedList() {
+			
 			try{
 				imageView.setImageDrawable(null);
 				currentPictures.remove(currentPhotoDisplayed);
