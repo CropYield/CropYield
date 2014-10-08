@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -232,15 +233,17 @@ public class MainActivity extends ActionBarActivity implements
 		 * fragment.
 		 */
 		ImageView imageView;
-		String currentPhotoPath[] = new String[5];
+		LinkedList<String> currentPhotoPath = new LinkedList();
 		static final int REQUEST_IMAGE_CAPTURE = 1;
 		static final int REQUEST_IMAGE_SELECT = 2;
 		Button takePicture;
 		ImageButton nextPicture;
 		ImageButton previousPicture;
-		int nextPhoto = 0;
+		ImageButton deletePicture;
+		ImageButton gpsLocation;
 		int currentPhotoDisplayed = 0;
-
+		int photoCount = 0;
+		LinkedList<Bitmap> currentPictures = new LinkedList();
 		
 		private static final String ARG_SECTION_NUMBER = "section_number";
 
@@ -269,6 +272,8 @@ public class MainActivity extends ActionBarActivity implements
 			takePicture      = (Button)     rootView.findViewById(R.id.button_camera);			
 			nextPicture      = (ImageButton)rootView.findViewById(R.id.nextImageButton);
 			previousPicture  = (ImageButton)rootView.findViewById(R.id.previousImageButton);
+			deletePicture    = (ImageButton)rootView.findViewById(R.id.deleteImageButton);
+			gpsLocation      = (ImageButton)rootView.findViewById(R.id.gpsImageButton);
 			
 			setPreviousNextButtonEnabledStatus();
 			
@@ -289,11 +294,23 @@ public class MainActivity extends ActionBarActivity implements
 					previousPicture(v);
 				}
 			});	
+			
+			deletePicture.setOnClickListener(new View.OnClickListener() {
+				public void onClick(View v) {
+					removePicFromLinkedList();
+				}
+			});
+			
+			gpsLocation.setOnClickListener(new View.OnClickListener() {
+	             public void onClick(View v) {
+	                 selectLocationOrRetrieveCurrent(v);
+	             }
+	         });
 			return rootView;
 		}
 	
 		private void cameraOrGallery(View v) {
-			CharSequence options[] = new CharSequence[] { "Take a Photo", "Choose from Gallery"};
+			CharSequence options[] = new CharSequence[] { "Take A Photo", "Choose From Gallery"};
 			
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			builder.setTitle("Choose Photo Selection Method");
@@ -306,22 +323,49 @@ public class MainActivity extends ActionBarActivity implements
 					case 1:
 						SelectGalleryPhoto();
 						break;
-					
 					}
 				}
 			});
 			builder.show();
 		}
 		
+		private void selectLocationOrRetrieveCurrent(View v) {
+			CharSequence options[] = new CharSequence[] { "Retrieve Current Location", "Select A Location"};
+			
+			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			builder.setTitle("Choose GPS Location Method");
+			builder.setItems(options,  new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int picked) {
+					switch (picked) {
+					case 0:
+						obtainLocation();
+						break;
+					case 1:
+						selectLocation();
+						break;
+					
+					}
+				}
+			});
+			builder.show();		}
+		
+		private void obtainLocation() {
+			
+		}
+		
+		private void selectLocation() {
+			
+		}
+		
 		private void previousPicture(View v) {
-			currentPhotoDisplayed--;
-			addPreviewPic();
+			currentPhotoDisplayed++;
+			imageView.setImageBitmap(currentPictures.get(currentPhotoDisplayed));
 			setPreviousNextButtonEnabledStatus();
 		}
 
 		private void nextPicture(View v) {
-			currentPhotoDisplayed++;
-			addPreviewPic();
+			currentPhotoDisplayed--;
+			imageView.setImageBitmap(currentPictures.get(currentPhotoDisplayed));
 			setPreviousNextButtonEnabledStatus();
 		}
 		
@@ -332,18 +376,25 @@ public class MainActivity extends ActionBarActivity implements
 		}
 		
 		private void setPreviousNextButtonEnabledStatus() {
-			if( nextPhoto > 1 && ( currentPhotoDisplayed < ( nextPhoto - 1 ) ) ) {
-				nextPicture.setEnabled(true);
-			} else {
-				nextPicture.setEnabled(false);
-			}
-			if(currentPhotoDisplayed > 0) {
+			if( currentPictures.size() > 1 && ( currentPhotoDisplayed < ( currentPictures.size() - 1 ) ) ) {
 				previousPicture.setEnabled(true);
 			} else {
 				previousPicture.setEnabled(false);
 			}
-			if( nextPhoto > 4 ) {
+			if(currentPhotoDisplayed > 0) {
+				nextPicture.setEnabled(true);
+			} else {
+				nextPicture.setEnabled(false);
+			}
+			if( currentPictures.size() > 4 ) {
 				takePicture.setEnabled(false);
+			} else {
+				takePicture.setEnabled(true);
+			}
+			if( currentPictures.size() > 0 ) {
+				deletePicture.setEnabled(true);
+			} else {
+				deletePicture.setEnabled(false);
 			}
 		}
 		
@@ -353,7 +404,7 @@ public class MainActivity extends ActionBarActivity implements
 		    	File photoFile = null;
 		    	try {
 		    		photoFile = createImageFile();
-				    currentPhotoPath[nextPhoto] = photoFile.getAbsolutePath();
+				    currentPhotoPath.push(photoFile.getAbsolutePath());
 
 		    	} catch (IOException EX) {
 		    		// Error
@@ -373,11 +424,11 @@ public class MainActivity extends ActionBarActivity implements
 		@Override
 		public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 			if( requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK ) {
-				currentPhotoDisplayed = nextPhoto;
+	    		addPictureToLinkedList();
+				currentPhotoDisplayed = 0;
+				imageView.setImageBitmap(currentPictures.get(0));
 	    		galleryAddPic();
-	    		addPreviewPic();
 	    		retrieveExifData();
-	    		nextPhoto++; 
 	    		setPreviousNextButtonEnabledStatus();
 			}
 			else if( requestCode == REQUEST_IMAGE_SELECT && resultCode == RESULT_OK ) {
@@ -389,21 +440,23 @@ public class MainActivity extends ActionBarActivity implements
 	            cursor.moveToFirst();
 
 	            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-	            currentPhotoPath[nextPhoto] = cursor.getString(columnIndex);
-				currentPhotoDisplayed = nextPhoto;
+	            currentPhotoPath.push(cursor.getString(columnIndex));
 
 	            cursor.close();				
-	            addPreviewPic();
+	            addPictureToLinkedList();
+				currentPhotoDisplayed = 0;
+				imageView.setImageBitmap(currentPictures.get(0));
+
 
 				retrieveExifData();
-				nextPhoto++;
 				setPreviousNextButtonEnabledStatus();
 			}
 		}
+	
 		
 		private void retrieveExifData() {
 			try {
-				ExifInterface exif = new ExifInterface(currentPhotoPath[nextPhoto]);
+				ExifInterface exif = new ExifInterface(currentPhotoPath.peek());
 				String tempString = exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH);
 				if( exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE) == null || exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE) == null ) {
 					sendToast("Cannot access latitude and longitude data, please input location on Weather screen.", Toast.LENGTH_LONG);
@@ -427,13 +480,13 @@ public class MainActivity extends ActionBarActivity implements
 		
 		private void galleryAddPic() {
 			Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-			File f = new File(currentPhotoPath[nextPhoto]);
+			File f = new File(currentPhotoPath.peek());
 			Uri contentUri = Uri.fromFile(f);
 			mediaScanIntent.setData(contentUri);
 			getActivity().sendBroadcast(mediaScanIntent);
 		}
 		
-		private void addPreviewPic() {			
+		private void addPictureToLinkedList() {			
 		    // Get the dimensions of the View
 		    int targetW = imageView.getWidth();
 		    int targetH = imageView.getHeight();
@@ -441,7 +494,7 @@ public class MainActivity extends ActionBarActivity implements
 		    // Get the dimensions of the bitmap
 		    BitmapFactory.Options bmOptions = new BitmapFactory.Options();
 		    bmOptions.inJustDecodeBounds = true;
-		    BitmapFactory.decodeFile(currentPhotoPath[currentPhotoDisplayed], bmOptions);
+		    BitmapFactory.decodeFile(currentPhotoPath.peek(), bmOptions);
 		    int photoW = bmOptions.outWidth;
 		    int photoH = bmOptions.outHeight;
 
@@ -452,12 +505,36 @@ public class MainActivity extends ActionBarActivity implements
 		    bmOptions.inJustDecodeBounds = false;
 		    bmOptions.inSampleSize = scaleFactor;
 		    bmOptions.inPurgeable = true;
-
-		    Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath[currentPhotoDisplayed], bmOptions);
+		    String temp = currentPhotoPath.peek();
+		    Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath.peek(), bmOptions);
 		    Matrix matrix = new Matrix();
 		    matrix.postRotate(90);
 		    Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bmOptions.outWidth, bmOptions.outHeight, matrix, true);
-		    imageView.setImageBitmap(rotatedBitmap);
+		    currentPictures.push(rotatedBitmap);
+		    photoCount++;
+		    
+//		    imageView.setImageBitmap(rotatedBitmap);
+		}
+		
+		private void removePicFromLinkedList() {
+			try{
+				imageView.setImageDrawable(null);
+				currentPictures.remove(currentPhotoDisplayed);
+				currentPhotoPath.remove(currentPhotoDisplayed);
+				if(currentPictures.size() == 0 ) {
+					imageView.setImageDrawable(null);
+				}
+				else if(currentPhotoDisplayed != 0) {
+					imageView.setImageBitmap(currentPictures.get(--currentPhotoDisplayed));
+				}
+				else {
+					imageView.setImageBitmap(currentPictures.get(0));
+				}
+				photoCount--;
+				setPreviousNextButtonEnabledStatus();
+			} catch(Exception EX) {
+				sendToast("Error removing picture", Toast.LENGTH_LONG);
+			}
 		}
 		
 		
