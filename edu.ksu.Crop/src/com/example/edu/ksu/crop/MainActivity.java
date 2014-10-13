@@ -53,8 +53,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -185,12 +187,22 @@ public class MainActivity extends ActionBarActivity implements
 	/**
 	 * A placeholder fragment containing a simple view.
 	 */
-	public static class PlaceholderFragment extends Fragment {
+	public static class PlaceholderFragment extends Fragment implements
+	Button.OnClickListener {
 		/**
 		 * The fragment argument representing the section number for this
 		 * fragment.
 		 */
 		private static final String ARG_SECTION_NUMBER = "section_number";
+		Button calculateButton;
+		Button resetButton;
+		
+		EditText plantsPerAcre;
+		EditText tillerPerPlant;
+		
+		TextView yieldValue;
+		
+		RadioGroup avgSeedCount;
 
 		/**
 		 * Returns a new instance of this fragment for the given section number.
@@ -211,6 +223,30 @@ public class MainActivity extends ActionBarActivity implements
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_main, container,
 					false);
+			
+			yieldValue = (TextView) rootView.findViewById(R.id.textYieldVal);
+			
+			plantsPerAcre = (EditText) rootView.findViewById(R.id.editPPA);
+			tillerPerPlant = (EditText) rootView.findViewById(R.id.editTillers);
+			
+			avgSeedCount = (RadioGroup) rootView.findViewById(R.id.radioSeedCount);
+			
+			calculateButton = (Button) rootView.findViewById(R.id.buttonCalcYield);
+			calculateButton.setOnClickListener(this);
+			
+			resetButton = (Button) rootView.findViewById(R.id.buttonResetYield);
+			
+			resetButton.setOnClickListener(new View.OnClickListener() {
+	            public void onClick(View v) {
+	                plantsPerAcre.setText("");
+	                tillerPerPlant.setText("");
+	                avgSeedCount.clearCheck();
+	                avgSeedCount.check(R.id.radio_avg);
+	                yieldValue.setText("");
+	            }
+	        });
+			
+			
 			return rootView;
 		}
 
@@ -220,8 +256,51 @@ public class MainActivity extends ActionBarActivity implements
 			((MainActivity) activity).onSectionAttached(getArguments().getInt(
 					ARG_SECTION_NUMBER));
 		}
-	}
 
+		@Override
+		public void onClick(View arg0) {
+			// TODO Auto-generated method stub
+			
+			boolean calculateValue = false;
+			int countCrops = 0;
+			double tillersAvg = 0;
+			
+			if(!plantsPerAcre.getText().toString().equals("") && !tillerPerPlant.getText().toString().equals("")){
+				countCrops = Integer.parseInt(plantsPerAcre.getText().toString());
+				tillersAvg = Double.parseDouble(tillerPerPlant.getText().toString());
+				calculateValue = true;
+			}
+			
+			
+			int val = avgSeedCount.getCheckedRadioButtonId();
+			int seedsPerHeadVal = 0;
+			if(val == R.id.radio_low){
+				seedsPerHeadVal = 1000;
+			} else if(val == R.id.radio_avg){
+				seedsPerHeadVal = 2000;
+			} else {
+				seedsPerHeadVal = 3000;
+			}
+			
+			if(calculateValue){
+				double headCount = countCrops * tillersAvg; 
+				double seedsPerAcre = headCount * seedsPerHeadVal * 1000;
+				double poundsPerAcre = seedsPerAcre / 17723.0;
+				double yield = poundsPerAcre / 56.0;
+				String finalYield = String.format("%.2f", yield) + " bu/acre";
+				yieldValue.setText(finalYield);
+				
+			}
+			else {
+				Toast.makeText(getActivity(), "Please input all items.", 3000).show();
+			}
+			
+			
+		}
+		
+		
+	}
+	
 	public static class WeatherFragment extends Fragment {
 		/**
 		 * The fragment argument representing the section number for this
