@@ -85,7 +85,7 @@
                 android:id="@+id/radio_high"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="High Count (~2500 Seeds/Head)" />
+                android:text="High Count (~3500 Seeds/Head)" />
         </RadioGroup>
 
         <TextView
