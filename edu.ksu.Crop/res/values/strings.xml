@@ -6,11 +6,13 @@
     <string name="title_section2">Weather</string>
     <string name="title_section3">Plan Trip</string>
     <string name="title_section4">Take Pictures</string><string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="title_section5">Soil Report</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example"></string>
     <string name="action_settings">Settings</string>
     <string name="button_take_picture">Take Picture</string>
     <string name="add_pic_img_view_desc">Take or Select an Image</string>
-    
-
+    <string name="Forecast">5 Day Forecast</string>
+	<string name="SoilReport">Soil Report</string>
+	
 </resources>
