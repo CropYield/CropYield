@@ -10,12 +10,15 @@ import java.util.LinkedList;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.location.Location;
+import android.location.LocationManager;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,6 +27,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Scanner;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -426,7 +430,7 @@ public class MainActivity extends ActionBarActivity implements
 	public static class PictureFragment extends Fragment {
 
 		ImageView imageView;
-		LinkedList<String> currentPhotoPath = new LinkedList();
+		LinkedList<String> currentPhotoPath = new LinkedList<String>();
 		static final int REQUEST_IMAGE_CAPTURE = 1;
 		static final int REQUEST_IMAGE_SELECT = 2;
 		Button takePicture;
@@ -436,7 +440,7 @@ public class MainActivity extends ActionBarActivity implements
 		ImageButton gpsLocation;
 		int currentPhotoDisplayed = 0;
 		int photoCount = 0;
-		LinkedList<Bitmap> currentPictures = new LinkedList();
+		LinkedList<Bitmap> currentPictures = new LinkedList<Bitmap>();
 		
 		private static final String ARG_SECTION_NUMBER = "section_number";
 
@@ -534,7 +538,7 @@ public class MainActivity extends ActionBarActivity implements
 				public void onClick(DialogInterface dialog, int picked) {
 					switch (picked) {
 					case 0:
-						obtainLocation();
+						obtainLocation(true);
 						break;
 					case 1:
 						selectLocation();
@@ -571,12 +575,19 @@ public class MainActivity extends ActionBarActivity implements
 		}
 		
 		
-		private void obtainLocation() {
-			
+		private Location obtainLocation(Boolean showToast) {
+	        getActivity();
+			LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+	        Location location= locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+	        if(showToast) sendToast( "Location is " + location.getLatitude() + ", " + location.getLongitude() + ".", Toast.LENGTH_LONG);
+	        return location;
 		}
 		
 		private void selectLocation() {
-			
+			Location location = obtainLocation(false);
+			String uri = String.format(Locale.ENGLISH, "geo:%f,%f", location.getLatitude(), location.getLongitude());
+			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+			getActivity().startActivity(intent);
 		}
 		
 		private void previousPicture(View v) {
@@ -677,7 +688,6 @@ public class MainActivity extends ActionBarActivity implements
 		private void retrieveExifData() {
 			try {
 				ExifInterface exif = new ExifInterface(currentPhotoPath.peek());
-				String tempString = exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH);
 				if( exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE) == null || exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE) == null ) {
 					sendToast("Unable To Retrieve GPS Data, Please Try Other Option", Toast.LENGTH_LONG);
 				}
@@ -725,7 +735,6 @@ public class MainActivity extends ActionBarActivity implements
 		    bmOptions.inJustDecodeBounds = false;
 		    bmOptions.inSampleSize = scaleFactor;
 		    bmOptions.inPurgeable = true;
-		    String temp = currentPhotoPath.peek();
 		    Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath.peek(), bmOptions);
 		    Matrix matrix = new Matrix();
 		    matrix.postRotate(90);
