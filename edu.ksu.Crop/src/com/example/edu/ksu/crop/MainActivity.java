@@ -60,7 +60,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.edu.ksu.crop.MainActivity.WeatherFragment.PictureFragment;
+//import com.example.edu.ksu.crop.MainActivity.WeatherFragment.PictureFragment;
 
 public class MainActivity extends ActionBarActivity implements
 		NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -448,61 +448,6 @@ public class MainActivity extends ActionBarActivity implements
 			((MainActivity) activity).onSectionAttached(getArguments().getInt(
 					ARG_SECTION_NUMBER));
 		}
-	public static class PictureFragment extends Fragment implements Button.OnClickListener {
-		/**
-		 * The fragment argument representing the section number for this
-		 * fragment.
-		 */
-		Button button;
-		
-		
-		private static final String ARG_SECTION_NUMBER = "section_number";
-
-		/**
-		 * Returns a new instance of this fragment for the given section number.
-		 */
-		public static PictureFragment newInstance(int sectionNumber) {
-			PictureFragment fragment = new PictureFragment();
-			Bundle args = new Bundle();
-			args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-			fragment.setArguments(args);
-			return fragment;
-		}
-
-		public PictureFragment() {
-
-		}
-		static final int REQUEST_IMAGE_CAPTURE = 1;
-
-
-		
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_picture,
-					container, false);
-			
-			button = (Button) rootView.findViewById(R.id.button_camera);
-			
-			button.setOnClickListener(this);
-					
-			return rootView;
-		}
-		
-		public void onClick(View v) {
-			Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		    if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-		        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-		    }				
-		}
-
-		@Override
-		public void onAttach(Activity activity) {
-			super.onAttach(activity);
-			((MainActivity) activity).onSectionAttached(getArguments().getInt(
-					ARG_SECTION_NUMBER));
-		}
-	}
 	}
 	
 	
