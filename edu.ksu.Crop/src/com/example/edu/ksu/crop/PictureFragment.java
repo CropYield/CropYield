@@ -241,9 +241,9 @@ public class PictureFragment extends Fragment {
 	        setImageViewTest2(dilatedMask, "4");
 	
 			List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
-			sendToast("Countour Count: " + contours.size() , Toast.LENGTH_LONG);
 	        Imgproc.findContours(Masked, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);   
-	        
+			sendToast("Countour Count: " + contours.size() , Toast.LENGTH_LONG);
+
 	        double maxArea = 0;
 		    Iterator<MatOfPoint> each = contours.iterator();
 		    while (each.hasNext()) {
