@@ -32,8 +32,22 @@ public class GraphFragment extends Fragment{
 	
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fragment_main, container,
+		View rootView = inflater.inflate(R.layout.fragment_graph, container,
 				false);
+		
+		
+		GraphViewSeries exampleSeries = new GraphViewSeries(new GraphViewData[] {
+			    new GraphViewData(1, 2.0d)
+			    , new GraphViewData(2, 1.5d)
+			    , new GraphViewData(3, 2.5d)
+			    , new GraphViewData(4, 1.0d)
+			});
+			 
+			GraphView graphView = new LineGraphView(getActivity(), "Example");
+			graphView.addSeries(exampleSeries); // data
+			 
+			LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.widget43);
+			layout.addView(graphView);
 		
 		return rootView;
 	}
