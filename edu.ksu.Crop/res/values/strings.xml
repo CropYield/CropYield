@@ -7,6 +7,7 @@
     <string name="title_section3">Plan Trip</string>
     <string name="title_section4">Take Pictures</string><string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="title_section5">Soil Report</string>
+    <string name="title_section6">Calculator</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example"></string>
     <string name="action_settings">Settings</string>
