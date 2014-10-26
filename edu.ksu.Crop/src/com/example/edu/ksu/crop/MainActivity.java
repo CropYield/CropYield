@@ -349,6 +349,7 @@ public class MainActivity extends ActionBarActivity implements
 	        latitude = location.getLatitude();
 	        longitude = location.getLongitude();
 	        new retrieve_weatherTask().execute();
+	        Toast.makeText(getActivity(), "Retrieving Weather", Toast.LENGTH_SHORT).show();
 			return rootView;
 		}
 		
