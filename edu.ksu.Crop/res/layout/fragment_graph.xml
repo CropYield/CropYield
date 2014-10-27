@@ -93,5 +93,12 @@
         android:max="100"
         android:progress="50" />
 
+    <TextView
+        android:id="@+id/textViewValueBPA"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text=" 0.0 bu/acre"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </LinearLayout>

@@ -28,6 +28,7 @@ public class GraphFragment extends Fragment implements OnSeekBarChangeListener{
 	TextView tvHeads;
 	TextView tvSPH;
 	TextView tvSPP;
+	TextView tvBPA;
 	
 	int headsPer = 45;
 	int seedsPerHead = 2500;
@@ -58,6 +59,7 @@ public class GraphFragment extends Fragment implements OnSeekBarChangeListener{
 		tvHeads = (TextView) rootView.findViewById(R.id.textViewHPA);
 		tvSPH = (TextView) rootView.findViewById(R.id.textViewSPHV);
 		tvSPP = (TextView) rootView.findViewById(R.id.textViewSPPV);
+		tvBPA = (TextView) rootView.findViewById(R.id.textViewValueBPA);
 		
 		exampleSeries = new GraphViewSeries(CalculateValues(headsPer, seedsPerHead, seedsPerPound));
 		 
@@ -75,7 +77,8 @@ public class GraphFragment extends Fragment implements OnSeekBarChangeListener{
                 // TODO Auto-generated method stub
             	//Graph stuff
             	exampleSeries.resetData(CalculateValues(headsPer, seedsPerHead, seedsPerPound));
-
+            	String tempVal = String.format("%.2f", averageBUA) + " bu/acre";
+            	tvBPA.setText(tempVal);
             }
 
             @Override
@@ -105,7 +108,8 @@ public class GraphFragment extends Fragment implements OnSeekBarChangeListener{
                 // TODO Auto-generated method stub
             	//Graph stuff
             	exampleSeries.resetData(CalculateValues(headsPer, seedsPerHead, seedsPerPound));
-
+            	String tempVal = String.format("%.2f", averageBUA) + " bu/acre";
+            	tvBPA.setText(tempVal);
             }
 
             @Override
@@ -134,7 +138,8 @@ public class GraphFragment extends Fragment implements OnSeekBarChangeListener{
                 // TODO Auto-generated method stub
             	//Graph stuff
             	exampleSeries.resetData(CalculateValues(headsPer, seedsPerHead, seedsPerPound));
-            	
+            	String tempVal = String.format("%.2f", averageBUA) + " bu/acre";
+            	tvBPA.setText(tempVal);
 
             }
 
@@ -167,6 +172,7 @@ public class GraphFragment extends Fragment implements OnSeekBarChangeListener{
 		lowBUA = averageBUA * .85;
 		highBUA = averageBUA * 1.15;
 		
+		
 		return new GraphViewData[] {
 			    new GraphViewData(1, lowBUA)
 			    , new GraphViewData(2, averageBUA)
@@ -184,7 +190,7 @@ public class GraphFragment extends Fragment implements OnSeekBarChangeListener{
 		// TODO Auto-generated method stub
 		if(seekBar == seekBarHeads){
 			headsPer = UpdateGraphView(progress, 90, 30);
-           // tvHeads.setText(progress);
+            //tvHeads.setText(progress);
 
 		} else if (seekBar == seekBarSPH){
 			seedsPerPound = UpdateGraphView(progress, 22000, 9000);
@@ -206,6 +212,7 @@ public class GraphFragment extends Fragment implements OnSeekBarChangeListener{
 	public void onStopTrackingTouch(SeekBar arg0) {
 		// TODO Auto-generated method stub
 		exampleSeries.resetData(CalculateValues(headsPer, seedsPerHead, seedsPerPound));
-		
+		String tempVal = String.format("%.2f", averageBUA) + " bu/acre";
+    	tvBPA.setText(tempVal);
 	}
 }
