@@ -3,9 +3,23 @@ package com.example.edu.ksu.crop;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
+
+import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
+import org.opencv.core.Core;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Size;
+import org.opencv.core.Scalar;
+import org.opencv.highgui.Highgui;
+import org.opencv.imgproc.Imgproc;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -16,6 +30,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.location.Location;
 import android.location.LocationManager;
@@ -23,6 +38,7 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -135,7 +151,7 @@ public class PictureFragment extends Fragment {
 	}
 	
 	private void selectLocationOrRetrieveCurrent(View v) {
-		CharSequence options[] = new CharSequence[] { "Retrieve Current Location", "Select A Location", "Use GPS Location Off Current Photo"};
+		CharSequence options[] = new CharSequence[] { "Retrieve Current Location", "Select A Location", "Use GPS Location Off Current Photo", "Calculate Max Area"};
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setTitle("Choose GPS Location Method");
@@ -148,9 +164,12 @@ public class PictureFragment extends Fragment {
 				case 1:
 					selectLocation();
 					break;
-				case 2: retrieveExifData();
-				break;
-				
+				case 2: 
+					retrieveExifData();
+					break;
+				case 3:
+					calculateArea();
+					break;
 				}
 			}
 		});
@@ -178,7 +197,82 @@ public class PictureFragment extends Fragment {
 		});
 		builder.show();
 	}
+//	private void calculateArea() {
+//		Double currentArea;
+//		ColorDetector colorDetector = new ColorDetector();
+//		currentArea = colorDetector.AreaDetection(currentPhotoPath.get(currentPhotoDisplayed));
+//		sendToast(currentArea.toString(), Toast.LENGTH_LONG);
+//	}
 	
+	private void calculateArea() {
+		if( !OpenCVLoader.initDebug()) {
+			sendToast("Error Loading OpenCV", Toast.LENGTH_LONG);
+		} else {
+	        Mat dilatedMask = new Mat();
+			Mat hierarchy = new Mat();
+			Mat HSV = new Mat();
+			Mat Masked = new Mat();
+			
+	        Scalar LowerBound = new Scalar(0);
+		    Scalar UpperBound = new Scalar(0);
+		    
+		    float HSVUpper[] = new float[3];
+		    float HSVLower[] = new float[3];
+
+			Mat originalImage = Highgui.imread(currentPhotoPath.get(currentPhotoDisplayed));
+			
+		    Color.RGBToHSV(15, 60, 120, HSVUpper);
+		    Color.RGBToHSV(0, 35, 60, HSVLower);
+		    
+		    for(int i = 0; i < 3; i++) {
+		    	LowerBound.val[ i ] = (double)HSVLower[ i ];
+		    	UpperBound.val[ i ] = (double)HSVUpper[ i ];
+		    }
+		   
+			Imgproc.cvtColor(originalImage, HSV, Imgproc.COLOR_BGR2HSV, 3);
+
+	        Core.inRange(HSV, new Scalar(0, 100, 30), new Scalar(15, 255, 255), Masked);
+
+	        Imgproc.dilate(Masked, dilatedMask, new Mat());
+	        setImageViewTest2(dilatedMask, "1");
+	        
+			List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+	        Imgproc.findContours(Masked, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);   
+			sendToast("Countour Count: " + contours.size() , Toast.LENGTH_LONG);
+
+	        double totalArea = 0;
+		    Iterator<MatOfPoint> each = contours.iterator();
+		    while (each.hasNext()) {
+		        MatOfPoint wrapper = each.next();
+		        double area = Imgproc.contourArea(wrapper);
+		        totalArea += area;
+		    }
+			sendToast( ( "The total area in pixels is: " + totalArea ), Toast.LENGTH_LONG);
+		}
+	}
+	
+	private void setImageViewTest2(Mat mat, String toastNum) {
+		try{
+			if( mat.rows() > 1200 ) {
+				Mat smallerMat = new Mat();
+				Imgproc.resize(mat, smallerMat, new Size(800.0, 1200.0), 0, 0, Imgproc.INTER_NEAREST);
+				Bitmap bmp = Bitmap.createBitmap(smallerMat.cols(), smallerMat.rows(), Bitmap.Config.ARGB_8888);
+				Mat tmp = new Mat(smallerMat.rows(), smallerMat.cols(), CvType.CV_8U, new Scalar(4));
+			    Imgproc.cvtColor(smallerMat, tmp, Imgproc.COLOR_GRAY2BGR, 4);
+				Utils.matToBitmap(tmp, bmp);
+				imageView.setImageBitmap(bmp);			
+			} else {
+				Bitmap bmp = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888);
+				Mat tmp = new Mat(mat.rows(), mat.cols(), CvType.CV_8U, new Scalar(4));
+			    Imgproc.cvtColor(mat, tmp, Imgproc.COLOR_GRAY2BGR, 4);
+				Utils.matToBitmap(tmp, bmp);
+				imageView.setImageBitmap(bmp);			
+			}
+		} catch (Exception EX) {
+			sendToast( "Bitmap " + toastNum + " is null", Toast.LENGTH_SHORT );
+		}
+		
+	}
 	
 	private Location obtainLocation(Boolean showToast) {
         getActivity();
@@ -341,10 +435,15 @@ public class PictureFragment extends Fragment {
 	    bmOptions.inSampleSize = scaleFactor;
 	    bmOptions.inPurgeable = true;
 	    Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath.peek(), bmOptions);
-	    Matrix matrix = new Matrix();
-	    matrix.postRotate(90);
-	    Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bmOptions.outWidth, bmOptions.outHeight, matrix, true);
-	    currentPictures.push(rotatedBitmap);
+	    if( bitmap.getWidth() > bitmap.getHeight() ) {
+	    	Matrix matrix = new Matrix();
+		    matrix.postRotate(90);
+		    Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bmOptions.outWidth, bmOptions.outHeight, matrix, true);
+		    currentPictures.push(rotatedBitmap);
+	    }
+	    else {
+		    currentPictures.push(bitmap);
+	    }
 	    photoCount++;
 	    
 //	    imageView.setImageBitmap(rotatedBitmap);
@@ -373,9 +472,8 @@ public class PictureFragment extends Fragment {
 	}
 	
 	
-	@SuppressLint("SimpleDateFormat") // This removes the warning thrown about creating the date format.
-	                                  // Normally, you should use a different call but it provides a date
-								      // in a format not suitable for saving as a file name, so I used this.
+
+	@SuppressLint("SimpleDateFormat")
 	private File createImageFile() throws IOException {
 	    // Create an image file name
 	    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());

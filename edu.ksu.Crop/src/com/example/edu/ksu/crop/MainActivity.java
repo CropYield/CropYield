@@ -1,5 +1,38 @@
 package com.example.edu.ksu.crop;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Locale;
+import java.util.Scanner;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.location.Location;
+import android.location.LocationManager;
+import android.media.ExifInterface;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -28,8 +61,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -317,16 +354,15 @@ public class MainActivity extends ActionBarActivity implements
 		/**
 		 * Returns a new instance of this fragment for the given section number.
 		 */
-		private TextView m_Day1, m_Date1, m_Low1, m_High1, m_Text1;
-		private TextView m_Day2, m_Date2, m_Low2, m_High2, m_Text2;
-		private TextView m_Day3, m_Date3, m_Low3, m_High3, m_Text3;
-		private TextView m_Day4, m_Date4, m_Low4, m_High4, m_Text4;
-		private TextView m_Day5, m_Date5, m_Low5, m_High5, m_Text5;
-		private final String ZIPCODE = "66502";
-		private ArrayList<String> listOfInputData = new ArrayList<String>();
-		private HashMap<Integer, ArrayList<String>> fiveDayForecast = new HashMap<Integer, ArrayList<String>>();
 
+		private static final int LENGTH_OF_FORECAST = 7;
+		private ListView listView;
+		private static int [] weatherImages = {R.drawable.sun48, R.drawable.down48, R.drawable.up48, R.drawable.littlerain48}; //7 images, 1 set for each listview
+	    private ArrayList<String> listOfWeatherData = new ArrayList<String>();
+	    private HashMap<Integer,ArrayList<String>> dictFiveDayForecast = new HashMap<Integer,ArrayList<String>>();
+		private double latitude, longitude = 0.0;
 		public static WeatherFragment newInstance(int sectionNumber) {
+			
 			WeatherFragment fragment = new WeatherFragment();
 			Bundle args = new Bundle();
 			args.putInt(ARG_SECTION_NUMBER, sectionNumber);
@@ -342,119 +378,98 @@ public class MainActivity extends ActionBarActivity implements
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_weather,
 					container, false);
-
-			m_Day1 = (TextView) rootView.findViewById(R.id.day1);
-			m_Date1 = (TextView) rootView.findViewById(R.id.date1);
-			m_Low1 = (TextView) rootView.findViewById(R.id.low1);
-			m_High1 = (TextView) rootView.findViewById(R.id.high1);
-			m_Text1 = (TextView) rootView.findViewById(R.id.text1);
-			m_Day2 = (TextView) rootView.findViewById(R.id.day2);
-			m_Date2 = (TextView) rootView.findViewById(R.id.date2);
-			m_Low2 = (TextView) rootView.findViewById(R.id.low2);
-			m_High2 = (TextView) rootView.findViewById(R.id.high2);
-			m_Text2 = (TextView) rootView.findViewById(R.id.text2);
-			m_Day3 = (TextView) rootView.findViewById(R.id.day3);
-			m_Date3 = (TextView) rootView.findViewById(R.id.date3);
-			m_Low3 = (TextView) rootView.findViewById(R.id.low3);
-			m_High3 = (TextView) rootView.findViewById(R.id.high3);
-			m_Text3 = (TextView) rootView.findViewById(R.id.text3);
-			m_Day4 = (TextView) rootView.findViewById(R.id.day4);
-			m_Date4 = (TextView) rootView.findViewById(R.id.date4);
-			m_Low4 = (TextView) rootView.findViewById(R.id.low4);
-			m_High4 = (TextView) rootView.findViewById(R.id.high4);
-			m_Text4 = (TextView) rootView.findViewById(R.id.text4);
-			m_Day5 = (TextView) rootView.findViewById(R.id.day5);
-			m_Date5 = (TextView) rootView.findViewById(R.id.date5);
-			m_Low5 = (TextView) rootView.findViewById(R.id.low5);
-			m_High5 = (TextView) rootView.findViewById(R.id.high5);
-			m_Text5 = (TextView) rootView.findViewById(R.id.text5);
-			new retrieve_weatherTask().execute();
+			listView = (ListView)rootView.findViewById(R.id.listView);
+			 
+	        Location location = obtainLocation(false);
+	        latitude = location.getLatitude();
+	        longitude = location.getLongitude();
+	        new retrieve_weatherTask().execute();
+	        Toast.makeText(getActivity(), "Retrieving Weather", Toast.LENGTH_SHORT).show();
 			return rootView;
 		}
-
-		protected class retrieve_weatherTask extends
-				AsyncTask<Void, String, HashMap<Integer, ArrayList<String>>> {
-			@Override
-			public HashMap<Integer, ArrayList<String>> doInBackground(
-					Void... arg0) {
-				try {
-					InputStream inputXml;
-					inputXml = new URL(
-							"http://weather.yahooapis.com/forecastrss?p="
-									+ ZIPCODE + "&u=f").openConnection()
-							.getInputStream();
-					DocumentBuilderFactory factory = DocumentBuilderFactory
-							.newInstance();
-					DocumentBuilder builder = factory.newDocumentBuilder();
-					org.w3c.dom.Document doc = builder.parse(inputXml);
-					NodeList nodi = doc
-							.getElementsByTagName("yweather:forecast");
-
-					if (nodi.getLength() > 0) {
-						for (int i = 0; i < 5; i++) {
-							nodi = doc
-									.getElementsByTagName("yweather:forecast");
-							Element nodo = (Element) nodi.item(i);
-							listOfInputData.add(nodo.getAttribute("day"));
-							listOfInputData.add(nodo.getAttribute("date"));
-							listOfInputData.add(nodo.getAttribute("low"));
-							listOfInputData.add(nodo.getAttribute("high"));
-							listOfInputData.add(nodo.getAttribute("text"));
-							fiveDayForecast.put(i, listOfInputData);
-							listOfInputData = new ArrayList<String>();
-						}
-					}
-					if (inputXml != null)
-						inputXml.close();
-
-					return fiveDayForecast;
-				} catch (Exception e) {
-					e.printStackTrace();
-					return fiveDayForecast;
-				}
-			}
-
-			protected void onPostExecute(
-					HashMap<Integer, ArrayList<String>> forecast) {
-				try {
-					ArrayList<String> dayForecast = new ArrayList<String>();
-					dayForecast = forecast.get(0);
-					m_Day1.setText(dayForecast.get(0));
-					m_Date1.setText(dayForecast.get(1));
-					m_Low1.setText(dayForecast.get(2));
-					m_High1.setText(dayForecast.get(3));
-					m_Text1.setText(dayForecast.get(4));
-					dayForecast = forecast.get(1);
-					m_Day2.setText(dayForecast.get(0));
-					m_Date2.setText(dayForecast.get(1));
-					m_Low2.setText(dayForecast.get(2));
-					m_High2.setText(dayForecast.get(3));
-					m_Text2.setText(dayForecast.get(4));
-					dayForecast = forecast.get(2);
-					m_Day3.setText(dayForecast.get(0));
-					m_Date3.setText(dayForecast.get(1));
-					m_Low3.setText(dayForecast.get(2));
-					m_High3.setText(dayForecast.get(3));
-					m_Text3.setText(dayForecast.get(4));
-					dayForecast = forecast.get(3);
-					m_Day4.setText(dayForecast.get(0));
-					m_Date4.setText(dayForecast.get(1));
-					m_Low4.setText(dayForecast.get(2));
-					m_High4.setText(dayForecast.get(3));
-					m_Text4.setText(dayForecast.get(4));
-					dayForecast = forecast.get(4);
-					m_Day5.setText(dayForecast.get(0));
-					m_Date5.setText(dayForecast.get(1));
-					m_Low5.setText(dayForecast.get(2));
-					m_High5.setText(dayForecast.get(3));
-					m_Text5.setText(dayForecast.get(4));
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-
+		
+		private Location obtainLocation(Boolean showToast) {
+	        getActivity();
+			LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+	        Location location= locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+	        if(showToast) sendToast( "Location is " + location.getLatitude() + ", " + location.getLongitude() + ".", Toast.LENGTH_LONG);
+	        return location;
 		}
-
+	    
+	    private void sendToast(String message, int length) {
+    		
+    		Activity context = getActivity();
+    		CharSequence text = (CharSequence) message;
+    		int duration = length;
+    		
+    		Toast toast = Toast.makeText(context, text, duration);
+    		toast.show();
+		}
+	    
+		protected class retrieve_weatherTask extends AsyncTask<Void, String, HashMap<Integer,ArrayList<String>>>{
+		    @Override
+		    public HashMap<Integer,ArrayList<String>> doInBackground(Void... arg0) {
+		    	try{
+		    		JSONObject jsonObject;
+		    		JSONArray jsonArray;
+		    		
+		    		jsonArray = getJsonArray();
+	    		    for (int i = 0; i < LENGTH_OF_FORECAST; i++){
+	    		    	listOfWeatherData = new ArrayList<String>();
+	    		    	jsonObject = jsonArray.getJSONObject(i);
+	    		    	listOfWeatherData.add(jsonObject.getString("validTime").substring(0, 10));
+	    		    	listOfWeatherData.add(jsonObject.getString("minTempF"));
+	    		    	listOfWeatherData.add(jsonObject.getString("maxTempF"));
+	    		    	listOfWeatherData.add(jsonObject.getString("pop"));
+	    		    	//listOfWeatherData.add(jsonObject.getString("weatherPrimary"));
+	    		    	dictFiveDayForecast.put(i,listOfWeatherData);
+	    		    }
+		    	    return dictFiveDayForecast;
+		    	} catch (Exception e) {
+		    		e.printStackTrace();
+		    		return dictFiveDayForecast; 
+		    	}
+		    }
+		    
+		    protected void onPostExecute(HashMap<Integer,ArrayList<String>> forecast){
+		    	try{
+		    		ArrayList<String> weatherInfo = new ArrayList<String>();
+		    		for(int i = 0; i < LENGTH_OF_FORECAST; i++){
+		    			weatherInfo.addAll(forecast.get(i));	    			
+		    		}
+		    		
+		    		listView.setAdapter(new CustomAdapter(getActivity(), weatherImages, weatherInfo));
+		    		
+		    	}catch(Exception e){
+		    		e.printStackTrace();
+		    	}
+		    }
+		
+		private JSONArray getJsonArray(){
+			JSONObject jsonObject;
+    		JSONArray jsonArray, jsonArray2 = new JSONArray();
+    		
+    		try{
+    			String str = new String();
+    			URL url = new URL("https://api.aerisapi.com/forecasts/closest?p=" + latitude + ",%20" + longitude + "&limit="+ LENGTH_OF_FORECAST + "&client_id=3697JMRSKj6ncjcGrRIZt&client_secret=hyOUsu3HU4TG4kXAGEmwsL50ZKKRhoaYMFM8pti5");
+    			Scanner scan = new Scanner(url.openStream());
+    			while (scan.hasNext())
+    				str += scan.nextLine();
+    			scan.close();
+    			jsonObject = new JSONObject(str);
+    			jsonArray = jsonObject.getJSONArray("response");
+    			jsonObject = jsonArray.getJSONObject(0);
+    			jsonObject = new JSONObject(jsonObject.toString());
+    			jsonArray2 = jsonObject.getJSONArray("periods");
+    			return jsonArray2;
+    		
+    		}catch (Exception e){
+    			e.printStackTrace();
+    			return jsonArray2;
+    		}
+		}
+		
+	}
 		@Override
 		public void onAttach(Activity activity) {
 			super.onAttach(activity);
@@ -464,10 +479,10 @@ public class MainActivity extends ActionBarActivity implements
 	}
 
 	public static class SoilFragment extends Fragment {
-		/**
-		 * The fragment argument representing the section number for this
-		 * fragment.
-		 */
+	/**
+	 * The fragment argument representing the section number for this
+	 * fragment.
+	 */
 		private static final String ARG_SECTION_NUMBER = "section_number";
 
 		/**
@@ -475,9 +490,9 @@ public class MainActivity extends ActionBarActivity implements
 		 */
 		private TextView m_Soil1, m_Soil2, m_Soil3, m_Soil4, m_Soil5;
 		private ArrayList<String> listOfData = new ArrayList<String>();
-		private final String LATITUDE = "44.50";// some random spot in spain
-		private final String LONGITUDE = "5.29";
-
+	    private final String LATITUDE = "44.50";//some random spot in spain
+	    private final String LONGITUDE = "5.29"; 
+		
 		public static SoilFragment newInstance(int sectionNumber) {
 			SoilFragment fragment = new SoilFragment();
 			Bundle args = new Bundle();
@@ -492,67 +507,57 @@ public class MainActivity extends ActionBarActivity implements
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_soil, container,
-					false);
-			m_Soil1 = (TextView) rootView.findViewById(R.id.textView1);
-			m_Soil2 = (TextView) rootView.findViewById(R.id.textView2);
-			m_Soil3 = (TextView) rootView.findViewById(R.id.textView3);
-			m_Soil4 = (TextView) rootView.findViewById(R.id.textView4);
-			m_Soil5 = (TextView) rootView.findViewById(R.id.textView5);
-			new retrieve_soilTask().execute();
+			View rootView = inflater.inflate(R.layout.fragment_soil,
+					container, false);
+			m_Soil1 = (TextView)rootView.findViewById(R.id.textView1);
+			m_Soil2 = (TextView)rootView.findViewById(R.id.textView2);
+			m_Soil3 = (TextView)rootView.findViewById(R.id.textView3);
+			m_Soil4 = (TextView)rootView.findViewById(R.id.textView4);
+			m_Soil5 = (TextView)rootView.findViewById(R.id.textView5);
+	        new retrieve_soilTask().execute();
 			return rootView;
 		}
 
-		protected class retrieve_soilTask extends
-				AsyncTask<Void, String, ArrayList<String>> {
-			@Override
-			public ArrayList<String> doInBackground(Void... arg0) {
-				try {
-
-					String strUrl = "http://rest.soilgrids.org/query?lon="
-							+ LATITUDE + "&lat=" + LONGITUDE;
-					URL url = new URL(strUrl);
-					Scanner scan = new Scanner(url.openStream());
-					String str = new String();
-					while (scan.hasNext())
-						str += scan.nextLine();
-					scan.close();
-
-					JSONObject obj = new JSONObject(str);
-
-					// listOfData.add(obj.getJSONObject("crs").getString("type"));
-					listOfData.add(obj.getJSONObject("properties").getString(
-							"publication_date"));
-					listOfData.add(obj.getJSONObject("geometry").getString(
-							"type"));
-					listOfData.add(obj.getJSONObject("properties").getString(
-							"soilmask"));
-					listOfData.add(obj.getJSONObject("properties")
-							.getJSONObject("BLD").getJSONObject("U")
-							.getString("sd2"));
-					listOfData.add(obj.getJSONObject("properties")
-							.getJSONObject("TAXOUSDA").getString("Aquolls"));
-					return listOfData;
-
-				} catch (Exception e) {
-					e.printStackTrace();
-					return listOfData;
-				}
-			}
-
-			protected void onPostExecute(ArrayList<String> data) {
-				try {
-					m_Soil1.setText(data.get(0));
-					m_Soil2.setText(data.get(1));
-					m_Soil3.setText(data.get(2));
-					m_Soil4.setText(data.get(3));
-					m_Soil5.setText(data.get(4));
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
+		protected class retrieve_soilTask extends AsyncTask<Void,String, ArrayList<String>>{
+		    @Override
+		    public ArrayList<String> doInBackground(Void... arg0) {
+		    	try{
+		    			
+		    			String strUrl = "http://rest.soilgrids.org/query?lon="+ LATITUDE + "&lat=" + LONGITUDE;
+		    			URL url = new URL(strUrl);
+		    			Scanner scan = new Scanner(url.openStream());
+		    		    String str = new String();
+		    		    while (scan.hasNext())
+		    		        str += scan.nextLine();
+		    		    scan.close();
+		    		    
+		    		    JSONObject obj = new JSONObject(str);
+		    		    
+		    		    listOfData.add(obj.getJSONObject("properties").getString("publication_date"));
+		    		    listOfData.add(obj.getJSONObject("geometry").getString("type"));
+		    		    listOfData.add(obj.getJSONObject("properties").getString("soilmask"));
+		    		    listOfData.add(obj.getJSONObject("properties").getJSONObject("BLD").getJSONObject("U").getString("sd2"));
+		    		    listOfData.add(obj.getJSONObject("properties").getJSONObject("TAXOUSDA").getString("Aquolls"));
+		    			return listOfData;
+		    			
+		    	} catch (Exception e) {
+		    		e.printStackTrace();
+		    		return listOfData; 
+		    		}
+		    }
+		    protected void onPostExecute(ArrayList<String> data){
+		    	try{
+		    		m_Soil1.setText(data.get(0));
+		    		m_Soil2.setText(data.get(1));
+		    		m_Soil3.setText(data.get(2));
+		    		m_Soil4.setText(data.get(3));
+		    		m_Soil5.setText(data.get(4));
+		    	}catch(Exception e){
+		    		e.printStackTrace();
+		    	}
+		    }
 		}
-
+	
 		@Override
 		public void onAttach(Activity activity) {
 			super.onAttach(activity);
