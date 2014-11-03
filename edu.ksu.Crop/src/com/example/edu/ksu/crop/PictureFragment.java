@@ -278,14 +278,29 @@ public class PictureFragment extends Fragment {
 				Mat tmp = new Mat(smallerMat.rows(), smallerMat.cols(), CvType.CV_8U, new Scalar(4));
 			    Imgproc.cvtColor(smallerMat, tmp, Imgproc.COLOR_GRAY2BGR, 4);
 				Utils.matToBitmap(tmp, bmp);
-				imageView.setImageBitmap(bmp);			
+			    if( bmp.getWidth() > bmp.getHeight() ) {
+			    	Matrix matrix = new Matrix();
+				    matrix.postRotate(90);
+				    Bitmap rotatedBitmap = Bitmap.createBitmap(bmp, 0, 0, 800, 1200, matrix, true);
+					imageView.setImageBitmap(rotatedBitmap);
+			    }
+			    else {
+					imageView.setImageBitmap(bmp);			
+			    }
 			} else {
 				Bitmap bmp = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888);
 				Mat tmp = new Mat(mat.rows(), mat.cols(), CvType.CV_8U, new Scalar(4));
 			    Imgproc.cvtColor(mat, tmp, Imgproc.COLOR_GRAY2BGR, 4);
 				Utils.matToBitmap(tmp, bmp);
-				imageView.setImageBitmap(bmp);			
-			}
+			    if( bmp.getWidth() > bmp.getHeight() ) {
+			    	Matrix matrix = new Matrix();
+				    matrix.postRotate(90);
+				    Bitmap rotatedBitmap = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
+					imageView.setImageBitmap(rotatedBitmap);
+			    }
+			    else {
+					imageView.setImageBitmap(bmp);			
+			    }			}
 		} catch (Exception EX) {
 			sendToast( "Bitmap " + toastNum + " is null", Toast.LENGTH_SHORT );
 		}
