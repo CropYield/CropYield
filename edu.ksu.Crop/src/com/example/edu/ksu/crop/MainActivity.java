@@ -379,10 +379,16 @@ public class MainActivity extends ActionBarActivity implements
 			View rootView = inflater.inflate(R.layout.fragment_weather,
 					container, false);
 			listView = (ListView)rootView.findViewById(R.id.listView);
-			 
+			
 	        Location location = obtainLocation(false);
-	        latitude = location.getLatitude();
-	        longitude = location.getLongitude();
+	        try{
+		        latitude = location.getLatitude();
+		        longitude = location.getLongitude();
+	        }
+	        catch (Exception e){	        
+	        	Toast.makeText(getActivity(), "Weather failed to be retrieved", Toast.LENGTH_SHORT).show();
+	        }
+	        
 	        new retrieve_weatherTask().execute();
 	        Toast.makeText(getActivity(), "Retrieving Weather", Toast.LENGTH_SHORT).show();
 			return rootView;
