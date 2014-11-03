@@ -47,6 +47,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class PictureFragment extends Fragment {
@@ -58,6 +59,7 @@ public class PictureFragment extends Fragment {
 	Button takePicture;
 	ImageButton nextPicture;
 	ImageButton previousPicture;
+	TextView headSize;
 	ImageButton deletePicture;
 	ImageButton gpsLocation;
 	int currentPhotoDisplayed = 0;
@@ -85,7 +87,7 @@ public class PictureFragment extends Fragment {
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_picture,
 				container, false);
-		
+		headSize   		 = (TextView)   rootView.findViewById(R.id.imageSizeTextView);
 		imageView        = (ImageView)  rootView.findViewById(R.id.imageView1);
 		takePicture      = (Button)     rootView.findViewById(R.id.button_camera);			
 		nextPicture      = (ImageButton)rootView.findViewById(R.id.nextImageButton);
@@ -208,11 +210,12 @@ public class PictureFragment extends Fragment {
 		if( !OpenCVLoader.initDebug()) {
 			sendToast("Error Loading OpenCV", Toast.LENGTH_LONG);
 		} else {
+			
 	        Mat dilatedMask = new Mat();
 			Mat hierarchy = new Mat();
 			Mat HSV = new Mat();
 			Mat Masked = new Mat();
-			
+			Mat squarePull = new Mat();
 	        Scalar LowerBound = new Scalar(0);
 		    Scalar UpperBound = new Scalar(0);
 		    
@@ -231,14 +234,27 @@ public class PictureFragment extends Fragment {
 		   
 			Imgproc.cvtColor(originalImage, HSV, Imgproc.COLOR_BGR2HSV, 3);
 
-	        Core.inRange(HSV, new Scalar(0, 100, 30), new Scalar(15, 255, 255), Masked);
-
+	        Core.inRange(HSV, new Scalar(0, 60, 60), new Scalar(25, 175, 175), Masked);
+	        Core.inRange(HSV, new Scalar(50, 60, 50), new Scalar(75, 255, 180), squarePull);
+	        // Convert regular HSV 0-360 / 0-100 / 0-100
+			List<MatOfPoint> sqContours = new ArrayList<MatOfPoint>();
+	        Imgproc.findContours(squarePull, sqContours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);   
+	        
+	        double squareArea = 1;
+		    Iterator<MatOfPoint> sqEach = sqContours.iterator();
+		    while (sqEach.hasNext()) {
+		        MatOfPoint wrapper = sqEach.next();
+		        double area = Imgproc.contourArea(wrapper);
+		        squareArea += area;
+		    }
+		    Mat sqDilate = new Mat();      
+	       
 	        Imgproc.dilate(Masked, dilatedMask, new Mat());
 	        setImageViewTest2(dilatedMask, "1");
 	        
 			List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
 	        Imgproc.findContours(Masked, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);   
-			sendToast("Countour Count: " + contours.size() , Toast.LENGTH_LONG);
+//			sendToast("Countour Count: " + contours.size() , Toast.LENGTH_LONG);
 
 	        double totalArea = 0;
 		    Iterator<MatOfPoint> each = contours.iterator();
@@ -247,7 +263,9 @@ public class PictureFragment extends Fragment {
 		        double area = Imgproc.contourArea(wrapper);
 		        totalArea += area;
 		    }
-			sendToast( ( "The total area in pixels is: " + totalArea ), Toast.LENGTH_LONG);
+//			sendToast( ( "The total area in pixels is: " + totalArea ), Toast.LENGTH_LONG);
+			headSize.setText(String.format("%.3f", totalArea / squareArea) + " inches squared");
+//			sendToast( ( "The area in inches is: " + totalArea / squareArea ), Toast.LENGTH_LONG );
 		}
 	}
 	
