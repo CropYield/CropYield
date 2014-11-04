@@ -3,22 +3,15 @@ package com.example.edu.ksu.crop;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
 
-import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
-import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.Size;
 import org.opencv.core.Scalar;
-import org.opencv.highgui.Highgui;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import android.annotation.SuppressLint;
@@ -30,7 +23,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.location.Location;
 import android.location.LocationManager;
@@ -38,7 +30,6 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -64,6 +55,7 @@ public class PictureFragment extends Fragment {
 	ImageButton gpsLocation;
 	int currentPhotoDisplayed = 0;
 	int photoCount = 0;
+	ColorDetector cd;
 	LinkedList<Bitmap> currentPictures = new LinkedList<Bitmap>();
 	private static final String ARG_SECTION_NUMBER = "section_number";
 
@@ -94,7 +86,7 @@ public class PictureFragment extends Fragment {
 		previousPicture  = (ImageButton)rootView.findViewById(R.id.previousImageButton);
 		deletePicture    = (ImageButton)rootView.findViewById(R.id.deleteImageButton);
 		gpsLocation      = (ImageButton)rootView.findViewById(R.id.gpsImageButton);
-		
+		cd = new ColorDetector();
 		setPreviousNextButtonEnabledStatus();
 		
 		takePicture.setOnClickListener(new View.OnClickListener() {
@@ -170,7 +162,8 @@ public class PictureFragment extends Fragment {
 					retrieveExifData();
 					break;
 				case 3:
-					calculateArea();
+					headSize.setText(cd.AreaDetection(currentPhotoPath.get(currentPhotoDisplayed)));
+					setImageViewTest2(cd.dilatedMask, "1");
 					break;
 				}
 			}
@@ -206,68 +199,68 @@ public class PictureFragment extends Fragment {
 //		sendToast(currentArea.toString(), Toast.LENGTH_LONG);
 //	}
 	
-	private void calculateArea() {
-		if( !OpenCVLoader.initDebug()) {
-			sendToast("Error Loading OpenCV", Toast.LENGTH_LONG);
-		} else {
-			
-	        Mat dilatedMask = new Mat();
-			Mat hierarchy = new Mat();
-			Mat HSV = new Mat();
-			Mat Masked = new Mat();
-			Mat squarePull = new Mat();
-	        Scalar LowerBound = new Scalar(0);
-		    Scalar UpperBound = new Scalar(0);
-		    
-		    float HSVUpper[] = new float[3];
-		    float HSVLower[] = new float[3];
-
-			Mat originalImage = Highgui.imread(currentPhotoPath.get(currentPhotoDisplayed));
-			
-		    Color.RGBToHSV(15, 60, 120, HSVUpper);
-		    Color.RGBToHSV(0, 35, 60, HSVLower);
-		    
-		    for(int i = 0; i < 3; i++) {
-		    	LowerBound.val[ i ] = (double)HSVLower[ i ];
-		    	UpperBound.val[ i ] = (double)HSVUpper[ i ];
-		    }
-		   
-			Imgproc.cvtColor(originalImage, HSV, Imgproc.COLOR_BGR2HSV, 3);
-
-	        Core.inRange(HSV, new Scalar(0, 60, 60), new Scalar(25, 175, 175), Masked);
-	        Core.inRange(HSV, new Scalar(50, 60, 50), new Scalar(75, 255, 180), squarePull);
-	        // Convert regular HSV 0-360 / 0-100 / 0-100
-			List<MatOfPoint> sqContours = new ArrayList<MatOfPoint>();
-	        Imgproc.findContours(squarePull, sqContours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);   
-	        
-	        double squareArea = 1;
-		    Iterator<MatOfPoint> sqEach = sqContours.iterator();
-		    while (sqEach.hasNext()) {
-		        MatOfPoint wrapper = sqEach.next();
-		        double area = Imgproc.contourArea(wrapper);
-		        squareArea += area;
-		    }
-		    Mat sqDilate = new Mat();      
-	       
-	        Imgproc.dilate(Masked, dilatedMask, new Mat());
-	        setImageViewTest2(dilatedMask, "1");
-	        
-			List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
-	        Imgproc.findContours(Masked, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);   
-//			sendToast("Countour Count: " + contours.size() , Toast.LENGTH_LONG);
-
-	        double totalArea = 0;
-		    Iterator<MatOfPoint> each = contours.iterator();
-		    while (each.hasNext()) {
-		        MatOfPoint wrapper = each.next();
-		        double area = Imgproc.contourArea(wrapper);
-		        totalArea += area;
-		    }
-//			sendToast( ( "The total area in pixels is: " + totalArea ), Toast.LENGTH_LONG);
-			headSize.setText(String.format("%.3f", totalArea / squareArea) + " inches squared");
-//			sendToast( ( "The area in inches is: " + totalArea / squareArea ), Toast.LENGTH_LONG );
-		}
-	}
+//	private void calculateArea() {
+//		if( !OpenCVLoader.initDebug()) {
+//			sendToast("Error Loading OpenCV", Toast.LENGTH_LONG);
+//		} else {
+//			
+//	        Mat dilatedMask = new Mat();
+//			Mat hierarchy = new Mat();
+//			Mat HSV = new Mat();
+//			Mat Masked = new Mat();
+//			Mat squarePull = new Mat();
+//	        Scalar LowerBound = new Scalar(0);
+//		    Scalar UpperBound = new Scalar(0);
+//		    
+//		    float HSVUpper[] = new float[3];
+//		    float HSVLower[] = new float[3];
+//
+//			Mat originalImage = Highgui.imread(currentPhotoPath.get(currentPhotoDisplayed));
+//			
+//		    Color.RGBToHSV(15, 60, 120, HSVUpper);
+//		    Color.RGBToHSV(0, 35, 60, HSVLower);
+//		    
+//		    for(int i = 0; i < 3; i++) {
+//		    	LowerBound.val[ i ] = (double)HSVLower[ i ];
+//		    	UpperBound.val[ i ] = (double)HSVUpper[ i ];
+//		    }
+//		   
+//			Imgproc.cvtColor(originalImage, HSV, Imgproc.COLOR_BGR2HSV, 3);
+//
+//	        Core.inRange(HSV, new Scalar(0, 60, 60), new Scalar(25, 175, 175), Masked);
+//	        Core.inRange(HSV, new Scalar(50, 60, 50), new Scalar(75, 255, 180), squarePull);
+//	        // Convert regular HSV 0-360 / 0-100 / 0-100
+//			List<MatOfPoint> sqContours = new ArrayList<MatOfPoint>();
+//	        Imgproc.findContours(squarePull, sqContours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);   
+//	        
+//	        double squareArea = 1;
+//		    Iterator<MatOfPoint> sqEach = sqContours.iterator();
+//		    while (sqEach.hasNext()) {
+//		        MatOfPoint wrapper = sqEach.next();
+//		        double area = Imgproc.contourArea(wrapper);
+//		        squareArea += area;
+//		    }
+//		    Mat sqDilate = new Mat();      
+//	       
+//	        Imgproc.dilate(Masked, dilatedMask, new Mat());
+//	        setImageViewTest2(dilatedMask, "1");
+//	        
+//			List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+//	        Imgproc.findContours(Masked, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);   
+////			sendToast("Countour Count: " + contours.size() , Toast.LENGTH_LONG);
+//
+//	        double totalArea = 0;
+//		    Iterator<MatOfPoint> each = contours.iterator();
+//		    while (each.hasNext()) {
+//		        MatOfPoint wrapper = each.next();
+//		        double area = Imgproc.contourArea(wrapper);
+//		        totalArea += area;
+//		    }
+////			sendToast( ( "The total area in pixels is: " + totalArea ), Toast.LENGTH_LONG);
+//			headSize.setText(String.format("%.3f", totalArea / squareArea) + " inches squared");
+////			sendToast( ( "The area in inches is: " + totalArea / squareArea ), Toast.LENGTH_LONG );
+//		}
+//	}
 	
 	private void setImageViewTest2(Mat mat, String toastNum) {
 		try{
