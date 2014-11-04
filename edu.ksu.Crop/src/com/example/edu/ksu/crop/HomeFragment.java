@@ -1,6 +1,5 @@
 package com.example.edu.ksu.crop;
 
-import com.example.edu.ksu.crop.MainActivity.PlaceholderFragment;
 import com.example.edu.ksu.crop.MainActivity.WeatherFragment;
 
 import android.app.Activity;
@@ -11,9 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class HomeFragment extends Fragment {
@@ -47,7 +43,7 @@ public class HomeFragment extends Fragment {
 		homeButton = (Button) rootView.findViewById(R.id.home_button);
 		homeButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				Toast.makeText(getActivity(), "Already Home", 2000);
+				Toast.makeText(getActivity(), "Already Home", Toast.LENGTH_SHORT).show();
 			}
 		});
 		
