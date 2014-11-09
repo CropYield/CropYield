@@ -28,8 +28,13 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
+<<<<<<< HEAD
             android:screenOrientation="portrait"
             android:label="@string/app_name" >
+=======
+            android:label="@string/app_name" 
+            android:screenOrientation="portrait" >
+>>>>>>> b18c2789305307bedf38fb6e2c90580993cb789d
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

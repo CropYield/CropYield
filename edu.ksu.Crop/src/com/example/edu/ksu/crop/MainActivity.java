@@ -1,5 +1,9 @@
 package com.example.edu.ksu.crop;
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> b18c2789305307bedf38fb6e2c90580993cb789d
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,10 +15,21 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+<<<<<<< HEAD
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+=======
+
+import android.location.Location;
+import android.location.LocationManager;
+
+import android.os.AsyncTask;
+import android.os.Bundle;
+
+
+>>>>>>> b18c2789305307bedf38fb6e2c90580993cb789d
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -26,6 +41,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+<<<<<<< HEAD
 import android.webkit.GeolocationPermissions;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -33,6 +49,10 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+=======
+import android.widget.Button;
+import android.widget.EditText;
+>>>>>>> b18c2789305307bedf38fb6e2c90580993cb789d
 import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -331,8 +351,13 @@ public class MainActivity extends ActionBarActivity implements
 		private TextView tv_lowExample, tv_highExample, tv_popExample;
 		private ListView listView;
 		private static int [] weatherImages = {R.drawable.sun48, R.drawable.down48, R.drawable.up48, R.drawable.littlerain48}; //7 images, 1 set for each listview
+<<<<<<< HEAD
 		private ArrayList<String> listOfWeatherData = new ArrayList<String>();
 	    private HashMap<Integer,ArrayList<String>> dictFiveDayForecast = new HashMap<Integer,ArrayList<String>>();
+=======
+	    private ArrayList<String> listOfWeatherData = new ArrayList<String>();
+	    @SuppressLint("UseSparseArrays") private HashMap<Integer,ArrayList<String>> dictFiveDayForecast = new HashMap<Integer,ArrayList<String>>();
+>>>>>>> b18c2789305307bedf38fb6e2c90580993cb789d
 		private double latitude, longitude = 0.0;
 		public static WeatherFragment newInstance(int sectionNumber) {
 			
