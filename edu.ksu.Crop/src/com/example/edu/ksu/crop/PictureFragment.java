@@ -32,6 +32,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,6 +54,7 @@ public class PictureFragment extends Fragment {
 	TextView headSize;
 	ImageButton deletePicture;
 	ImageButton gpsLocation;
+	Button nextButton;
 	int currentPhotoDisplayed = 0;
 	int photoCount = 0;
 	ColorDetector cd;
@@ -99,7 +101,9 @@ public class PictureFragment extends Fragment {
 		deletePicture = (ImageButton) rootView
 				.findViewById(R.id.deleteImageButton);
 		gpsLocation = (ImageButton) rootView.findViewById(R.id.gpsImageButton);
+		nextButton = (Button) rootView.findViewById(R.id.buttonNext2);
 		cd = new ColorDetector();
+		
 		setPreviousNextButtonEnabledStatus();
 
 		takePicture.setOnClickListener(new View.OnClickListener() {
@@ -129,6 +133,27 @@ public class PictureFragment extends Fragment {
 		gpsLocation.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				selectLocationOrRetrieveCurrent(v);
+			}
+		});
+		
+		nextButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Fragment newFragment;
+				FragmentTransaction transaction;
+				newFragment = FinalFragment.newInstance(10, data);
+				transaction = getFragmentManager().beginTransaction();
+
+				// Replace whatever is in the fragment_container view with
+				// this fragment,
+				// and add the transaction to the back stack
+				transaction.replace(R.id.container, newFragment);
+				transaction.addToBackStack(null);
+
+				// Commit the transaction
+				transaction.commit();
 			}
 		});
 

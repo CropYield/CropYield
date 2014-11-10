@@ -34,12 +34,20 @@ public class DataSet {
 	//This is incomplete
 	public double AverageArea(){
 		double averageArea = 0;
-		int counter = 0;
+		
 		for(double area : areas){
 			averageArea += area;
-			counter++; 
+			
 		}
-		return (averageArea/counter);
+		
+		averageArea = averageArea/areas.size();
+		
+		return averageArea;
+	}
+	
+	//Equation supplied as of 10/06/14 This is using inches for the equation.
+	public double ReturnGrainNumber(){
+		return 120 * AverageArea() - 400;
 	}
 	
 	

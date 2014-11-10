@@ -69,5 +69,13 @@
         android:layout_marginBottom="23dp"
         android:text="Head Size" />
 
+    <Button
+        android:id="@+id/buttonNext2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:text="Calc" />
+
 </RelativeLayout>
 

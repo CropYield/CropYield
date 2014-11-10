@@ -225,6 +225,17 @@ public class MainActivity extends ActionBarActivity implements
 			projectionButton = (Button) rootView
 					.findViewById(R.id.graph_button);
 
+			homeButton.setOnClickListener(new View.OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					newFragment = InputFragment.newInstance(7);
+					transaction = getFragmentManager().beginTransaction();
+					transaction.replace(R.id.container, newFragment);
+					transaction.addToBackStack(null);
+					transaction.commit();
+				}
+			});
 			weatherButton.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
 					// Create new fragment and transaction
