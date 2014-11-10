@@ -14,16 +14,18 @@ import android.widget.Toast;
 
 public class CustomAdapter extends BaseAdapter{
 	private static int LENGTH_OF_FORECAST = 7;
-	private int i,j = 0;
+	private int i,j,k = 0;
 	int[] imageId;
 	Context context;
 	ArrayList<String> weatherInfo;
-	private static LayoutInflater layoutInflater= null;
+	ArrayList<Integer> dailyWeatherIcons;
+	private static LayoutInflater layoutInflater = null;
 	
-	public CustomAdapter(Context cxt, int[] images, ArrayList<String> weather){
+	public CustomAdapter(Context cxt, int[] images, ArrayList<Integer> daily, ArrayList<String> weather){
 		context = cxt;
 		imageId = images;
 		weatherInfo = weather;
+		dailyWeatherIcons = daily;
 		layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
 	@Override
@@ -46,8 +48,9 @@ public class CustomAdapter extends BaseAdapter{
  
     public class Holder
     {
-        TextView tv_date, tv_low, tv_high, tv_pop;
-        ImageView iv_icon, iv_low, iv_high, iv_pop;
+        TextView tv_date, tv_low, tv_high, tv_pop, tv_lowExample, tv_highExample, tv_popExample;
+        ImageView iv_icon, iv_low, iv_high, iv_pop, iv_lowExample, iv_highExample, iv_popExample;
+        
     }
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
@@ -55,6 +58,7 @@ public class CustomAdapter extends BaseAdapter{
     	View rowView; 
     	try{
     		j+=1;
+    		
     		Holder holder=new Holder();
                
         	rowView 	   = layoutInflater.inflate(R.layout.weather_custom_rows, null);
@@ -67,17 +71,20 @@ public class CustomAdapter extends BaseAdapter{
         	holder.tv_high =(TextView) rowView.findViewById(R.id.tv_high); 
         	holder.tv_pop  =(TextView) rowView.findViewById(R.id.tv_pop);
         	
-        	holder.iv_icon.setImageResource(imageId[0]);
+        	holder.iv_icon.setImageResource(dailyWeatherIcons.get(k));
         	holder.iv_low.setImageResource(imageId[1]);
         	holder.iv_high.setImageResource(imageId[2]);
         	holder.iv_pop.setImageResource(imageId[3]);
         	if(i < 28 && j >= 8){
+        		holder.iv_icon.setImageResource(dailyWeatherIcons.get(k));
         		holder.tv_date.setText(weatherInfo.get(i));
         		holder.tv_low.setText(weatherInfo.get(i+1));
         		holder.tv_high.setText(weatherInfo.get(i+2));
         		holder.tv_pop.setText(weatherInfo.get(i+3));
         		i += 4;
+        		k += 1;
         	}
+        	
          rowView.setOnClickListener(new OnClickListener() {         
             @Override
             public void onClick(View v) {
