@@ -20,9 +20,9 @@ public class ColorDetector {
 		dilatedMask = new Mat();
 	}
 
-	public String AreaDetection(String cF) {
+	public double AreaDetection(String cF) {
 		if( !OpenCVLoader.initDebug()) {
-			return "Error Calculating Area";
+			return 0.0;
 		} else {
 			
 			Mat hierarchy = new Mat();
@@ -71,7 +71,8 @@ public class ColorDetector {
 		        double area = Imgproc.contourArea(wrapper);
 		        totalArea += area;
 		    }
-			return(String.format("%.3f", totalArea / squareArea) + " inches squared");
+		    return (totalArea/squareArea);
+			//return(String.format("%.3f", totalArea / squareArea) + " inches squared");
 		}
 	}
 
