@@ -352,18 +352,18 @@ public class MainActivity extends ActionBarActivity implements
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_weather,
-
-			listView = (ListView)rootView.findViewById(R.id.listView);
+					container, false);
 			
-	        Location location = obtainLocation(false);
-	        try{
-		        latitude = location.getLatitude();
-		        longitude = location.getLongitude();
-	        }
-	        catch (Exception e){	        
-	        	Toast.makeText(getActivity(), "Weather failed to be retrieved", Toast.LENGTH_SHORT).show();
-	        }
-
+			iv_lowExample     = (ImageView)rootView.findViewById(R.id.iv_lowExample);
+			iv_highExample    = (ImageView)rootView.findViewById(R.id.iv_highExample);
+			iv_popExample     = (ImageView)rootView.findViewById(R.id.iv_popExample);
+			tv_lowExample  	  = (TextView)rootView.findViewById(R.id.tv_lowExample);
+			tv_highExample    = (TextView)rootView.findViewById(R.id.tv_highExample);
+			tv_popExample     = (TextView)rootView.findViewById(R.id.tv_popExample);
+			listView 	      = (ListView)rootView.findViewById(R.id.listView);
+			Location location = obtainLocation(false);
+	        latitude 		  = location.getLatitude();
+	        longitude         = location.getLongitude();
 	        
 	        new retrieve_weatherTask().execute();
 	        Toast.makeText(getActivity(), "Retrieving Weather", Toast.LENGTH_SHORT).show();
