@@ -15,6 +15,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -33,6 +34,7 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+
 import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -223,6 +225,17 @@ public class MainActivity extends ActionBarActivity implements
 			projectionButton = (Button) rootView
 					.findViewById(R.id.graph_button);
 
+			homeButton.setOnClickListener(new View.OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					newFragment = InputFragment.newInstance(7);
+					transaction = getFragmentManager().beginTransaction();
+					transaction.replace(R.id.container, newFragment);
+					transaction.addToBackStack(null);
+					transaction.commit();
+				}
+			});
 			weatherButton.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
 					// Create new fragment and transaction
@@ -331,8 +344,8 @@ public class MainActivity extends ActionBarActivity implements
 		private TextView tv_lowExample, tv_highExample, tv_popExample;
 		private ListView listView;
 		private static int [] weatherImages = {R.drawable.sun48, R.drawable.down48, R.drawable.up48, R.drawable.littlerain48}; //7 images, 1 set for each listview
-		private ArrayList<String> listOfWeatherData = new ArrayList<String>();
-	    private HashMap<Integer,ArrayList<String>> dictFiveDayForecast = new HashMap<Integer,ArrayList<String>>();
+	    private ArrayList<String> listOfWeatherData = new ArrayList<String>();
+	    @SuppressLint("UseSparseArrays") private HashMap<Integer,ArrayList<String>> dictFiveDayForecast = new HashMap<Integer,ArrayList<String>>();
 		private double latitude, longitude = 0.0;
 		public static WeatherFragment newInstance(int sectionNumber) {
 			
@@ -342,7 +355,11 @@ public class MainActivity extends ActionBarActivity implements
 			fragment.setArguments(args);
 			return fragment;
 		}
-
+		public int add(int x, int y){
+			int z = 0;
+			
+			return z = x+y;
+		}
 		public WeatherFragment() {
 		}
 
@@ -455,7 +472,7 @@ public class MainActivity extends ActionBarActivity implements
 		    		e.printStackTrace();
 		    	}
 		    }
-		private String getPrimaryWeather(String primaryWeatherCode){
+		public String getPrimaryWeather(String primaryWeatherCode){
 			String[] weatherCodeSplit = primaryWeatherCode.split(":");
 			primaryWeatherCode = weatherCodeSplit[2];
 			try{
@@ -533,9 +550,7 @@ public class MainActivity extends ActionBarActivity implements
 		 * Returns a new instance of this fragment for the given section number.
 		 */
 		
-	    private final String LATITUDE = "44.50";//some random spot in spain
-	    private final String LONGITUDE = "5.29"; 
-		private WebView webView;
+		//private WebView webView;
 		private View rootView;
 		public static SoilFragment newInstance(int sectionNumber) {
 			SoilFragment fragment = new SoilFragment();

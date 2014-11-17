@@ -1,21 +1,16 @@
 package com.example.edu.ksu.crop;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
-import com.example.edu.ksu.crop.MainActivity.PlaceholderFragment;
 import com.jjoe64.graphview.*;
-import com.jjoe64.*;
-import com.jjoe64.graphview.GraphViewDataInterface;
 import com.jjoe64.graphview.LineGraphView;
 
 public class GraphFragment extends Fragment implements OnSeekBarChangeListener{
