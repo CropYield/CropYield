@@ -411,7 +411,6 @@ public class MainActivity extends ActionBarActivity implements
 	    		ArrayList<String> dailyWeatherIcon = new ArrayList<String>();
 		    	try{
 		    		
-		    		
 		    		jsonArray = getJsonArray();
 		    		listOfWeatherData = new ArrayList<String>();
 	    		    for (int i = 0; i < LENGTH_OF_FORECAST; i++){
@@ -421,7 +420,6 @@ public class MainActivity extends ActionBarActivity implements
 	    		    	listOfWeatherData.add(jsonObject.getString("minTempF"));
 	    		    	listOfWeatherData.add(jsonObject.getString("maxTempF"));
 	    		    	listOfWeatherData.add(jsonObject.getString("pop") + "%");
-	    		    	//listOfWeatherData.add(jsonObject.getString("weatherPrimary"));
 	    		    	dailyWeatherIcon.add(getPrimaryWeather(jsonObject.getString("weatherPrimaryCoded")));
 	    		    	
 	    		    }
@@ -595,23 +593,6 @@ public class MainActivity extends ActionBarActivity implements
 				
 			}
 		}
-		/*protected class retrieve_soilTask extends AsyncTask<Void,String, ArrayList<String>>{
-		    @Override
-		    public ArrayList<String> doInBackground(Void... arg0) {
-		    	try{
-		    		
-		    	} catch (Exception e) {
-		    		e.printStackTrace();
-		    		}
-		    }
-		    protected void onPostExecute(ArrayList<String> data){
-		    	try{
-		    		
-		    	}catch(Exception e){
-		    		e.printStackTrace();
-		    	}
-		    }
-		}*/
 	
 		@Override
 		public void onAttach(Activity activity) {
