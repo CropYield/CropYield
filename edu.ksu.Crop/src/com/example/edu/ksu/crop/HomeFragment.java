@@ -40,24 +40,6 @@ public class HomeFragment extends Fragment {
 				false);
 		final FragmentManager fragmentManager = getFragmentManager();
 		
-		homeButton = (Button) rootView.findViewById(R.id.home_button);
-		homeButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				Toast.makeText(getActivity(), "Already Home", Toast.LENGTH_SHORT).show();
-			}
-		});
-		
-		weatherButton = (Button) rootView.findViewById(R.id.weather_button);
-		weatherButton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
-				fragmentManager.beginTransaction().replace(R.id.container, WeatherFragment.newInstance(2))
-			.commit();
-			}
-			
-		});
 
 		return rootView;
 	}
