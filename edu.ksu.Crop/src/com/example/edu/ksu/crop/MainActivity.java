@@ -605,6 +605,10 @@ public class MainActivity extends ActionBarActivity implements
 		}
 	}
 
+	/*
+	 * This is for the that is available in the side-menu, it can be used
+	 * to calculate output based off of a few different things.
+	 */
 	public static class CalculateFragment extends Fragment implements
 			Button.OnClickListener {
 		private static final String ARG_SECTION_NUMBER = "section_number";
