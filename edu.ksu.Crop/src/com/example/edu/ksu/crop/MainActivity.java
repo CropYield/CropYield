@@ -178,8 +178,12 @@ public class MainActivity extends ActionBarActivity implements
 		return super.onOptionsItemSelected(item);
 	}
 
+	
+	
 	/**
-	 * A placeholder fragment containing a simple view.
+	 * The Placeholder Fragment is actually the view for the home page. 
+	 * This is the page that contains the two buttons that you would normally click
+	 * to navigate to either the Yield Calculator or the Plan Trip area.
 	 */
 	public static class PlaceholderFragment extends Fragment {
 		/**
@@ -207,6 +211,8 @@ public class MainActivity extends ActionBarActivity implements
 		public PlaceholderFragment() {
 		}
 
+		//This sets the functionality of the two buttons and where they navigate
+		//when they are clicked.
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
@@ -254,8 +260,8 @@ public class MainActivity extends ActionBarActivity implements
 			super.onAttach(activity);
 			((MainActivity) activity).onSectionAttached(getArguments().getInt(
 					ARG_SECTION_NUMBER));
+			
 		}
-
 	}
 
 	public static class WeatherFragment extends Fragment {
