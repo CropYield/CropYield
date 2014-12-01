@@ -9,25 +9,6 @@
     android:paddingTop="20dp" >
 
     <TextView
-        android:id="@+id/textViewTitlePlan"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Plan Your Trip" />
-
-    <TextView
-        android:id="@+id/textViewParaPlan"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Please select a date that you will be using this service:" />
-
-    <EditText
-        android:id="@+id/editText1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="date" />
-
-    <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
