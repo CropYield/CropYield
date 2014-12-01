@@ -41,4 +41,10 @@
         android:text=" 0.0 bu/acre"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
+    <Button
+        android:id="@+id/weatherButtonFinal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Weather" />
+
 </LinearLayout>

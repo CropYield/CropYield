@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -212,6 +213,11 @@ public class PictureFragment extends Fragment {
 			photoPath = currentPhotoPath.pop();
 			data.AddAreas(cd.AreaDetection(photoPath));
 		}
+		Fragment newFragment = FinalFragment.newInstance(10, data);//Instance has something to do with title, will work on this later during clearn up
+		FragmentTransaction transaction = getFragmentManager().beginTransaction();
+		transaction.replace(R.id.container, newFragment);
+		transaction.addToBackStack(null);
+		transaction.commit();//Navigates to the final fragment
 	}
 	
 	

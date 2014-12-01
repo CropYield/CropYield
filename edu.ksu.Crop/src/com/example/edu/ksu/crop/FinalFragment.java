@@ -2,16 +2,18 @@ package com.example.edu.ksu.crop;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
+import com.example.edu.ksu.crop.MainActivity.WeatherFragment;
 import com.jjoe64.graphview.*;
-import com.jjoe64.graphview.LineGraphView;
 
 public class FinalFragment extends Fragment implements OnSeekBarChangeListener {
 
@@ -24,6 +26,7 @@ public class FinalFragment extends Fragment implements OnSeekBarChangeListener {
 	static double grainNum;
 	static double averageBUA;
 	TextView bpaTV;
+	Button weather;
 
 	public static FinalFragment newInstance(int sectionNumber, DataSet dataSet) {
 		FinalFragment fragment = new FinalFragment();
@@ -97,6 +100,21 @@ public class FinalFragment extends Fragment implements OnSeekBarChangeListener {
 
 			}
 		});
+		
+		weather = (Button) rootView.findViewById(R.id.weatherButtonFinal);
+		weather.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Fragment newFragment = WeatherFragment.newInstance(10);//Instance has something to do with title, will work on this later during clearn up
+				FragmentTransaction transaction = getFragmentManager().beginTransaction();
+				transaction.replace(R.id.container, newFragment);
+				transaction.addToBackStack(null);
+				transaction.commit();
+			}
+		});
+		
 		return rootView;
 	}
 
