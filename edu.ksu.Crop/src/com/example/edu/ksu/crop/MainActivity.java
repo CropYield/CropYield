@@ -219,9 +219,19 @@ public class MainActivity extends ActionBarActivity implements
 			View rootView = inflater.inflate(R.layout.fragment_main, container,
 					false);
 
-			yieldCalculator = (Button) rootView
-					.findViewById(R.id.YieldCalculator);
-			planTrip = (Button) rootView.findViewById(R.id.PlanTrip);
+			yieldCalculator = (Button) rootView.findViewById(R.id.YieldCalculator);
+			planTrip = 		  (Button) rootView.findViewById(R.id.PlanTrip);
+			
+			planTrip.setOnClickListener(new View.OnClickListener() {
+				public void onClick(View v) {
+					// Create new fragment and transaction
+					newFragment = PlanTripFragment.newInstance(10);//Instance has something to do with title, will work on this later during clearn up
+					transaction = getFragmentManager().beginTransaction();
+					transaction.replace(R.id.container, newFragment);
+					transaction.addToBackStack(null);
+					transaction.commit();
+				}
+			});
 
 			//Sets the button to navigate to the start of the Yield Calculator
 			yieldCalculator.setOnClickListener(new View.OnClickListener() {
@@ -235,22 +245,7 @@ public class MainActivity extends ActionBarActivity implements
 				}
 			});
 
-			planTrip.setOnClickListener(new View.OnClickListener() {
-				public void onClick(View v) {
-					// Create new fragment and transaction
-					newFragment = PlanTripFragment.newInstance(8);//Instance has something to do with title, will work on this later during clearn up
-					transaction = getFragmentManager().beginTransaction();
-
-					// Replace whatever is in the fragment_container view with
-					// this fragment,
-					// and add the transaction to the back stack
-					transaction.replace(R.id.container, newFragment);
-					transaction.addToBackStack(null);
-
-					// Commit the transaction
-					transaction.commit();
-				}
-			});
+			
 
 			return rootView;
 		}

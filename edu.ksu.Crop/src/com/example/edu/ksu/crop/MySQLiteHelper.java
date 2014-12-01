@@ -13,7 +13,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
   public static final String COLUMN_HIGH = "high";
   public static final String COLUMN_LOW = "low";
   public static final String COLUMN_POP = "pop";
-  public static final String COLUMN_PRIMARY = "primary";
+  public static final String COLUMN_PRIMARY = "primary1";
 
   private static final String DATABASE_NAME = "weather.db";
   private static final int DATABASE_VERSION = 1;
@@ -22,11 +22,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
   private static final String DATABASE_CREATE = "create table "
       + TABLE_WEATHER + "(" + COLUMN_ID
       + " integer primary key autoincrement, " + 
-      COLUMN_DATE + " text not null," +
-      COLUMN_HIGH + "text not null" +
-      COLUMN_LOW + "text not null" +
-      COLUMN_POP + "text not null" +    
-      COLUMN_PRIMARY + "text not null" + 
+      COLUMN_DATE	 	+ " text not null, " +
+      COLUMN_HIGH 		+ " text not null, " +
+      COLUMN_LOW 		+ " text not null, " +
+      COLUMN_POP 		+ " text not null, " +    
+      COLUMN_PRIMARY 	+ " text not null "  + 
       ");";
 
   public MySQLiteHelper(Context context) {
