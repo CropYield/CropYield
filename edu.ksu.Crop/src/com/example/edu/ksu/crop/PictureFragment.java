@@ -7,12 +7,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.Locale;
 
-import org.opencv.android.Utils;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -32,7 +26,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,7 +38,16 @@ import android.widget.Toast;
 
 public class PictureFragment extends Fragment {
 
-	// User Interface elements
+	/*
+	 * Declare constant values
+	 */
+	static final int REQUEST_IMAGE_CAPTURE = 1;
+	static final int REQUEST_IMAGE_SELECT = 2;
+	private static final String ARG_SECTION_NUMBER = "4";
+	
+	/*
+	 * Declare user interface elements
+	 */
 	ImageView imageView;
 	Button takePicture;
 	Button choosePicture;
@@ -56,14 +58,14 @@ public class PictureFragment extends Fragment {
 	ImageButton previousPicture;
 	TextView imageCounter;
 	
+	/*
+	 * Declare different data values used throughout the Picture/Camera logic.
+	 */
 	LinkedList<String> currentPhotoPath = new LinkedList<String>();
-	static final int REQUEST_IMAGE_CAPTURE = 1;
-	static final int REQUEST_IMAGE_SELECT = 2;
+	LinkedList<Bitmap> currentPictures = new LinkedList<Bitmap>();
 	int currentPhotoDisplayed = 0;
 	int photoCount = 0;
 	ColorDetector cd;
-	LinkedList<Bitmap> currentPictures = new LinkedList<Bitmap>();
-	private static final String ARG_SECTION_NUMBER = "4";
 	double areaCalc = 0.0;
 	static DataSet data = new DataSet();
 
@@ -78,6 +80,10 @@ public class PictureFragment extends Fragment {
 		return fragment;
 	}
 
+	/**
+	 * The overloaded constructor of PictureFragment offers
+	 * a DataSet, in addition to the default sectionNumber.
+	 */
 	public static PictureFragment newInstance(int sectionNumber, DataSet d) {
 		PictureFragment fragment = new PictureFragment();
 		data = d;
@@ -91,7 +97,11 @@ public class PictureFragment extends Fragment {
 
 	}
 
-	@Override
+
+	/**
+	 * Sets up all of the UI elements, closes the keyboard,
+	 * and creates onClickListeners to watch for button presses.
+	 */
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_picture, container,
@@ -151,6 +161,10 @@ public class PictureFragment extends Fragment {
 		return rootView;
 	}
 
+	/**
+	 * Hides the keyboard. Helpful for instances where the previous
+	 * fragment has the keyboard open and utilizes the 'Done' key.
+	 */
 	private void hideKeyboard() {    
 	    // Check if no view has focus: 
 	    View view = getActivity().getCurrentFocus();
@@ -160,6 +174,11 @@ public class PictureFragment extends Fragment {
 	    } 
 	} 
 	
+	
+	/**
+	 * Simply confirms the user's intent in deleting a picture,
+	 * and will let the user know the success of the operation.
+	 */
 	private void deletePictureSelected(View v) {
 		CharSequence options[] = new CharSequence[] { "Yes", "No" };
 
@@ -182,7 +201,11 @@ public class PictureFragment extends Fragment {
 		builder.show();
 	}
 
-
+	/**
+	 * The user is done with the picture/camera fragment. This
+	 * transitions to the next fragment, and calculates the area
+	 * in all of the pictures.
+	 */
 	private void finishPictureFragment() {
 		String photoPath;
 		for(int i = 0; i < currentPhotoPath.size(); i++ ) {
@@ -191,50 +214,60 @@ public class PictureFragment extends Fragment {
 		}
 	}
 	
-	private void setImageViewTest2(Mat mat, String toastNum) {
-		try {
-			if (mat.rows() > 1200) {
-				Mat smallerMat = new Mat();
-				Imgproc.resize(mat, smallerMat, new Size(800.0, 1200.0), 0, 0,
-						Imgproc.INTER_NEAREST);
-				Bitmap bmp = Bitmap.createBitmap(smallerMat.cols(),
-						smallerMat.rows(), Bitmap.Config.ARGB_8888);
-				Mat tmp = new Mat(smallerMat.rows(), smallerMat.cols(),
-						CvType.CV_8U, new Scalar(4));
-				Imgproc.cvtColor(smallerMat, tmp, Imgproc.COLOR_GRAY2BGR, 4);
-				Utils.matToBitmap(tmp, bmp);
-				if (bmp.getWidth() > bmp.getHeight()) {
-					Matrix matrix = new Matrix();
-					matrix.postRotate(90);
-					Bitmap rotatedBitmap = Bitmap.createBitmap(bmp, 0, 0, 800,
-							1200, matrix, true);
-					imageView.setImageBitmap(rotatedBitmap);
-				} else {
-					imageView.setImageBitmap(bmp);
-				}
-			} else {
-				Bitmap bmp = Bitmap.createBitmap(mat.cols(), mat.rows(),
-						Bitmap.Config.ARGB_8888);
-				Mat tmp = new Mat(mat.rows(), mat.cols(), CvType.CV_8U,
-						new Scalar(4));
-				Imgproc.cvtColor(mat, tmp, Imgproc.COLOR_GRAY2BGR, 4);
-				Utils.matToBitmap(tmp, bmp);
-				if (bmp.getWidth() > bmp.getHeight()) {
-					Matrix matrix = new Matrix();
-					matrix.postRotate(90);
-					Bitmap rotatedBitmap = Bitmap.createBitmap(bmp, 0, 0,
-							bmp.getWidth(), bmp.getHeight(), matrix, true);
-					imageView.setImageBitmap(rotatedBitmap);
-				} else {
-					imageView.setImageBitmap(bmp);
-				}
-			}
-		} catch (Exception EX) {
-			sendToast("Bitmap " + toastNum + " is null", Toast.LENGTH_SHORT);
-		}
+	
+	/**
+	 * This function sets the image preview to the analyzed
+	 * and edited image. Not intending on using this code,
+	 * but it's good for debugging.
+	 */
+//	private void setImageViewTest2(Mat mat, String toastNum) {
+//		try {
+//			if (mat.rows() > 1200) {
+//				Mat smallerMat = new Mat();
+//				Imgproc.resize(mat, smallerMat, new Size(800.0, 1200.0), 0, 0,
+//						Imgproc.INTER_NEAREST);
+//				Bitmap bmp = Bitmap.createBitmap(smallerMat.cols(),
+//						smallerMat.rows(), Bitmap.Config.ARGB_8888);
+//				Mat tmp = new Mat(smallerMat.rows(), smallerMat.cols(),
+//						CvType.CV_8U, new Scalar(4));
+//				Imgproc.cvtColor(smallerMat, tmp, Imgproc.COLOR_GRAY2BGR, 4);
+//				Utils.matToBitmap(tmp, bmp);
+//				if (bmp.getWidth() > bmp.getHeight()) {
+//					Matrix matrix = new Matrix();
+//					matrix.postRotate(90);
+//					Bitmap rotatedBitmap = Bitmap.createBitmap(bmp, 0, 0, 800,
+//							1200, matrix, true);
+//					imageView.setImageBitmap(rotatedBitmap);
+//				} else {
+//					imageView.setImageBitmap(bmp);
+//				}
+//			} else {
+//				Bitmap bmp = Bitmap.createBitmap(mat.cols(), mat.rows(),
+//						Bitmap.Config.ARGB_8888);
+//				Mat tmp = new Mat(mat.rows(), mat.cols(), CvType.CV_8U,
+//						new Scalar(4));
+//				Imgproc.cvtColor(mat, tmp, Imgproc.COLOR_GRAY2BGR, 4);
+//				Utils.matToBitmap(tmp, bmp);
+//				if (bmp.getWidth() > bmp.getHeight()) {
+//					Matrix matrix = new Matrix();
+//					matrix.postRotate(90);
+//					Bitmap rotatedBitmap = Bitmap.createBitmap(bmp, 0, 0,
+//							bmp.getWidth(), bmp.getHeight(), matrix, true);
+//					imageView.setImageBitmap(rotatedBitmap);
+//				} else {
+//					imageView.setImageBitmap(bmp);
+//				}
+//			}
+//		} catch (Exception EX) {
+//			sendToast("Bitmap " + toastNum + " is null", Toast.LENGTH_SHORT);
+//		}
+//	}
 
-	}
-
+	
+	/**
+	 * Currently not using this code here. Might be useful elsewhere,
+	 * so not deleting yet. May be removed at release time if not needed.
+	 */
 	private Location obtainLocation(Boolean showToast) {
 		getActivity();
 		LocationManager locationManager = (LocationManager) getActivity()
@@ -248,6 +281,11 @@ public class PictureFragment extends Fragment {
 		return location;
 	}
 
+	/**
+	 * Currently not using this code here. Might be useful elsewhere,
+	 * so not deleting yet. May be removed at release time if not needed.
+	 */
+	@SuppressWarnings("unused")
 	private void selectLocation() {
 		Location location = obtainLocation(false);
 		String uri = String.format(Locale.ENGLISH, "geo:%f,%f",
@@ -256,24 +294,39 @@ public class PictureFragment extends Fragment {
 		getActivity().startActivity(intent);
 	}
 
+	
+	/**
+	 * Increase the current photo displayed.
+	 */
 	private void previousPicture(View v) {
 		currentPhotoDisplayed++;
 		imageView.setImageBitmap(currentPictures.get(currentPhotoDisplayed));
 		setPreviousNextButtonEnabledStatus();
 	}
 
+	/**
+	 * Decrease the current photo displayed.
+	 */
 	private void nextPicture(View v) {
 		currentPhotoDisplayed--;
 		imageView.setImageBitmap(currentPictures.get(currentPhotoDisplayed));
 		setPreviousNextButtonEnabledStatus();
 	}
 
+	/**
+	 * Choose a photo from the gallery. Uses
+	 * Android's built in functionality for this.
+	 */
 	private void SelectGalleryPhoto() {
 		Intent pickPhoto = new Intent(Intent.ACTION_PICK,
 				android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 		startActivityForResult(pickPhoto, REQUEST_IMAGE_SELECT);
 	}
 
+	
+	/**
+	 * The logic behind whether or not buttons should be enabled.
+	 */
 	private void setPreviousNextButtonEnabledStatus() {
 		if (currentPictures.size() > 1
 				&& (currentPhotoDisplayed < (currentPictures.size() - 1))) {
@@ -300,6 +353,10 @@ public class PictureFragment extends Fragment {
 		}
 	}
 
+	/**
+	 * The code to take a new photo, save it in the default directory,
+	 * and call the functions to set it in the image preview.
+	 */
 	private void TakeNewPhoto() {
 		Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		if (takePictureIntent
@@ -324,7 +381,10 @@ public class PictureFragment extends Fragment {
 	}
 
 
-	@Override
+	/**
+	 * Code called after either a camera capture or gallery select.
+	 * The bitmap (image preview) will be updated accordingly. 
+	 */
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		if (requestCode == REQUEST_IMAGE_CAPTURE
 				&& resultCode == Activity.RESULT_OK) {
@@ -354,6 +414,12 @@ public class PictureFragment extends Fragment {
 		}
 	}
 
+	
+	/**
+	 * Currently not used code. Could be useful if EXIF data fetching is ever
+	 * desired. Might leave code in for release, just for future purposes. 
+	 */
+	@SuppressWarnings("unused")
 	private void retrieveExifData() {
 		try {
 			ExifInterface exif = new ExifInterface(currentPhotoPath.peek());
@@ -371,6 +437,9 @@ public class PictureFragment extends Fragment {
 		}
 	}
 
+	/**
+	 * Function to display a message to the user easily.
+	 */
 	private void sendToast(String message, int length) {
 
 		Activity context = getActivity();
@@ -381,6 +450,10 @@ public class PictureFragment extends Fragment {
 		toast.show();
 	}
 
+	
+	/**
+	 * Adds a picture for the gallery. 
+	 */
 	private void galleryAddPic() {
 		Intent mediaScanIntent = new Intent(
 				Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
@@ -390,6 +463,10 @@ public class PictureFragment extends Fragment {
 		getActivity().sendBroadcast(mediaScanIntent);
 	}
 
+	/**
+	 * Add a picture to the linked list which contains file paths
+	 * and bitmap image previews.
+	 */
 	private void addPictureToLinkedList() {
 		// Get the dimensions of the View
 		int targetW = imageView.getWidth();
@@ -425,6 +502,12 @@ public class PictureFragment extends Fragment {
 		// imageView.setImageBitmap(rotatedBitmap);
 	}
 
+	
+	/**
+	 * A user has selected to delete a picture. This is 
+	 * the underlying logic for picture removal. Delete it
+	 * from the LinkedList, and decrement the count-of/current photo.
+	 */
 	private void removePicFromLinkedList() {
 
 		try {
@@ -447,6 +530,12 @@ public class PictureFragment extends Fragment {
 		}
 	}
 
+	/**
+	 * Google's default code for creating an image file. Format is 
+	 * JPEG_YYYY/MM/DD_HH/MM/SS_.jpg to avoid name collision.
+	 * @return
+	 * @throws IOException
+	 */
 	@SuppressLint("SimpleDateFormat")
 	private File createImageFile() throws IOException {
 		// Create an image file name

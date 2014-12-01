@@ -20,6 +20,12 @@ public class ColorDetector {
 		dilatedMask = new Mat();
 	}
 
+	
+	/** 
+	 * Color detection code. Declares two sets of colors to search between, and 
+	 * find all pixels in that range. To edit color range, look below to the comments.
+	 * Everything is done in HSV format.
+	 */
 	public double AreaDetection(String cF) {
 		if( !OpenCVLoader.initDebug()) {
 			return 0.0;
