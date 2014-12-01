@@ -5,6 +5,34 @@
     android:gravity="right"
     android:orientation="vertical" >
 
+    <TextView
+        android:id="@+id/imageCounterText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:text="Image Counter: 0/10"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+        
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/button_camera"
+		android:layout_below="@+id/imageCounterText"
+        android:layout_toLeftOf="@+id/nextImageButton"
+        android:layout_toRightOf="@+id/previousImageButton"
+        android:contentDescription="@string/add_pic_img_view_desc"
+        android:src="@drawable/abc_ab_bottom_transparent_dark_holo" />
+
+   <ImageButton
+       android:id="@+id/previousImageButton"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_alignParentLeft="true"
+       android:layout_centerVertical="true"
+       android:src="@drawable/ic_previous_picture" />
+
     <ImageButton
         android:id="@+id/nextImageButton"
         android:layout_width="wrap_content"
@@ -13,69 +41,40 @@
         android:layout_centerVertical="true"
         android:src="@drawable/ic_next_picture" />
 
-    <ImageButton
-        android:id="@+id/previousImageButton"
+    <Button
+        android:id="@+id/finishButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/nextImageButton"
-        android:src="@drawable/ic_previous_picture" />
+        android:layout_below="@+id/button_select"
+        android:layout_toRightOf="@+id/deleteImageButton"
+        android:text="@string/button_finish" />
 
-    <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/button_camera"
-        android:layout_alignParentTop="true"
-        android:layout_marginBottom="55dp"
-        android:layout_marginTop="15dp"
-        android:layout_toLeftOf="@+id/nextImageButton"
-        android:layout_toRightOf="@+id/previousImageButton"
-        android:layout_toStartOf="@+id/button_camera"
-        android:contentDescription="@string/add_pic_img_view_desc"
-        android:src="@drawable/abc_ab_bottom_transparent_dark_holo" />
+    <Button
+        android:id="@+id/button_select"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/deleteImageButton"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="27dp"
+        android:text="@string/button_select_picture" />
+
+
+    <Button
+        android:id="@+id/deleteImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="55dp"
+
+        android:layout_alignParentBottom="true"
+        android:text="@string/button_delete_picture" />
 
     <Button
         android:id="@+id/button_camera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@+id/nextImageButton"
-        android:layout_toRightOf="@+id/previousImageButton"
+        android:layout_above="@+id/deleteImageButton"
+        android:layout_toLeftOf="@+id/button_select"
         android:text="@string/button_take_picture" />
-
-    <ImageButton
-        android:id="@+id/gpsImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignTop="@+id/button_camera"
-        android:src="@android:drawable/ic_menu_mylocation" />
-
-    <ImageButton
-        android:id="@+id/deleteImageButton"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/button_camera"
-        android:layout_alignLeft="@+id/nextImageButton"
-        android:src="@drawable/abc_ic_clear_search_api_holo_light" />
-
-    <TextView
-        android:id="@+id/imageSizeTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/button_camera"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="23dp"
-        android:text="Head Size" />
-
-    <Button
-        android:id="@+id/buttonNext2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:text="Calc" />
-
+        
 </RelativeLayout>
 

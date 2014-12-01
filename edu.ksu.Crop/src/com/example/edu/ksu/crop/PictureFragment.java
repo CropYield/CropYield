@@ -49,11 +49,13 @@ public class PictureFragment extends Fragment {
 	static final int REQUEST_IMAGE_CAPTURE = 1;
 	static final int REQUEST_IMAGE_SELECT = 2;
 	Button takePicture;
+	Button choosePicture;
+	Button finish;
 	ImageButton nextPicture;
 	ImageButton previousPicture;
-	TextView headSize;
-	ImageButton deletePicture;
-	ImageButton gpsLocation;
+//	TextView headSize;
+	Button deletePicture;
+//	ImageButton gpsLocation;
 	Button nextButton;
 	int currentPhotoDisplayed = 0;
 	int photoCount = 0;
@@ -92,26 +94,30 @@ public class PictureFragment extends Fragment {
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_picture, container,
 				false);
-		headSize = (TextView) rootView.findViewById(R.id.imageSizeTextView);
-		imageView = (ImageView) rootView.findViewById(R.id.imageView1);
-		takePicture = (Button) rootView.findViewById(R.id.button_camera);
-		nextPicture = (ImageButton) rootView.findViewById(R.id.nextImageButton);
-		previousPicture = (ImageButton) rootView
-				.findViewById(R.id.previousImageButton);
-		deletePicture = (ImageButton) rootView
-				.findViewById(R.id.deleteImageButton);
-		gpsLocation = (ImageButton) rootView.findViewById(R.id.gpsImageButton);
-		nextButton = (Button) rootView.findViewById(R.id.buttonNext2);
+		imageView =       (ImageView) rootView.findViewById(R.id.imageView1);
+		takePicture =     (Button) rootView.findViewById(R.id.button_camera);
+		choosePicture =   (Button) rootView.findViewById(R.id.button_select);
+		finish =          (Button) rootView.findViewById(R.id.finishButton);
+		nextPicture =     (ImageButton) rootView.findViewById(R.id.nextImageButton);
+		previousPicture = (ImageButton) rootView.findViewById(R.id.previousImageButton);
+		deletePicture =   (Button) rootView.findViewById(R.id.deleteImageButton);
+//		nextButton =      (Button) rootView.findViewById(R.id.buttonNext);
 		cd = new ColorDetector();
 		
 		setPreviousNextButtonEnabledStatus();
 
 		takePicture.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				cameraOrGallery(v);
+				TakeNewPhoto();
 			}
 		});
 
+		choosePicture.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				SelectGalleryPhoto();
+			}
+		});
+		
 		nextPicture.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				nextPicture(v);
@@ -129,95 +135,74 @@ public class PictureFragment extends Fragment {
 				deletePictureSelected(v);
 			}
 		});
-
-		gpsLocation.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				selectLocationOrRetrieveCurrent(v);
-			}
-		});
 		
-		nextButton.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Fragment newFragment;
-				FragmentTransaction transaction;
-				newFragment = FinalFragment.newInstance(10, data);
-				transaction = getFragmentManager().beginTransaction();
-
-				// Replace whatever is in the fragment_container view with
-				// this fragment,
-				// and add the transaction to the back stack
-				transaction.replace(R.id.container, newFragment);
-				transaction.addToBackStack(null);
-
-				// Commit the transaction
-				transaction.commit();
-			}
-		});
+//		nextButton.setOnClickListener(new View.OnClickListener() {
+//			public void onClick(View v) {
+//				nextPicture(v);
+//			}
+//		});
 
 		imageView.setImageDrawable(null);
 
 		return rootView;
 	}
 
-	private void cameraOrGallery(View v) {
-		CharSequence options[] = new CharSequence[] { "Take A Photo",
-				"Choose From Gallery" };
+//	private void cameraOrGallery(View v) {
+//		CharSequence options[] = new CharSequence[] { "Take A Photo",
+//				"Choose From Gallery" };
+//
+//		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//		builder.setTitle("Choose Photo Selection Method");
+//		builder.setItems(options, new DialogInterface.OnClickListener() {
+//			public void onClick(DialogInterface dialog, int picked) {
+//				switch (picked) {
+//				case 0:
+//					TakeNewPhoto();
+//					break;
+//				case 1:
+//					SelectGalleryPhoto();
+//					break;
+//				}
+//			}
+//		});
+//		builder.show();
+//	}
 
-		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		builder.setTitle("Choose Photo Selection Method");
-		builder.setItems(options, new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int picked) {
-				switch (picked) {
-				case 0:
-					TakeNewPhoto();
-					break;
-				case 1:
-					SelectGalleryPhoto();
-					break;
-				}
-			}
-		});
-		builder.show();
-	}
-
-	private void selectLocationOrRetrieveCurrent(View v) {
-		CharSequence options[] = new CharSequence[] {
-				"Retrieve Current Location", "Select A Location",
-				"Use GPS Location Off Current Photo", "Calculate Max Area" };
-		
-		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		builder.setTitle("Choose GPS Location Method");
-		builder.setItems(options, new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int picked) {
-				switch (picked) {
-				case 0:
-					obtainLocation(true);
-					break;
-				case 1:
-					selectLocation();
-					break;
-				case 2:
-					retrieveExifData();
-					break;
-				case 3:
-					areaCalc = cd.AreaDetection(currentPhotoPath
-							.get(currentPhotoDisplayed));
-					if (areaCalc == 0.0) {
-						headSize.setText("Error Calculating Area");
-					} else {
-						data.AddAreas(areaCalc);//Add the calculated area to the Data set.
-						headSize.setText(String.format("%.3f", areaCalc) + " inches squared");
-						setImageViewTest2(cd.dilatedMask, "1");
-					}
-					break;
-				}
-			}
-		});
-		builder.show();
-	}
+//	private void selectLocationOrRetrieveCurrent(View v) {
+//		CharSequence options[] = new CharSequence[] {
+//				"Retrieve Current Location", "Select A Location",
+//				"Use GPS Location Off Current Photo", "Calculate Max Area" };
+//		
+//		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//		builder.setTitle("Choose GPS Location Method");
+//		builder.setItems(options, new DialogInterface.OnClickListener() {
+//			public void onClick(DialogInterface dialog, int picked) {
+//				switch (picked) {
+//				case 0:
+//					obtainLocation(true);
+//					break;
+//				case 1:
+//					selectLocation();
+//					break;
+//				case 2:
+//					retrieveExifData();
+//					break;
+//				case 3:
+//					areaCalc = cd.AreaDetection(currentPhotoPath
+//							.get(currentPhotoDisplayed));
+//					if (areaCalc == 0.0) {
+//						headSize.setText("Error Calculating Area");
+//					} else {
+//						data.AddAreas(areaCalc);//Add the calculated area to the Data set.
+//						headSize.setText(String.format("%.3f", areaCalc) + " inches squared");
+//						setImageViewTest2(cd.dilatedMask, "1");
+//					}
+//					break;
+//				}
+//			}
+//		});
+//		builder.show();
+//	}
 
 	private void deletePictureSelected(View v) {
 		CharSequence options[] = new CharSequence[] { "Yes", "No" };
