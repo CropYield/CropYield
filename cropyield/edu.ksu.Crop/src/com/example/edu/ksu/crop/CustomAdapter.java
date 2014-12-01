@@ -15,12 +15,14 @@ import android.widget.Toast;
 public class CustomAdapter extends BaseAdapter{
 	private static int LENGTH_OF_FORECAST = 7;
 	private int i,j,k = 0;
-	int[] imageId;
 	Context context;
+	//the high, low, and rain images
+	int[] imageId;
+	//the weather information for each day
 	ArrayList<String> weatherInfo;
+	//daily conditional weather
 	ArrayList<Integer> dailyWeatherIcons;
 	private static LayoutInflater layoutInflater = null;
-	
 	public CustomAdapter(Context cxt, int[] images, ArrayList<Integer> daily, ArrayList<String> weather){
 		context = cxt;
 		imageId = images;

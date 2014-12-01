@@ -3,6 +3,8 @@ package com.example.edu.ksu.crop;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.edu.ksu.crop.MainActivity.WeatherFragment;
+
 public class DataSet {
 	
 	private int headsPerPartAcre = 0;

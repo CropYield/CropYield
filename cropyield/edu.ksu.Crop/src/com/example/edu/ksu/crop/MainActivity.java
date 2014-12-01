@@ -44,7 +44,6 @@ import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity implements
 		NavigationDrawerFragment.NavigationDrawerCallbacks {
-
 	/**
 	 * Fragment managing the behaviors, interactions and presentation of the
 	 * navigation drawer.
@@ -98,12 +97,13 @@ public class MainActivity extends ActionBarActivity implements
 					.replace(R.id.container,
 							PictureFragment.newInstance(position + 1)).commit();
 		} else if (position == 4) {
-			try{
-			fragmentManager
-					.beginTransaction()
-					.replace(R.id.container,
-							SoilFragment.newInstance(position + 1)).commit();
-			}catch(Exception e){
+			try {
+				fragmentManager
+						.beginTransaction()
+						.replace(R.id.container,
+								SoilFragment.newInstance(position + 1))
+						.commit();
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} else if (position == 5) {
@@ -186,12 +186,9 @@ public class MainActivity extends ActionBarActivity implements
 		 * fragment.
 		 */
 		private static final String ARG_SECTION_NUMBER = "section_number";
-		Button homeButton;
-		Button weatherButton;
-		Button tripButton;
-		Button photoButton;
-		Button calcButton;
-		Button projectionButton;
+		Button yieldCalculator;
+		Button planTrip;
+		Button weatherInformation;
 		Fragment newFragment;
 		FragmentTransaction transaction;
 
@@ -215,28 +212,40 @@ public class MainActivity extends ActionBarActivity implements
 			View rootView = inflater.inflate(R.layout.fragment_main, container,
 					false);
 
-			homeButton = (Button) rootView.findViewById(R.id.home_button);
-			weatherButton = (Button) rootView.findViewById(R.id.weather_button);
-			tripButton = (Button) rootView.findViewById(R.id.plan_trip_button);
-			photoButton = (Button) rootView
-					.findViewById(R.id.take_picture_button);
-			calcButton = (Button) rootView
-					.findViewById(R.id.calculate_yield_button);
-			projectionButton = (Button) rootView
-					.findViewById(R.id.graph_button);
-
-			homeButton.setOnClickListener(new View.OnClickListener() {
-				
+			yieldCalculator = (Button) rootView
+					.findViewById(R.id.YieldCalculator);
+			planTrip = (Button) rootView.findViewById(R.id.PlanTrip);
+			weatherInformation = (Button) rootView.findViewById(R.id.WeatherInformation);
+			//Sets the button to navigate to the start of the Yield Calculator
+			yieldCalculator.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					newFragment = InputFragment.newInstance(7);
+					newFragment = HeadInputFragment.newInstance(7);
 					transaction = getFragmentManager().beginTransaction();
 					transaction.replace(R.id.container, newFragment);
 					transaction.addToBackStack(null);
 					transaction.commit();
 				}
 			});
-			weatherButton.setOnClickListener(new View.OnClickListener() {
+
+			planTrip.setOnClickListener(new View.OnClickListener() {
+				public void onClick(View v) {
+					// Create new fragment and transaction
+					newFragment = PlanTripFragment.newInstance(8);//Instance has something to do with title, will work on this later during clearn up
+					transaction = getFragmentManager().beginTransaction();
+
+					// Replace whatever is in the fragment_container view with
+					// this fragment,
+					// and add the transaction to the back stack
+					transaction.replace(R.id.container, newFragment);
+					transaction.addToBackStack(null);
+
+					// Commit the transaction
+					transaction.commit();
+				}
+			});
+			
+			weatherInformation.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
 					// Create new fragment and transaction
 					newFragment = WeatherFragment.newInstance(2);
@@ -247,75 +256,9 @@ public class MainActivity extends ActionBarActivity implements
 					// and add the transaction to the back stack
 					transaction.replace(R.id.container, newFragment);
 					transaction.addToBackStack(null);
-
-					// Commit the transaction
 					transaction.commit();
 				}
 			});
-			
-			tripButton.setOnClickListener(new View.OnClickListener() {
-				@SuppressLint("ShowToast") public void onClick(View v) {
-					// Create new fragment and transaction
-					Toast.makeText(getActivity(), "Not Implemented Yet", Toast.LENGTH_SHORT).show();
-				}
-			});
-			
-			photoButton.setOnClickListener(new View.OnClickListener() {
-				public void onClick(View v) {
-					// Create new fragment and transaction
-					newFragment = PictureFragment.newInstance(4);
-					transaction = getFragmentManager().beginTransaction();
-
-					// Replace whatever is in the fragment_container view with
-					// this fragment,
-					// and add the transaction to the back stack
-					transaction.replace(R.id.container, newFragment);
-					transaction.addToBackStack(null);
-
-					// Commit the transaction
-					transaction.commit();
-				}
-			});
-			
-			calcButton.setOnClickListener(new View.OnClickListener() {
-				public void onClick(View v) {
-					// Create new fragment and transaction
-					newFragment = CalculateFragment.newInstance(5);
-					transaction = getFragmentManager().beginTransaction();
-
-					// Replace whatever is in the fragment_container view with
-					// this fragment,
-					// and add the transaction to the back stack
-					transaction.replace(R.id.container, newFragment);
-					transaction.addToBackStack(null);
-
-					// Commit the transaction
-					transaction.commit();
-				}
-			});
-			
-			projectionButton.setOnClickListener(new View.OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-					// TODO Auto-generated method stub
-					newFragment = GraphFragment.newInstance(5);
-					transaction = getFragmentManager().beginTransaction();
-
-					// Replace whatever is in the fragment_container view with
-					// this fragment,
-					// and add the transaction to the back stack
-					transaction.replace(R.id.container, newFragment);
-					transaction.addToBackStack(null);
-
-					// Commit the transaction
-					transaction.commit();
-				}
-			});
-			
-			
-			
-
 			return rootView;
 		}
 
@@ -343,23 +286,28 @@ public class MainActivity extends ActionBarActivity implements
 		private ImageView iv_lowExample, iv_highExample, iv_popExample;
 		private TextView tv_lowExample, tv_highExample, tv_popExample;
 		private ListView listView;
-		private static int [] weatherImages = {R.drawable.sun48, R.drawable.down48, R.drawable.up48, R.drawable.littlerain48}; //7 images, 1 set for each listview
-	    private ArrayList<String> listOfWeatherData = new ArrayList<String>();
-	    @SuppressLint("UseSparseArrays") private HashMap<Integer,ArrayList<String>> dictFiveDayForecast = new HashMap<Integer,ArrayList<String>>();
+		public int weatherCondition = -1;
+		private static int[] weatherImages = { R.drawable.sun48,
+				R.drawable.down48, R.drawable.up48, R.drawable.littlerain48 }; // 4
+																				// images,
+																				// 1
+																				// set
+																				// for
+																				// each
+																				// listview
+		private ArrayList<String> listOfWeatherData = new ArrayList<String>();
+		@SuppressLint("UseSparseArrays")
+		private HashMap<Integer, ArrayList<String>> hmFiveDayForecast = new HashMap<Integer, ArrayList<String>>();
 		private double latitude, longitude = 0.0;
+
 		public static WeatherFragment newInstance(int sectionNumber) {
-			
 			WeatherFragment fragment = new WeatherFragment();
 			Bundle args = new Bundle();
 			args.putInt(ARG_SECTION_NUMBER, sectionNumber);
 			fragment.setArguments(args);
 			return fragment;
 		}
-		public int add(int x, int y){
-			int z = 0;
-			
-			return z = x+y;
-		}
+
 		public WeatherFragment() {
 		}
 
@@ -368,167 +316,220 @@ public class MainActivity extends ActionBarActivity implements
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_weather,
 					container, false);
-			
-			iv_lowExample     = (ImageView)rootView.findViewById(R.id.iv_lowExample);
-			iv_highExample    = (ImageView)rootView.findViewById(R.id.iv_highExample);
-			iv_popExample     = (ImageView)rootView.findViewById(R.id.iv_popExample);
-			tv_lowExample  	  = (TextView)rootView.findViewById(R.id.tv_lowExample);
-			tv_highExample    = (TextView)rootView.findViewById(R.id.tv_highExample);
-			tv_popExample     = (TextView)rootView.findViewById(R.id.tv_popExample);
-			listView 	      = (ListView)rootView.findViewById(R.id.listView);
+
+			iv_lowExample = (ImageView) rootView
+					.findViewById(R.id.iv_lowExample);
+			iv_highExample = (ImageView) rootView
+					.findViewById(R.id.iv_highExample);
+			iv_popExample = (ImageView) rootView
+					.findViewById(R.id.iv_popExample);
+			tv_lowExample = (TextView) rootView
+					.findViewById(R.id.tv_lowExample);
+			tv_highExample = (TextView) rootView
+					.findViewById(R.id.tv_highExample);
+			tv_popExample = (TextView) rootView
+					.findViewById(R.id.tv_popExample);
+			listView = (ListView) rootView.findViewById(R.id.listView);
 			Location location = obtainLocation(false);
-	        latitude 		  = location.getLatitude();
-	        longitude         = location.getLongitude();
-	        
-	        new retrieve_weatherTask().execute();
-	        Toast.makeText(getActivity(), "Retrieving Weather", Toast.LENGTH_SHORT).show();
+			latitude = location.getLatitude();
+			longitude = location.getLongitude();
+
+			new retrieve_weatherTask().execute();
+			Toast.makeText(getActivity(), "Retrieving Weather",
+					Toast.LENGTH_SHORT).show();
 			return rootView;
 		}
-		
+
 		private Location obtainLocation(Boolean showToast) {
-	        getActivity();
-			LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-	        Location location= locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-	        if(showToast) sendToast( "Location is " + location.getLatitude() + ", " + location.getLongitude() + ".", Toast.LENGTH_LONG);
-	        return location;
+			getActivity();
+			LocationManager locationManager = (LocationManager) getActivity()
+					.getSystemService(Context.LOCATION_SERVICE);
+			Location location = locationManager
+					.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+			if (showToast)
+				sendToast("Location is " + location.getLatitude() + ", "
+						+ location.getLongitude() + ".", Toast.LENGTH_LONG);
+			return location;
 		}
-	    
-	    private void sendToast(String message, int length) {
-    		
-    		Activity context = getActivity();
-    		CharSequence text = (CharSequence) message;
-    		int duration = length;
-    		
-    		Toast toast = Toast.makeText(context, text, duration);
-    		toast.show();
+
+		private void sendToast(String message, int length) {
+
+			Activity context = getActivity();
+			CharSequence text = (CharSequence) message;
+			int duration = length;
+
+			Toast toast = Toast.makeText(context, text, duration);
+			toast.show();
 		}
-	    
-		protected class retrieve_weatherTask extends AsyncTask<Void, String, HashMap<Integer,ArrayList<String>>>{
-		    @Override
-		    public HashMap<Integer,ArrayList<String>> doInBackground(Void... arg0) {
-		    	JSONObject jsonObject;
-	    		JSONArray jsonArray;
-	    		ArrayList<String> dailyWeatherIcon = new ArrayList<String>();
-		    	try{
-		    		
-		    		jsonArray = getJsonArray();
-		    		listOfWeatherData = new ArrayList<String>();
-	    		    for (int i = 0; i < LENGTH_OF_FORECAST; i++){
-	    		    	
-	    		    	jsonObject = jsonArray.getJSONObject(i);
-	    		    	listOfWeatherData.add(jsonObject.getString("validTime").substring(0, 10));
-	    		    	listOfWeatherData.add(jsonObject.getString("minTempF"));
-	    		    	listOfWeatherData.add(jsonObject.getString("maxTempF"));
-	    		    	listOfWeatherData.add(jsonObject.getString("pop") + "%");
-	    		    	dailyWeatherIcon.add(getPrimaryWeather(jsonObject.getString("weatherPrimaryCoded")));
-	    		    	
-	    		    }
-	    		    dictFiveDayForecast.put(0,listOfWeatherData);
-	    		    dictFiveDayForecast.put(1,dailyWeatherIcon);
-		    	    return dictFiveDayForecast;
-		    	} catch (Exception e) {
-		    		e.printStackTrace();
-		    		return dictFiveDayForecast; 
-		    	}
-		    }
-		    
-		    protected void onPostExecute(HashMap<Integer, ArrayList<String>> forecast){
-		    	try{
-		    		ArrayList<String> weatherInfo = new ArrayList<String>();
-		    		ArrayList<String> dailyWeatherIcon = new ArrayList<String>();
-		    		ArrayList<Integer> dailyWeatherDrawables = new ArrayList<Integer>();
-		    		
-		    		weatherInfo.addAll(forecast.get(0));	    			
-		    		dailyWeatherIcon.addAll(forecast.get(1));
-		    		
-		    		for (int i = 0; i < dailyWeatherIcon.size(); i++){
-		    			if (dailyWeatherIcon.get(i).equals("1"))//sunny
-		    				dailyWeatherDrawables.add(R.drawable.sun48);
-		    			else if(dailyWeatherIcon.get(i).equals("2"))//overcast
-		    				dailyWeatherDrawables.add(R.drawable.clouds48);
-		    			else if(dailyWeatherIcon.get(i).equals("3"))//rain
-		    				dailyWeatherDrawables.add(R.drawable.littlerain48);
-		    			else if(dailyWeatherIcon.get(i).equals("4"))//thunderstorm
-		    				dailyWeatherDrawables.add(R.drawable.storm48);
-		    			else if(dailyWeatherIcon.get(i).equals("5"))//snow
-		    				dailyWeatherDrawables.add(R.drawable.snow48);
-		    			else if(dailyWeatherIcon.get(i).equals("6"))//windy
-		    				dailyWeatherDrawables.add(R.drawable.windy48);
-		    			else//partly cloudy
-		    				dailyWeatherDrawables.add(R.drawable.partlycloudyday48);
-		    		}
-		    		
-		    		tv_lowExample.setText("Low");
-		    		tv_highExample.setText("High");
-		    		tv_popExample.setText("Rain");
-		    		iv_lowExample.setImageResource(R.drawable.down48);
-			        iv_highExample.setImageResource(R.drawable.up48);
-			        iv_popExample.setImageResource(R.drawable.littlerain48);
-		    		listView.setAdapter(new CustomAdapter(getActivity(), weatherImages, dailyWeatherDrawables, weatherInfo));//add conditional weather here
-		    		
-		    	}catch(Exception e){
-		    		e.printStackTrace();
-		    	}
-		    }
-		public String getPrimaryWeather(String primaryWeatherCode){
-			String[] weatherCodeSplit = primaryWeatherCode.split(":");
-			primaryWeatherCode = weatherCodeSplit[2];
-			try{
-				if(primaryWeatherCode.equalsIgnoreCase("CL") || primaryWeatherCode.equalsIgnoreCase("FW"))
-					primaryWeatherCode = "1";//sunny
-				
-				else if(primaryWeatherCode.equalsIgnoreCase("OV") || primaryWeatherCode.equalsIgnoreCase("BK"))
-					primaryWeatherCode = "2"; //cloudy
-				
-				else if(primaryWeatherCode.equalsIgnoreCase("R") || primaryWeatherCode.equalsIgnoreCase("L") ||
-						primaryWeatherCode.equalsIgnoreCase("RW") || primaryWeatherCode.equalsIgnoreCase("RS"))
-					primaryWeatherCode = "3";//rain
-				
-				else if(primaryWeatherCode.equalsIgnoreCase("T"))
-					primaryWeatherCode = "4";//Thunderstorms
-				
-				else if(primaryWeatherCode.equalsIgnoreCase("BS") || primaryWeatherCode.equalsIgnoreCase("RS") || 
-						primaryWeatherCode.equalsIgnoreCase("SI") || primaryWeatherCode.equalsIgnoreCase("S") ||
-						primaryWeatherCode.equalsIgnoreCase("S"))
-					primaryWeatherCode = "5";//Snow
-				
-				else if(primaryWeatherCode.equalsIgnoreCase("BD") || primaryWeatherCode.equalsIgnoreCase("BN") || 
-						primaryWeatherCode.equalsIgnoreCase("BY"))
-					primaryWeatherCode = "6";//windy
-				
-				else
-					primaryWeatherCode = "7";//Partly cloudy by default
-			
-				return primaryWeatherCode;
-			}catch(Exception ex){
-				ex.printStackTrace();
-				return "7";
+
+		protected class retrieve_weatherTask extends
+				AsyncTask<Void, String, HashMap<Integer, ArrayList<String>>> {
+			@Override
+			public HashMap<Integer, ArrayList<String>> doInBackground(
+					Void... arg0) {
+				JSONObject jsonObject;
+				JSONArray jsonArray;
+				ArrayList<String> dailyWeatherIcon = new ArrayList<String>();
+				try {
+
+					jsonArray = getJsonArray();
+					listOfWeatherData = new ArrayList<String>();
+					for (int i = 0; i < LENGTH_OF_FORECAST; i++) {
+						jsonObject = jsonArray.getJSONObject(i);
+						listOfWeatherData.add(jsonObject.getString("validTime")
+								.substring(0, 10));
+						listOfWeatherData.add(jsonObject.getString("minTempF"));
+						listOfWeatherData.add(jsonObject.getString("maxTempF"));
+						listOfWeatherData
+								.add(jsonObject.getString("pop") + "%");
+						//"weatherPrimaryCoded" is a string that gives three codes, each separated
+						//by a ":". It can be used to get very detailed weather information but
+						//for our purposes, we are just using the last code provided.
+						dailyWeatherIcon.add(getPrimaryWeather(jsonObject
+								.getString("weatherPrimaryCoded")));
+					}
+					//holds actual weather data
+					hmFiveDayForecast.put(0, listOfWeatherData);
+					//holds conditional weather information which will determine which icon to display
+					hmFiveDayForecast.put(1, dailyWeatherIcon);
+					return hmFiveDayForecast;
+				} catch (Exception e) {
+					e.printStackTrace();
+					return hmFiveDayForecast;
+				}
 			}
+
+			protected void onPostExecute(
+					HashMap<Integer, ArrayList<String>> forecast) {
+				try {
+					//this will store all weather data for each day
+					ArrayList<String> weatherInfo = new ArrayList<String>();
+					//this will be used to determine which daily weather icon will be stored
+					//in dailyWeatherDrawables
+					ArrayList<String> dailyWeatherIcon = new ArrayList<String>();
+					//this will store the daily weather icons based on daily conditions.
+					ArrayList<Integer> dailyWeatherDrawables = new ArrayList<Integer>();
+
+					weatherInfo.addAll(forecast.get(0));
+					dailyWeatherIcon.addAll(forecast.get(1));
+
+					for (int i = 0; i < dailyWeatherIcon.size(); i++) {
+						if (dailyWeatherIcon.get(i).equals("1"))// sunny
+							dailyWeatherDrawables.add(R.drawable.sun48);
+						else if (dailyWeatherIcon.get(i).equals("2"))// overcast
+							dailyWeatherDrawables.add(R.drawable.clouds48);
+						else if (dailyWeatherIcon.get(i).equals("3"))// rain
+							dailyWeatherDrawables.add(R.drawable.littlerain48); 
+						else if (dailyWeatherIcon.get(i).equals("4"))// thunderstorm
+							dailyWeatherDrawables.add(R.drawable.storm48);
+						else if (dailyWeatherIcon.get(i).equals("5"))// snow
+							dailyWeatherDrawables.add(R.drawable.snow48);
+						else if (dailyWeatherIcon.get(i).equals("6"))// windy
+							dailyWeatherDrawables.add(R.drawable.windy48);
+						else// partly cloudy icon by default
+							dailyWeatherDrawables
+									.add(R.drawable.partlycloudyday48);
+					}
+
+					tv_lowExample.setText("Low");
+					tv_highExample.setText("High");
+					tv_popExample.setText("Rain");
+					iv_lowExample.setImageResource(R.drawable.down48);
+					iv_highExample.setImageResource(R.drawable.up48);
+					iv_popExample.setImageResource(R.drawable.littlerain48);
+					//CustomAdapter takes the weather hard coded icons (high, low and rain cloud),
+					//the daily weather icon based on condition, and the actual weather data
+					listView.setAdapter(new CustomAdapter(getActivity(),
+							weatherImages, dailyWeatherDrawables, weatherInfo));
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			//primaryWeatherCode is 3 code string separated by a ":",
+			//each code provides information about the local weather.
+			//For our purposes, we only need the last code which tells if the 
+			//weather for that day will be sunny, windy, rain expected etc.
+			//This function and the primaryWeatherCode is only used to
+			//provide the correct conditional weather for each day.
+			//For more information: http://www.hamweather.com/support/documentation/aeris/codedweather/
+			private String getPrimaryWeather(String primaryWeatherCode) {
+				String[] weatherCodeSplit = primaryWeatherCode.split(":");
+				primaryWeatherCode = weatherCodeSplit[2];
+				try {
+					if (primaryWeatherCode.equalsIgnoreCase("CL")
+							|| primaryWeatherCode.equalsIgnoreCase("FW"))
+						primaryWeatherCode = "1";// sunny
+
+					else if (primaryWeatherCode.equalsIgnoreCase("OV")
+							|| primaryWeatherCode.equalsIgnoreCase("BK"))
+						primaryWeatherCode = "2"; // cloudy
+
+					else if (primaryWeatherCode.equalsIgnoreCase("R")
+							|| primaryWeatherCode.equalsIgnoreCase("L")
+							|| primaryWeatherCode.equalsIgnoreCase("RW")
+							|| primaryWeatherCode.equalsIgnoreCase("RS")){
+						primaryWeatherCode = "3";// rain
+					}
+					else if (primaryWeatherCode.equalsIgnoreCase("T")){
+						primaryWeatherCode = "4";// Thunderstorms
+					}
+					else if (primaryWeatherCode.equalsIgnoreCase("BS")
+							|| primaryWeatherCode.equalsIgnoreCase("RS")
+							|| primaryWeatherCode.equalsIgnoreCase("SI")
+							|| primaryWeatherCode.equalsIgnoreCase("S")
+							|| primaryWeatherCode.equalsIgnoreCase("S"))
+						primaryWeatherCode = "5";// Snow
+
+					else if (primaryWeatherCode.equalsIgnoreCase("BD")
+							|| primaryWeatherCode.equalsIgnoreCase("BN")
+							|| primaryWeatherCode.equalsIgnoreCase("BY"))
+						primaryWeatherCode = "6";// Windy
+
+					else
+						primaryWeatherCode = "7";// Partly cloudy by default
+
+					return primaryWeatherCode;
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					return "7";// Partly cloudy by default
+				}
+			}
+			//this parses the JSON api into a usable JSON array used in 
+			//the Async task, retrieve_weatherTask 
+			private JSONArray getJsonArray() {
+				JSONObject jsonObject;
+				JSONArray jsonArray, jsonArray2 = new JSONArray();
+				try {
+					String str = new String();
+					//change this url if we decide to use zipcodes. p="zipcode"
+					URL url = new URL(
+							"https://api.aerisapi.com/forecasts/closest?p="
+									+ latitude
+									+ ",%20"
+									+ longitude
+									+ "&limit="
+									+ LENGTH_OF_FORECAST
+									+ "&client_id=3697JMRSKj6ncjcGrRIZt&client_secret=hyOUsu3HU4TG4kXAGEmwsL50ZKKRhoaYMFM8pti5");
+					Scanner scan = new Scanner(url.openStream());
+					while (scan.hasNext())
+						str += scan.nextLine();
+					scan.close();
+					jsonObject = new JSONObject(str);
+					jsonArray = jsonObject.getJSONArray("response");
+					jsonObject = jsonArray.getJSONObject(0);
+					jsonObject = new JSONObject(jsonObject.toString());
+					jsonArray2 = jsonObject.getJSONArray("periods");
+					return jsonArray2;
+
+				} catch (Exception e) {
+					e.printStackTrace();
+					return jsonArray2;
+				}
+			}
+
 		}
-		private JSONArray getJsonArray(){
-			JSONObject jsonObject;
-    		JSONArray jsonArray, jsonArray2 = new JSONArray();
-    		try{
-    			String str = new String();
-    			URL url = new URL("https://api.aerisapi.com/forecasts/closest?p=" + latitude + ",%20" + longitude + "&limit="+ LENGTH_OF_FORECAST + "&client_id=3697JMRSKj6ncjcGrRIZt&client_secret=hyOUsu3HU4TG4kXAGEmwsL50ZKKRhoaYMFM8pti5");
-    			Scanner scan = new Scanner(url.openStream());
-    			while (scan.hasNext())
-    				str += scan.nextLine();
-    			scan.close();
-    			jsonObject = new JSONObject(str);
-    			jsonArray = jsonObject.getJSONArray("response");
-    			jsonObject = jsonArray.getJSONObject(0);
-    			jsonObject = new JSONObject(jsonObject.toString());
-    			jsonArray2 = jsonObject.getJSONArray("periods");
-    			return jsonArray2;
-    		
-    		}catch (Exception e){
-    			e.printStackTrace();
-    			return jsonArray2;
-    		}
-		}
-		
-	}
+
 		@Override
 		public void onAttach(Activity activity) {
 			super.onAttach(activity);
@@ -537,18 +538,17 @@ public class MainActivity extends ActionBarActivity implements
 		}
 	}
 
+	@SuppressLint("SetJavaScriptEnabled")
 	public static class SoilFragment extends Fragment {
-	/**
-	 * The fragment argument representing the section number for this
-	 * fragment.
-	 */
+		/**
+		 * The fragment argument representing the section number for this
+		 * fragment.
+		 */
 		private static final String ARG_SECTION_NUMBER = "section_number";
 
 		/**
 		 * Returns a new instance of this fragment for the given section number.
 		 */
-		
-		//private WebView webView;
 		private View rootView;
 		public static SoilFragment newInstance(int sectionNumber) {
 			SoilFragment fragment = new SoilFragment();
@@ -564,36 +564,39 @@ public class MainActivity extends ActionBarActivity implements
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			
-				rootView = inflater.inflate(R.layout.fragment_soil,
-						container, false);
-				
-				return rootView;
-				//new retrieve_soilTask().execute();
-		}
-		@Override
-		public void onActivityCreated(Bundle savedInstanceState){
-			super.onActivityCreated(savedInstanceState);
-			try{
-				WebView webView = (WebView)(rootView.findViewById(R.id.wv_Soil));
-				WebSettings webSettings = webView.getSettings();
 
+			rootView = inflater.inflate(R.layout.fragment_soil, container,
+					false);
+			return rootView;
+		}
+		//the following opens a web browser which displays soil information
+		//for an area based on the users location.
+		@Override
+		public void onActivityCreated(Bundle savedInstanceState) {
+			super.onActivityCreated(savedInstanceState);
+			try {
+				WebView webView = (WebView) (rootView
+						.findViewById(R.id.wv_Soil));
+				WebSettings webSettings = webView.getSettings();
 				webSettings.setJavaScriptEnabled(true);
 				
-				webView.setWebChromeClient(new WebChromeClient(){
-					  public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
-					    // callback.invoke(String origin, boolean allow, boolean remember);
-					    callback.invoke(origin, true, false);
-					  }
+				webView.setWebChromeClient(new WebChromeClient() {
+					public void onGeolocationPermissionsShowPrompt(
+							String origin,
+							GeolocationPermissions.Callback callback) {
+						// callback.invoke(String origin, boolean allow, boolean
+						// remember);
+						callback.invoke(origin, true, false);
+					}
 				});
-				
+
 				webView.loadUrl("http://casoilresource.lawr.ucdavis.edu/gmap/");
-			}catch(Exception e){
+			} catch (Exception e) {
 				e.printStackTrace();
-				
+
 			}
 		}
-	
+
 		@Override
 		public void onAttach(Activity activity) {
 			super.onAttach(activity);

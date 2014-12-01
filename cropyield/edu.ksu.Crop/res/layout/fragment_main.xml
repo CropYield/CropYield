@@ -2,72 +2,27 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:paddingTop="30dp" >
 
-    <LinearLayout
+    <Button
+        android:id="@+id/YieldCalculator"
         android:layout_width="match_parent"
-        android:layout_height="100dp" >
-
-        <Button 
-            android:id="@+id/home_button"
-            android:layout_height="100dp"
-            android:layout_width="match_parent"
-            android:layout_weight="1"
-            android:drawableTop="@drawable/home"
-            android:text="Home" />
-
-        <Button
-            android:id="@+id/weather_button"
-            android:layout_height="100dp"
-            android:layout_width="match_parent"
-            android:layout_weight="1"
-            android:drawableTop="@drawable/weather"
-            android:text="Weather" />
-
-    </LinearLayout>
-
-    <LinearLayout
+        android:layout_height="100dp"
+        android:text="Yield Calculator" />
+    
+    <Button
+        android:id="@+id/PlanTrip"
         android:layout_width="match_parent"
-        android:layout_height="100dp" >
-
-        <Button
-            android:id="@+id/plan_trip_button"
-            android:layout_height="100dp"
-            android:layout_width="match_parent"
-            android:layout_weight="1"
-            android:drawableTop="@drawable/tractor"
-            android:text="Plan Trip" />
-
-        <Button
-            android:id="@+id/take_picture_button"
-            android:layout_height="100dp"
-            android:layout_width="match_parent"
-            android:layout_weight="1"
-            android:drawableTop="@drawable/photo"
-            android:text="Take Photo" />
-
-    </LinearLayout>
-
-    <LinearLayout
+        android:layout_height="100dp"
+        android:text="Plan Trip" />
+    
+    <Button
+        android:id="@+id/WeatherInformation"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <Button
-            android:id="@+id/calculate_yield_button"
-            android:layout_height="100dp"
-            android:layout_width="match_parent"
-            android:layout_weight="1"
-            android:drawableTop="@drawable/calculator"
-            android:text="Calculator" />
-
-        <Button
-            android:id="@+id/graph_button"
-            android:layout_height="100dp"
-            android:layout_width="match_parent"
-            android:layout_weight="1"
-            android:drawableTop="@drawable/graph"
-            android:text="Projection" />
-
-    </LinearLayout>
+        android:layout_height="100dp"
+        android:text="Weather Information" />
 
 </LinearLayout>
