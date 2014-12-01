@@ -139,15 +139,10 @@ public class PlanTripFragment extends Fragment {
 		protected void onPostExecute(
 				HashMap<Integer, ArrayList<String>> forecast) {
 			try {
-				ArrayList<String> weatherInfo = new ArrayList<String>();
-				ArrayList<String> dailyWeatherIcon = new ArrayList<String>();
-				ArrayList<Integer> dailyWeatherDrawables = new ArrayList<Integer>();
-
-				weatherInfo.addAll(forecast.get(0));
-				dailyWeatherIcon.addAll(forecast.get(1)); // here
+				
 
 			} catch (Exception e) {
-				e.printStackTrace();
+			
 			}
 		}
 
