@@ -36,6 +36,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -44,24 +45,25 @@ import android.widget.Toast;
 
 public class PictureFragment extends Fragment {
 
+	// User Interface elements
 	ImageView imageView;
-	LinkedList<String> currentPhotoPath = new LinkedList<String>();
-	static final int REQUEST_IMAGE_CAPTURE = 1;
-	static final int REQUEST_IMAGE_SELECT = 2;
 	Button takePicture;
 	Button choosePicture;
 	Button finish;
+	Button deletePicture;
+	Button nextButton;
 	ImageButton nextPicture;
 	ImageButton previousPicture;
-//	TextView headSize;
-	Button deletePicture;
-//	ImageButton gpsLocation;
-	Button nextButton;
+	TextView imageCounter;
+	
+	LinkedList<String> currentPhotoPath = new LinkedList<String>();
+	static final int REQUEST_IMAGE_CAPTURE = 1;
+	static final int REQUEST_IMAGE_SELECT = 2;
 	int currentPhotoDisplayed = 0;
 	int photoCount = 0;
 	ColorDetector cd;
 	LinkedList<Bitmap> currentPictures = new LinkedList<Bitmap>();
-	private static final String ARG_SECTION_NUMBER = "section_number";
+	private static final String ARG_SECTION_NUMBER = "4";
 	double areaCalc = 0.0;
 	static DataSet data = new DataSet();
 
@@ -101,7 +103,7 @@ public class PictureFragment extends Fragment {
 		nextPicture =     (ImageButton) rootView.findViewById(R.id.nextImageButton);
 		previousPicture = (ImageButton) rootView.findViewById(R.id.previousImageButton);
 		deletePicture =   (Button) rootView.findViewById(R.id.deleteImageButton);
-//		nextButton =      (Button) rootView.findViewById(R.id.buttonNext);
+		imageCounter =    (TextView) rootView.findViewById(R.id.imageCounterText);
 		cd = new ColorDetector();
 		
 		setPreviousNextButtonEnabledStatus();
@@ -135,75 +137,29 @@ public class PictureFragment extends Fragment {
 				deletePictureSelected(v);
 			}
 		});
-		
-//		nextButton.setOnClickListener(new View.OnClickListener() {
-//			public void onClick(View v) {
-//				nextPicture(v);
-//			}
-//		});
+
+		finish.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				finishPictureFragment();
+			}
+		});
 
 		imageView.setImageDrawable(null);
+		hideKeyboard();
 
+		
 		return rootView;
 	}
 
-//	private void cameraOrGallery(View v) {
-//		CharSequence options[] = new CharSequence[] { "Take A Photo",
-//				"Choose From Gallery" };
-//
-//		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//		builder.setTitle("Choose Photo Selection Method");
-//		builder.setItems(options, new DialogInterface.OnClickListener() {
-//			public void onClick(DialogInterface dialog, int picked) {
-//				switch (picked) {
-//				case 0:
-//					TakeNewPhoto();
-//					break;
-//				case 1:
-//					SelectGalleryPhoto();
-//					break;
-//				}
-//			}
-//		});
-//		builder.show();
-//	}
-
-//	private void selectLocationOrRetrieveCurrent(View v) {
-//		CharSequence options[] = new CharSequence[] {
-//				"Retrieve Current Location", "Select A Location",
-//				"Use GPS Location Off Current Photo", "Calculate Max Area" };
-//		
-//		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//		builder.setTitle("Choose GPS Location Method");
-//		builder.setItems(options, new DialogInterface.OnClickListener() {
-//			public void onClick(DialogInterface dialog, int picked) {
-//				switch (picked) {
-//				case 0:
-//					obtainLocation(true);
-//					break;
-//				case 1:
-//					selectLocation();
-//					break;
-//				case 2:
-//					retrieveExifData();
-//					break;
-//				case 3:
-//					areaCalc = cd.AreaDetection(currentPhotoPath
-//							.get(currentPhotoDisplayed));
-//					if (areaCalc == 0.0) {
-//						headSize.setText("Error Calculating Area");
-//					} else {
-//						data.AddAreas(areaCalc);//Add the calculated area to the Data set.
-//						headSize.setText(String.format("%.3f", areaCalc) + " inches squared");
-//						setImageViewTest2(cd.dilatedMask, "1");
-//					}
-//					break;
-//				}
-//			}
-//		});
-//		builder.show();
-//	}
-
+	private void hideKeyboard() {    
+	    // Check if no view has focus: 
+	    View view = getActivity().getCurrentFocus();
+	    if (view != null) {
+	        InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+	        inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+	    } 
+	} 
+	
 	private void deletePictureSelected(View v) {
 		CharSequence options[] = new CharSequence[] { "Yes", "No" };
 
@@ -226,85 +182,15 @@ public class PictureFragment extends Fragment {
 		builder.show();
 	}
 
-	// private void calculateArea() {
-	// Double currentArea;
-	// ColorDetector colorDetector = new ColorDetector();
-	// currentArea =
-	// colorDetector.AreaDetection(currentPhotoPath.get(currentPhotoDisplayed));
-	// sendToast(currentArea.toString(), Toast.LENGTH_LONG);
-	// }
 
-	// private void calculateArea() {
-	// if( !OpenCVLoader.initDebug()) {
-	// sendToast("Error Loading OpenCV", Toast.LENGTH_LONG);
-	// } else {
-	//
-	// Mat dilatedMask = new Mat();
-	// Mat hierarchy = new Mat();
-	// Mat HSV = new Mat();
-	// Mat Masked = new Mat();
-	// Mat squarePull = new Mat();
-	// Scalar LowerBound = new Scalar(0);
-	// Scalar UpperBound = new Scalar(0);
-	//
-	// float HSVUpper[] = new float[3];
-	// float HSVLower[] = new float[3];
-	//
-	// Mat originalImage =
-	// Highgui.imread(currentPhotoPath.get(currentPhotoDisplayed));
-	//
-	// Color.RGBToHSV(15, 60, 120, HSVUpper);
-	// Color.RGBToHSV(0, 35, 60, HSVLower);
-	//
-	// for(int i = 0; i < 3; i++) {
-	// LowerBound.val[ i ] = (double)HSVLower[ i ];
-	// UpperBound.val[ i ] = (double)HSVUpper[ i ];
-	// }
-	//
-	// Imgproc.cvtColor(originalImage, HSV, Imgproc.COLOR_BGR2HSV, 3);
-	//
-	// Core.inRange(HSV, new Scalar(0, 60, 60), new Scalar(25, 175, 175),
-	// Masked);
-	// Core.inRange(HSV, new Scalar(50, 60, 50), new Scalar(75, 255, 180),
-	// squarePull);
-	// // Convert regular HSV 0-360 / 0-100 / 0-100
-	// List<MatOfPoint> sqContours = new ArrayList<MatOfPoint>();
-	// Imgproc.findContours(squarePull, sqContours, hierarchy,
-	// Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-	//
-	// double squareArea = 1;
-	// Iterator<MatOfPoint> sqEach = sqContours.iterator();
-	// while (sqEach.hasNext()) {
-	// MatOfPoint wrapper = sqEach.next();
-	// double area = Imgproc.contourArea(wrapper);
-	// squareArea += area;
-	// }
-	// Mat sqDilate = new Mat();
-	//
-	// Imgproc.dilate(Masked, dilatedMask, new Mat());
-	// setImageViewTest2(dilatedMask, "1");
-	//
-	// List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
-	// Imgproc.findContours(Masked, contours, hierarchy, Imgproc.RETR_EXTERNAL,
-	// Imgproc.CHAIN_APPROX_SIMPLE);
-	// // sendToast("Countour Count: " + contours.size() , Toast.LENGTH_LONG);
-	//
-	// double totalArea = 0;
-	// Iterator<MatOfPoint> each = contours.iterator();
-	// while (each.hasNext()) {
-	// MatOfPoint wrapper = each.next();
-	// double area = Imgproc.contourArea(wrapper);
-	// totalArea += area;
-	// }
-	// // sendToast( ( "The total area in pixels is: " + totalArea ),
-	// Toast.LENGTH_LONG);
-	// headSize.setText(String.format("%.3f", totalArea / squareArea) +
-	// " inches squared");
-	// // sendToast( ( "The area in inches is: " + totalArea / squareArea ),
-	// Toast.LENGTH_LONG );
-	// }
-	// }
-
+	private void finishPictureFragment() {
+		String photoPath;
+		for(int i = 0; i < currentPhotoPath.size(); i++ ) {
+			photoPath = currentPhotoPath.pop();
+			data.AddAreas(cd.AreaDetection(photoPath));
+		}
+	}
+	
 	private void setImageViewTest2(Mat mat, String toastNum) {
 		try {
 			if (mat.rows() > 1200) {
@@ -400,10 +286,12 @@ public class PictureFragment extends Fragment {
 		} else {
 			nextPicture.setEnabled(false);
 		}
-		if (currentPictures.size() > 4) {
+		if (currentPictures.size() > 9) {
 			takePicture.setEnabled(false);
+			choosePicture.setEnabled(false);
 		} else {
 			takePicture.setEnabled(true);
+			choosePicture.setEnabled(true);
 		}
 		if (currentPictures.size() > 0) {
 			deletePicture.setEnabled(true);
@@ -435,7 +323,6 @@ public class PictureFragment extends Fragment {
 		}
 	}
 
-	// Currently working on the below code to ensure ease for scaling
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -534,7 +421,7 @@ public class PictureFragment extends Fragment {
 			currentPictures.push(bitmap);
 		}
 		photoCount++;
-
+		imageCounter.setText("Image Counter: " + photoCount + "/10");
 		// imageView.setImageBitmap(rotatedBitmap);
 	}
 
@@ -553,6 +440,7 @@ public class PictureFragment extends Fragment {
 				imageView.setImageBitmap(currentPictures.get(0));
 			}
 			photoCount--;
+			imageCounter.setText("Image Counter: " + photoCount + "/10");
 			setPreviousNextButtonEnabledStatus();
 		} catch (Exception EX) {
 			sendToast("Error removing picture", Toast.LENGTH_LONG);
