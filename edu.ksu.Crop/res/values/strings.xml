@@ -15,5 +15,8 @@
     <string name="add_pic_img_view_desc">Take or Select an Image</string>
     <string name="Forecast">5 Day Forecast</string>
 	<string name="SoilReport">Soil Report</string>
+	<string name="button_finish">Finish</string>
+	<string name="button_delete_picture">Delete Picture</string>
+	<string name="button_select_picture">Select Picture</string>
 	
 </resources>
