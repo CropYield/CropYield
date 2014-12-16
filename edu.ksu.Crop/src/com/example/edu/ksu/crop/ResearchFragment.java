@@ -38,11 +38,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 public class ResearchFragment extends Fragment {
 	/**
-	 * The fragment argument representing the section number for this
-	 * fragment.
+	 * The fragment argument representing the section number for this fragment.
 	 */
 	private static final String ARG_SECTION_NUMBER = "6";
 	static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -50,7 +48,7 @@ public class ResearchFragment extends Fragment {
 	/**
 	 * Returns a new instance of this fragment for the given section number.
 	 */
-	
+
 	ImageView imageView;
 	Button takePicture;
 	Button choosePicture;
@@ -68,7 +66,7 @@ public class ResearchFragment extends Fragment {
 	ColorDetector cd;
 	double areaCalc = 0.0;
 	static DataSet data = new DataSet();
-	
+
 	public static ResearchFragment newInstance(int sectionNumber) {
 		ResearchFragment fragment = new ResearchFragment();
 		Bundle args = new Bundle();
@@ -78,32 +76,33 @@ public class ResearchFragment extends Fragment {
 	}
 
 	public ResearchFragment() {
-		
+
 	}
 
-	//This sets the functionality of the two buttons and where they navigate
-	//when they are clicked.
+	// This sets the functionality of the two buttons and where they navigate
+	// when they are clicked.
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_research, container,
 				false);
 
-		
-		imageView =       (ImageView) rootView.findViewById(R.id.imageViewResearch);
-		takePicture =     (Button) rootView.findViewById(R.id.button_camera2);
-		choosePicture =   (Button) rootView.findViewById(R.id.button_select2);
-		finish =          (Button) rootView.findViewById(R.id.finishButton2);
-		nextPicture =     (ImageButton) rootView.findViewById(R.id.nextImageButton2);
-		previousPicture = (ImageButton) rootView.findViewById(R.id.previousImageButton2);
-		deletePicture =   (Button) rootView.findViewById(R.id.deleteImageButton2);
-		imageArea =    (TextView) rootView.findViewById(R.id.textViewArea);
-		seedCount =    (TextView) rootView.findViewById(R.id.textViewSeedCount);
+		imageView = (ImageView) rootView.findViewById(R.id.imageViewResearch);
+		takePicture = (Button) rootView.findViewById(R.id.button_camera2);
+		choosePicture = (Button) rootView.findViewById(R.id.button_select2);
+		finish = (Button) rootView.findViewById(R.id.finishButton2);
+		nextPicture = (ImageButton) rootView
+				.findViewById(R.id.nextImageButton2);
+		previousPicture = (ImageButton) rootView
+				.findViewById(R.id.previousImageButton2);
+		deletePicture = (Button) rootView.findViewById(R.id.deleteImageButton2);
+		imageArea = (TextView) rootView.findViewById(R.id.textViewArea);
+		seedCount = (TextView) rootView.findViewById(R.id.textViewSeedCount);
 
 		cd = new ColorDetector();
-		
+
 		setPreviousNextButtonEnabledStatus();
-//
+		//
 		takePicture.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				TakeNewPhoto();
@@ -115,7 +114,7 @@ public class ResearchFragment extends Fragment {
 				SelectGalleryPhoto();
 			}
 		});
-		
+
 		nextPicture.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				nextPicture(v);
@@ -139,29 +138,27 @@ public class ResearchFragment extends Fragment {
 				finishPictureFragment();
 			}
 		});
-//
+		//
 		imageView.setImageDrawable(null);
 		hideKeyboard();
-		
-		
-		
-		
+
 		return rootView;
 	}
 
-	
-	private void hideKeyboard() {    
-	    // Check if no view has focus: 
-	    View view = getActivity().getCurrentFocus();
-	    if (view != null) {
-	        InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-	        inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-	    } 
-	} 
+	private void hideKeyboard() {
+		// Check if no view has focus:
+		View view = getActivity().getCurrentFocus();
+		if (view != null) {
+			InputMethodManager inputManager = (InputMethodManager) getActivity()
+					.getSystemService(Context.INPUT_METHOD_SERVICE);
+			inputManager.hideSoftInputFromWindow(view.getWindowToken(),
+					InputMethodManager.HIDE_NOT_ALWAYS);
+		}
+	}
 
 	/**
-	 * Simply confirms the user's intent in deleting a picture,
-	 * and will let the user know the success of the operation.
+	 * Simply confirms the user's intent in deleting a picture, and will let the
+	 * user know the success of the operation.
 	 */
 	private void deletePictureSelected(View v) {
 		CharSequence options[] = new CharSequence[] { "Yes", "No" };
@@ -186,35 +183,36 @@ public class ResearchFragment extends Fragment {
 	}
 
 	/**
-	 * The user is done with the picture/camera fragment. This
-	 * transitions to the next fragment, and calculates the area
-	 * in all of the pictures.
+	 * The user is done with the picture/camera fragment. This transitions to
+	 * the next fragment, and calculates the area in all of the pictures.
 	 */
 	private void finishPictureFragment() {
 		String photoPath;
 		photoPath = currentPhotoPath.get(currentPhotoDisplayed);
 		double curArea = cd.AreaDetection(photoPath);
-		imageArea.setText( String.format( "%.2f sq. in", curArea) );
-		seedCount.setText( String.format( "%.1f seeds ", (curArea * 120 ) - 400) );
-		setImageViewTest2( cd.dilatedMask );
-//		sendToast( "" + curArea, Toast.LENGTH_LONG );
-		//		for(int i = 0; i < currentPhotoPath.size(); i++ ) {
-//			photoPath = currentPhotoPath.pop();
-//			data.AddAreas(cd.AreaDetection(photoPath));
-//		}
-//		Fragment newFragment = FinalFragment.newInstance(10, data);//Instance has something to do with title, will work on this later during clearn up
-//		FragmentTransaction transaction = getFragmentManager().beginTransaction();
-//		transaction.replace(R.id.container, newFragment);
-//		transaction.addToBackStack(null);
-//		transaction.commit();//Navigates to the final fragment
+		imageArea.setText(String.format("%.2f sq. in", curArea));
+		seedCount.setText(String.format("%.1f seeds ", (curArea * 120) - 400));
+		setImageViewTest2(cd.dilatedMask);
+		// sendToast( "" + curArea, Toast.LENGTH_LONG );
+		// for(int i = 0; i < currentPhotoPath.size(); i++ ) {
+		// photoPath = currentPhotoPath.pop();
+		// data.AddAreas(cd.AreaDetection(photoPath));
+		// }
+		// Fragment newFragment = FinalFragment.newInstance(10, data);//Instance
+		// has something to do with title, will work on this later during clearn
+		// up
+		// FragmentTransaction transaction =
+		// getFragmentManager().beginTransaction();
+		// transaction.replace(R.id.container, newFragment);
+		// transaction.addToBackStack(null);
+		// transaction.commit();//Navigates to the final fragment
 	}
-	
+
 	/**
-	 * This function sets the image preview to the analyzed
-	 * and edited image. Not intending on using this code,
-	 * but it's good for debugging.
+	 * This function sets the image preview to the analyzed and edited image.
+	 * Not intending on using this code, but it's good for debugging.
 	 */
-	private void setImageViewTest2( Mat mat ) {
+	private void setImageViewTest2(Mat mat) {
 		try {
 			if (mat.rows() > 1200) {
 				Mat smallerMat = new Mat();
@@ -256,8 +254,7 @@ public class ResearchFragment extends Fragment {
 			sendToast("Bitmap is null", Toast.LENGTH_SHORT);
 		}
 	}
-	
-	
+
 	/**
 	 * Increase the current photo displayed.
 	 */
@@ -277,8 +274,8 @@ public class ResearchFragment extends Fragment {
 	}
 
 	/**
-	 * Choose a photo from the gallery. Uses
-	 * Android's built in functionality for this.
+	 * Choose a photo from the gallery. Uses Android's built in functionality
+	 * for this.
 	 */
 	private void SelectGalleryPhoto() {
 		Intent pickPhoto = new Intent(Intent.ACTION_PICK,
@@ -286,7 +283,6 @@ public class ResearchFragment extends Fragment {
 		startActivityForResult(pickPhoto, REQUEST_IMAGE_SELECT);
 	}
 
-	
 	/**
 	 * The logic behind whether or not buttons should be enabled.
 	 */
@@ -312,8 +308,8 @@ public class ResearchFragment extends Fragment {
 	}
 
 	/**
-	 * The code to take a new photo, save it in the default directory,
-	 * and call the functions to set it in the image preview.
+	 * The code to take a new photo, save it in the default directory, and call
+	 * the functions to set it in the image preview.
 	 */
 	private void TakeNewPhoto() {
 		Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -337,10 +333,10 @@ public class ResearchFragment extends Fragment {
 			}
 		}
 	}
-	
+
 	/**
-	 * Code called after either a camera capture or gallery select.
-	 * The bitmap (image preview) will be updated accordingly. 
+	 * Code called after either a camera capture or gallery select. The bitmap
+	 * (image preview) will be updated accordingly.
 	 */
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		if (requestCode == REQUEST_IMAGE_CAPTURE
@@ -370,7 +366,7 @@ public class ResearchFragment extends Fragment {
 			setPreviousNextButtonEnabledStatus();
 		}
 	}
-	
+
 	private void sendToast(String message, int length) {
 
 		Activity context = getActivity();
@@ -381,9 +377,8 @@ public class ResearchFragment extends Fragment {
 		toast.show();
 	}
 
-	
 	/**
-	 * Adds a picture for the gallery. 
+	 * Adds a picture for the gallery.
 	 */
 	private void galleryAddPic() {
 		Intent mediaScanIntent = new Intent(
@@ -395,8 +390,8 @@ public class ResearchFragment extends Fragment {
 	}
 
 	/**
-	 * Add a picture to the linked list which contains file paths
-	 * and bitmap image previews.
+	 * Add a picture to the linked list which contains file paths and bitmap
+	 * image previews.
 	 */
 	private void addPictureToLinkedList() {
 		// Get the dimensions of the View
@@ -429,15 +424,14 @@ public class ResearchFragment extends Fragment {
 			currentPictures.push(bitmap);
 		}
 		photoCount++;
-//		imageCounter.setText("Image Counter: " + photoCount + "/10");
+		// imageCounter.setText("Image Counter: " + photoCount + "/10");
 		// imageView.setImageBitmap(rotatedBitmap);
 	}
 
-	
 	/**
-	 * A user has selected to delete a picture. This is 
-	 * the underlying logic for picture removal. Delete it
-	 * from the LinkedList, and decrement the count-of/current photo.
+	 * A user has selected to delete a picture. This is the underlying logic for
+	 * picture removal. Delete it from the LinkedList, and decrement the
+	 * count-of/current photo.
 	 */
 	private void removePicFromLinkedList() {
 
@@ -454,7 +448,7 @@ public class ResearchFragment extends Fragment {
 				imageView.setImageBitmap(currentPictures.get(0));
 			}
 			photoCount--;
-//			imageCounter.setText("Image Counter: " + photoCount + "/10");
+			// imageCounter.setText("Image Counter: " + photoCount + "/10");
 			setPreviousNextButtonEnabledStatus();
 		} catch (Exception EX) {
 			sendToast("Error removing picture", Toast.LENGTH_LONG);
@@ -462,8 +456,9 @@ public class ResearchFragment extends Fragment {
 	}
 
 	/**
-	 * Google's default code for creating an image file. Format is 
+	 * Google's default code for creating an image file. Format is
 	 * JPEG_YYYY/MM/DD_HH/MM/SS_.jpg to avoid name collision.
+	 * 
 	 * @return
 	 * @throws IOException
 	 */
@@ -487,12 +482,11 @@ public class ResearchFragment extends Fragment {
 		return image;
 	}
 
-	
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		((MainActivity) activity).onSectionAttached(getArguments().getInt(
 				ARG_SECTION_NUMBER));
-		
+
 	}
 }
