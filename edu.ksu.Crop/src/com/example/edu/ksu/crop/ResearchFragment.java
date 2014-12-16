@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.LinkedList;
 
 import org.opencv.android.Utils;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
@@ -28,6 +29,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -196,16 +198,6 @@ public class ResearchFragment extends Fragment {
 		imageArea.setText( String.format( "%.2f sq. in", curArea) );
 		seedCount.setText( String.format( "%.1f seeds ", (curArea * 120 ) - 400) );
 		setImageViewTest2( cd.dilatedMask );
-//		sendToast( "" + curArea, Toast.LENGTH_LONG );
-		//		for(int i = 0; i < currentPhotoPath.size(); i++ ) {
-//			photoPath = currentPhotoPath.pop();
-//			data.AddAreas(cd.AreaDetection(photoPath));
-//		}
-//		Fragment newFragment = FinalFragment.newInstance(10, data);//Instance has something to do with title, will work on this later during clearn up
-//		FragmentTransaction transaction = getFragmentManager().beginTransaction();
-//		transaction.replace(R.id.container, newFragment);
-//		transaction.addToBackStack(null);
-//		transaction.commit();//Navigates to the final fragment
 	}
 	
 	/**
@@ -217,8 +209,13 @@ public class ResearchFragment extends Fragment {
 		try {
 			if (mat.rows() > 1200) {
 				Mat smallerMat = new Mat();
-				Imgproc.resize(mat, smallerMat, new Size(800.0, 1200.0), 0, 0,
-						Imgproc.INTER_NEAREST);
+				if( mat.rows() > mat.cols() ) {
+					Imgproc.resize(mat, smallerMat, new Size( 800.0, 1200.0), 0, 0,
+							Imgproc.INTER_NEAREST);
+				} else {
+					Imgproc.resize(mat, smallerMat, new Size( 1200.0, 800.0), 0, 0,
+							Imgproc.INTER_NEAREST);
+				}
 				Bitmap bmp = Bitmap.createBitmap(smallerMat.cols(),
 						smallerMat.rows(), Bitmap.Config.ARGB_8888);
 				Mat tmp = new Mat(smallerMat.rows(), smallerMat.cols(),
@@ -226,11 +223,14 @@ public class ResearchFragment extends Fragment {
 				Imgproc.cvtColor(smallerMat, tmp, Imgproc.COLOR_GRAY2BGR, 4);
 				Utils.matToBitmap(tmp, bmp);
 				if (bmp.getWidth() > bmp.getHeight()) {
-					Matrix matrix = new Matrix();
-					matrix.postRotate(90);
-					Bitmap rotatedBitmap = Bitmap.createBitmap(bmp, 0, 0, 800,
-							1200, matrix, true);
-					imageView.setImageBitmap(rotatedBitmap);
+					Core.flip(smallerMat.t(), smallerMat, 1);
+					Bitmap bmp2 = Bitmap.createBitmap(smallerMat.cols(),
+							smallerMat.rows(), Bitmap.Config.ARGB_8888);
+					Mat tmp2 = new Mat(smallerMat.rows(), smallerMat.cols(),
+							CvType.CV_8U, new Scalar(4));
+					Imgproc.cvtColor(smallerMat, tmp2, Imgproc.COLOR_GRAY2BGR, 4);
+					Utils.matToBitmap(tmp2, bmp2);
+					imageView.setImageBitmap(bmp2);
 				} else {
 					imageView.setImageBitmap(bmp);
 				}
@@ -245,14 +245,16 @@ public class ResearchFragment extends Fragment {
 					Matrix matrix = new Matrix();
 					matrix.postRotate(90);
 					Bitmap rotatedBitmap = Bitmap.createBitmap(bmp, 0, 0,
-							bmp.getWidth(), bmp.getHeight(), matrix, true);
+							1200, 800, matrix, true);
 					imageView.setImageBitmap(rotatedBitmap);
 				} else {
 					imageView.setImageBitmap(bmp);
 				}
 			}
 		} catch (Exception EX) {
-			sendToast("Bitmap is null", Toast.LENGTH_SHORT);
+			sendToast("Error displaying analyzed image", Toast.LENGTH_SHORT);
+			Log.e("CROPYIELD", "exception", EX);
+			
 		}
 	}
 	
@@ -305,8 +307,10 @@ public class ResearchFragment extends Fragment {
 		choosePicture.setEnabled(true);
 		if (currentPhotoPath.size() > 0) {
 			deletePicture.setEnabled(true);
+			finish.setEnabled(true);
 		} else {
 			deletePicture.setEnabled(false);
+			finish.setEnabled(false);
 		}
 	}
 
