@@ -62,7 +62,6 @@ public class ResearchFragment extends Fragment {
 	TextView seedCount;
 
 	LinkedList<String> currentPhotoPath = new LinkedList<String>();
-	LinkedList<Bitmap> currentPictures = new LinkedList<Bitmap>();
 	int currentPhotoDisplayed = 0;
 	int photoCount = 0;
 	ColorDetector cd;
@@ -263,7 +262,7 @@ public class ResearchFragment extends Fragment {
 	 */
 	private void previousPicture(View v) {
 		currentPhotoDisplayed++;
-		imageView.setImageBitmap(currentPictures.get(currentPhotoDisplayed));
+		imageView.setImageBitmap(renderBitmap(currentPhotoDisplayed));
 		setPreviousNextButtonEnabledStatus();
 	}
 
@@ -272,7 +271,7 @@ public class ResearchFragment extends Fragment {
 	 */
 	private void nextPicture(View v) {
 		currentPhotoDisplayed--;
-		imageView.setImageBitmap(currentPictures.get(currentPhotoDisplayed));
+		imageView.setImageBitmap(renderBitmap(currentPhotoDisplayed));
 		setPreviousNextButtonEnabledStatus();
 	}
 
@@ -291,8 +290,8 @@ public class ResearchFragment extends Fragment {
 	 * The logic behind whether or not buttons should be enabled.
 	 */
 	private void setPreviousNextButtonEnabledStatus() {
-		if (currentPictures.size() > 1
-				&& (currentPhotoDisplayed < (currentPictures.size() - 1))) {
+		if (currentPhotoPath.size() > 1
+				&& (currentPhotoDisplayed < (currentPhotoPath.size() - 1))) {
 			previousPicture.setEnabled(true);
 		} else {
 			previousPicture.setEnabled(false);
@@ -304,7 +303,7 @@ public class ResearchFragment extends Fragment {
 		}
 		takePicture.setEnabled(true);
 		choosePicture.setEnabled(true);
-		if (currentPictures.size() > 0) {
+		if (currentPhotoPath.size() > 0) {
 			deletePicture.setEnabled(true);
 		} else {
 			deletePicture.setEnabled(false);
@@ -345,9 +344,9 @@ public class ResearchFragment extends Fragment {
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		if (requestCode == REQUEST_IMAGE_CAPTURE
 				&& resultCode == Activity.RESULT_OK) {
-			addPictureToLinkedList();
+			photoCount++;
 			currentPhotoDisplayed = 0;
-			imageView.setImageBitmap(currentPictures.get(0));
+			imageView.setImageBitmap(renderBitmap(currentPhotoDisplayed));
 			galleryAddPic();
 			setPreviousNextButtonEnabledStatus();
 		} else if (requestCode == REQUEST_IMAGE_SELECT
@@ -363,9 +362,9 @@ public class ResearchFragment extends Fragment {
 			currentPhotoPath.push(cursor.getString(columnIndex));
 
 			cursor.close();
-			addPictureToLinkedList();
+			photoCount++;
 			currentPhotoDisplayed = 0;
-			imageView.setImageBitmap(currentPictures.get(0));
+			imageView.setImageBitmap(renderBitmap(currentPhotoDisplayed));
 
 			setPreviousNextButtonEnabledStatus();
 		}
@@ -398,7 +397,7 @@ public class ResearchFragment extends Fragment {
 	 * Add a picture to the linked list which contains file paths
 	 * and bitmap image previews.
 	 */
-	private void addPictureToLinkedList() {
+	private Bitmap renderBitmap(int picNum) {
 		// Get the dimensions of the View
 		int targetW = imageView.getWidth();
 		int targetH = imageView.getHeight();
@@ -406,7 +405,7 @@ public class ResearchFragment extends Fragment {
 		// Get the dimensions of the bitmap
 		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
 		bmOptions.inJustDecodeBounds = true;
-		BitmapFactory.decodeFile(currentPhotoPath.peek(), bmOptions);
+		BitmapFactory.decodeFile(currentPhotoPath.get(picNum), bmOptions);
 		int photoW = bmOptions.outWidth;
 		int photoH = bmOptions.outHeight;
 
@@ -417,20 +416,17 @@ public class ResearchFragment extends Fragment {
 		bmOptions.inJustDecodeBounds = false;
 		bmOptions.inSampleSize = scaleFactor;
 		bmOptions.inPurgeable = true;
-		Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath.peek(),
+		Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath.get(picNum),
 				bmOptions);
 		if (bitmap.getWidth() > bitmap.getHeight()) {
 			Matrix matrix = new Matrix();
 			matrix.postRotate(90);
 			Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
 					bmOptions.outWidth, bmOptions.outHeight, matrix, true);
-			currentPictures.push(rotatedBitmap);
-		} else {
-			currentPictures.push(bitmap);
+			bitmap = rotatedBitmap;
+			rotatedBitmap.recycle();
 		}
-		photoCount++;
-//		imageCounter.setText("Image Counter: " + photoCount + "/10");
-		// imageView.setImageBitmap(rotatedBitmap);
+		return( bitmap ); 
 	}
 
 	
@@ -443,15 +439,14 @@ public class ResearchFragment extends Fragment {
 
 		try {
 			imageView.setImageDrawable(null);
-			currentPictures.remove(currentPhotoDisplayed);
 			currentPhotoPath.remove(currentPhotoDisplayed);
-			if (currentPictures.size() == 0) {
+			if (currentPhotoPath.size() == 0) {
 				imageView.setImageDrawable(null);
 			} else if (currentPhotoDisplayed != 0) {
-				imageView.setImageBitmap(currentPictures
-						.get(--currentPhotoDisplayed));
+				currentPhotoDisplayed--;
+				imageView.setImageBitmap(renderBitmap(currentPhotoDisplayed));
 			} else {
-				imageView.setImageBitmap(currentPictures.get(0));
+				imageView.setImageBitmap(renderBitmap(0));
 			}
 			photoCount--;
 //			imageCounter.setText("Image Counter: " + photoCount + "/10");
