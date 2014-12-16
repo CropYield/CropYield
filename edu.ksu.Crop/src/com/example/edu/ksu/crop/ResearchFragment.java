@@ -424,7 +424,7 @@ public class ResearchFragment extends Fragment {
 			Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
 					bmOptions.outWidth, bmOptions.outHeight, matrix, true);
 			bitmap = rotatedBitmap;
-			rotatedBitmap.recycle();
+//			rotatedBitmap.recycle();
 		}
 		return( bitmap ); 
 	}
