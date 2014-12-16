@@ -59,7 +59,7 @@ public class FinalFragment extends Fragment implements OnSeekBarChangeListener {
 		exampleSeries = new GraphViewSeries(CalculateValues(headsPerAcreInt,
 				grainNum, seedsPerPound));
 
-		GraphView graphView = new LineGraphView(getActivity(),
+		GraphView graphView = new BarGraphView(getActivity(),
 				"Projeced Bushels Per Acre");
 		graphView.addSeries(exampleSeries); // data
 		graphView.setHorizontalLabels(new String[] { "Low Yield",
@@ -147,6 +147,7 @@ public class FinalFragment extends Fragment implements OnSeekBarChangeListener {
 
 	}
 
+	//This converts a number range from 0-100 to c - d.
 	private int UpdateGraphView(int x, int d, int c) {
 		return (int) ((((double) (x - 1) / (double) (99)) * (d - c)) + c);
 	}
