@@ -54,7 +54,6 @@ public class PictureFragment extends Fragment {
 	Button choosePicture;
 	Button finish;
 	Button deletePicture;
-	Button nextButton;
 	ImageButton nextPicture;
 	ImageButton previousPicture;
 	TextView imageCounter;
