@@ -113,8 +113,13 @@ public class MainActivity extends ActionBarActivity implements
 					.replace(R.id.container,
 							CalculateFragment.newInstance(position + 1))
 					.commit();
+		} else if (position == 6) {
+			fragmentManager
+					.beginTransaction()
+					.replace(R.id.container,
+							ResearchFragment.newInstance(position + 1))
+					.commit();
 		} else {
-
 			fragmentManager
 					.beginTransaction()
 					.replace(R.id.container,
@@ -142,6 +147,9 @@ public class MainActivity extends ActionBarActivity implements
 			break;
 		case 6:
 			mTitle = getString(R.string.title_section6);
+			break;
+		case 7:
+			mTitle = getString(R.string.title_section7);
 			break;
 		}
 	}
