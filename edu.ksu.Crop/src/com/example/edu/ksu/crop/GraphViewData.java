@@ -1,7 +1,8 @@
 package com.example.edu.ksu.crop;
 
 import com.jjoe64.graphview.*;
-
+//Class to implement GraphViewDataInterface
+//Please see documentation at: android-graphview.org(2014)
 public class GraphViewData implements GraphViewDataInterface{
 
 	private double X;
