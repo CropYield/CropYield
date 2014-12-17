@@ -77,6 +77,10 @@ public class PlanTripFragment extends Fragment {
 
 				try {
 					new retrieve_weatherTask2().execute();
+					/* Show a toast notifying user that weather has downloaded */
+					Activity context = getActivity();
+					Toast toast = Toast.makeText(context, "Weather information has been stored", Toast.LENGTH_LONG);
+					toast.show();
 				} catch (Exception e) {
 					Toast.makeText(getActivity(), "Failed to save information",
 							Toast.LENGTH_SHORT).show();
