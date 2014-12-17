@@ -93,10 +93,11 @@ public class MainActivity extends ActionBarActivity implements
 							PlaceholderFragment.newInstance(position + 1))
 					.commit();
 		} else if (position == 3) {
-			fragmentManager
+					fragmentManager
 					.beginTransaction()
 					.replace(R.id.container,
-							PictureFragment.newInstance(position + 1)).commit();
+							SignInFragment.newInstance(position + 1))
+					.commit();
 		} else if (position == 4) {
 			try {
 				fragmentManager
@@ -119,6 +120,8 @@ public class MainActivity extends ActionBarActivity implements
 					.replace(R.id.container,
 							ResearchFragment.newInstance(position + 1))
 					.commit();
+		} else if (position == 7) {
+			
 		} else {
 			fragmentManager
 					.beginTransaction()
@@ -140,7 +143,7 @@ public class MainActivity extends ActionBarActivity implements
 			mTitle = getString(R.string.title_section3);
 			break;
 		case 4:
-			mTitle = getString(R.string.title_section4);
+			mTitle = getString(R.string.title_section8);
 			break;
 		case 5:
 			mTitle = getString(R.string.title_section5);
@@ -150,6 +153,9 @@ public class MainActivity extends ActionBarActivity implements
 			break;
 		case 7:
 			mTitle = getString(R.string.title_section7);
+			break;
+		case 8:
+			mTitle = getString(R.string.title_section8);
 			break;
 		}
 	}

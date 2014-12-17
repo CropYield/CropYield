@@ -9,6 +9,7 @@
     <string name="title_section5">Soil Report</string>
     <string name="title_section6">Calculator</string>
     <string name="title_section7">Research</string><string name="navigation_drawer_open">Open navigation drawer</string><string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="title_section8">Sign In</string>
     <string name="action_example"></string>
     <string name="action_settings">Settings</string>
     <string name="button_take_picture">Take Picture</string>
