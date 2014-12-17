@@ -27,7 +27,14 @@ public class FinalFragment extends Fragment implements OnSeekBarChangeListener {
 	static double averageBUA;
 	TextView bpaTV;
 	Button weather;
-
+	
+	/* newInstance
+	 * @params:
+	 *	sectionNumber : int : not necessary for input since this fragment isn't accessible from the menu
+	 *	dataSet : DataSet : Used to pass through data about the recent fields like area
+	 * 
+	 * Return : FinalFragment : returns an instance of this class.
+	 */
 	public static FinalFragment newInstance(int sectionNumber, DataSet dataSet) {
 		FinalFragment fragment = new FinalFragment();
 		data = dataSet;
@@ -41,10 +48,21 @@ public class FinalFragment extends Fragment implements OnSeekBarChangeListener {
 		return fragment;
 	}
 
+	/*
+	 * Constructor for override
+	 * 
+	 */
 	public FinalFragment() {
 
 	}
 
+	/*
+	 * Implemented by default. FinalFragment extends Fragment. Please see documentation below
+	 * 
+	 * This also creates the view and set all the listeners for the View
+	 * (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
+	 */
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		final View rootView = inflater.inflate(R.layout.fragment_final_page,
@@ -136,6 +154,20 @@ public class FinalFragment extends Fragment implements OnSeekBarChangeListener {
 
 	}
 
+	/*
+	 * This method will return a GraphViewData[] array of the 3 values 
+	 * @params:
+	 * 	HPA : int : Heads per Acre
+	 *  d : double : calculated value from pictures
+	 *  SPP : int : SeedsPerPound
+	 *  
+	 * Return: 
+	 * 	GraphViewData[] : array of GraphViewData from GraphViewData.java
+	 *  Please see the GraphViewData.java file to see how this is implemented. It
+	 *  is used to implement the interface from android-graphview.
+	 * 	See android-graphview.org for documentation.
+	 * 
+	 */
 	private static GraphViewData[] CalculateValues(int HPA, double d, int SPP) {
 		double  lowBUA, highBUA;
 		averageBUA = (double) ((((HPA * d) * 1000) / SPP) / 56);
@@ -147,7 +179,16 @@ public class FinalFragment extends Fragment implements OnSeekBarChangeListener {
 
 	}
 
-	//This converts a number range from 0-100 to c - d.
+	/*
+	 * This is used to convert ranges of 0 - 100 to different values(sliders)
+	 * @params:
+	 * 	x : int : The value of the slider(0 - 100)
+	 * 	d : int : Maximum value of range
+	 *  c : int : Minimum value of range
+	 *  
+	 * Return:
+	 * 	int : valuse converted from 100 to number within range
+	 */
 	private int UpdateGraphView(int x, int d, int c) {
 		return (int) ((((double) (x - 1) / (double) (99)) * (d - c)) + c);
 	}
