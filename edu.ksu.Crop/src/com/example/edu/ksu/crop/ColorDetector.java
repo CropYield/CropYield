@@ -12,6 +12,8 @@ import org.opencv.core.Scalar;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
+import android.util.Log;
+
 public class ColorDetector {
 	String currentFile;
 	public Mat dilatedMask;
@@ -64,7 +66,7 @@ public class ColorDetector {
 		        double area = Imgproc.contourArea(wrapper);
 		        squareArea += area;
 		    }
-	       
+	       Log.i("CROPYIELD", "Square: " + String.valueOf(squareArea));
 	        Imgproc.dilate(Masked, dilatedMask, new Mat());
 	       
 			List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
@@ -77,6 +79,7 @@ public class ColorDetector {
 		        double area = Imgproc.contourArea(wrapper);
 		        totalArea += area;
 		    }
+		    Log.i("CROPYIELD", "Sorghum: " + String.valueOf(totalArea));
 		    return (totalArea/squareArea);
 			//return(String.format("%.3f", totalArea / squareArea) + " inches squared");
 		}
