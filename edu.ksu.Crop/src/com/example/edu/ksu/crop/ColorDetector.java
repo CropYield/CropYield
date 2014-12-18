@@ -12,6 +12,8 @@ import org.opencv.core.Scalar;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
+import android.util.Log;
+
 public class ColorDetector {
 	String currentFile;
 	public Mat dilatedMask;
@@ -45,13 +47,13 @@ public class ColorDetector {
 			 *  HSV is converted from normal 0-360 / 0-100 / 0-100 to
 			 *  another HSV format: 0-180 / 0-255 / 0-255. 
 			 */
-	        Core.inRange(HSV, new Scalar(0, 60, 60), new Scalar(25, 175, 175), Masked);
+	        Core.inRange(HSV, new Scalar(0, 50, 40), new Scalar(25, 175, 175), Masked);
 			/* 
 			 * Give the range of colors in HSV for the 1" square where
 			 *  HSV is converted from normal 0-360 / 0-100 / 0-100 to
 			 *  another HSV format: 0-180 / 0-255 / 0-255. 
 			 */
-	        Core.inRange(HSV, new Scalar(50, 60, 50), new Scalar(75, 255, 180), squarePull);
+	        Core.inRange(HSV, new Scalar(75, 80, 80), new Scalar(115, 255, 255), squarePull);
 	        
 	        
 			List<MatOfPoint> sqContours = new ArrayList<MatOfPoint>();
@@ -64,7 +66,8 @@ public class ColorDetector {
 		        double area = Imgproc.contourArea(wrapper);
 		        squareArea += area;
 		    }
-	       
+	        Log.i("CROPYIELD", "Square: " + String.valueOf(squareArea));
+
 	        Imgproc.dilate(Masked, dilatedMask, new Mat());
 	       
 			List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
@@ -77,6 +80,8 @@ public class ColorDetector {
 		        double area = Imgproc.contourArea(wrapper);
 		        totalArea += area;
 		    }
+	        Log.i("CROPYIELD", "Sorghum: " + String.valueOf(totalArea));
+
 		    return (totalArea/squareArea);
 			//return(String.format("%.3f", totalArea / squareArea) + " inches squared");
 		}
