@@ -8,6 +8,9 @@ import java.util.Scanner;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.parse.Parse;
+import com.parse.ParseObject;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -60,6 +63,17 @@ public class MainActivity extends ActionBarActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		
+		// Enable Local Datastore.
+		Parse.enableLocalDatastore(this);
+		 
+		Parse.initialize(this, "gD6b5jCam6YiHvknBsJr2Vl34oFvThlSdOUZBXkq", "DnsiavpkN6mQPpuh7yZEo8R9o4zpSVNvnSPCRYQc");
+		
+		ParseObject testObject = new ParseObject("TestObject");
+		testObject.put("foo", "bar");
+		testObject.saveInBackground();
+		
 		setContentView(R.layout.activity_main);
 
 		mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager()
@@ -93,11 +107,10 @@ public class MainActivity extends ActionBarActivity implements
 							PlaceholderFragment.newInstance(position + 1))
 					.commit();
 		} else if (position == 3) {
-					fragmentManager
+			fragmentManager
 					.beginTransaction()
 					.replace(R.id.container,
-							SignInFragment.newInstance(position + 1))
-					.commit();
+							SignInFragment.newInstance(position + 1)).commit();
 		} else if (position == 4) {
 			try {
 				fragmentManager
@@ -121,7 +134,7 @@ public class MainActivity extends ActionBarActivity implements
 							ResearchFragment.newInstance(position + 1))
 					.commit();
 		} else if (position == 7) {
-			
+
 		} else {
 			fragmentManager
 					.beginTransaction()
@@ -192,12 +205,10 @@ public class MainActivity extends ActionBarActivity implements
 		return super.onOptionsItemSelected(item);
 	}
 
-	
-	
 	/**
-	 * The Placeholder Fragment is actually the view for the home page. 
-	 * This is the page that contains the two buttons that you would normally click
-	 * to navigate to either the Yield Calculator or the Plan Trip area.
+	 * The Placeholder Fragment is actually the view for the home page. This is
+	 * the page that contains the two buttons that you would normally click to
+	 * navigate to either the Yield Calculator or the Plan Trip area.
 	 */
 	public static class PlaceholderFragment extends Fragment {
 		/**
@@ -225,21 +236,33 @@ public class MainActivity extends ActionBarActivity implements
 		public PlaceholderFragment() {
 		}
 
-		//This sets the functionality of the two buttons and where they navigate
-		//when they are clicked.
+		// This sets the functionality of the two buttons and where they
+		// navigate
+		// when they are clicked.
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_main, container,
 					false);
 
-			yieldCalculator = (Button) rootView.findViewById(R.id.YieldCalculator);
-			planTrip = 		  (Button) rootView.findViewById(R.id.PlanTrip);
-			
+			yieldCalculator = (Button) rootView
+					.findViewById(R.id.YieldCalculator);
+			planTrip = (Button) rootView.findViewById(R.id.PlanTrip);
+
 			planTrip.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
 					// Create new fragment and transaction
-					newFragment = PlanTripFragment.newInstance(10);//Instance has something to do with title, will work on this later during clearn up
+					newFragment = PlanTripFragment.newInstance(10);// Instance
+																	// has
+																	// something
+																	// to do
+																	// with
+																	// title,
+																	// will work
+																	// on this
+																	// later
+																	// during
+																	// clearn up
 					transaction = getFragmentManager().beginTransaction();
 					transaction.replace(R.id.container, newFragment);
 					transaction.addToBackStack(null);
@@ -247,7 +270,7 @@ public class MainActivity extends ActionBarActivity implements
 				}
 			});
 
-			//Sets the button to navigate to the start of the Yield Calculator
+			// Sets the button to navigate to the start of the Yield Calculator
 			yieldCalculator.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -259,8 +282,6 @@ public class MainActivity extends ActionBarActivity implements
 				}
 			});
 
-			
-
 			return rootView;
 		}
 
@@ -269,7 +290,7 @@ public class MainActivity extends ActionBarActivity implements
 			super.onAttach(activity);
 			((MainActivity) activity).onSectionAttached(getArguments().getInt(
 					ARG_SECTION_NUMBER));
-			
+
 		}
 	}
 
@@ -615,8 +636,8 @@ public class MainActivity extends ActionBarActivity implements
 	}
 
 	/*
-	 * This is for the that is available in the side-menu, it can be used
-	 * to calculate output based off of a few different things.
+	 * This is for the that is available in the side-menu, it can be used to
+	 * calculate output based off of a few different things.
 	 */
 	public static class CalculateFragment extends Fragment implements
 			Button.OnClickListener {
