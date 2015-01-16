@@ -5,11 +5,9 @@ import java.util.List;
 
 public class DataSet {
 	
+	private String fieldName = "";
 	private int headsPerPartAcre = 0;
 	private List<Double> areas = new ArrayList<Double>();
-	//we might need to use a dictionary so that we can add and remove image areas as we go.
-	//I will have to look a little deeper into the photo code, but for now this will work.
-	
 	private int imageAreaCounter = 0;
 	
 	public DataSet(){
@@ -48,6 +46,16 @@ public class DataSet {
 	//Equation supplied as of 10/06/14 This is using inches for the equation.
 	public double ReturnGrainNumber(){
 		return 120 * AverageArea() - 400;
+	}
+	
+	//Set the name of the field
+	public void setFieldName(String name){
+		this.fieldName = name;
+	}
+	
+	//Return the name of the field
+	public String getFieldName(){
+		return fieldName;
 	}
 	
 	
