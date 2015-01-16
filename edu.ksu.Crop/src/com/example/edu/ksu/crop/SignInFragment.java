@@ -18,6 +18,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.example.edu.ksu.crop.MainActivity.PlaceholderFragment;
+import com.parse.LogInCallback;
+import com.parse.ParseException;
+import com.parse.ParseUser;
+import com.parse.SignUpCallback;
 
 import android.app.Activity;
 import android.content.Context;
@@ -86,18 +90,55 @@ public class SignInFragment extends Fragment {
 			
 			@Override
 			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
-				//This assumes that they are both filled for now...
-				//******************************FIX LATER*******************************
-				if(SignIn(email.getText().toString(), password.getText().toString()))
-				{
-					Toast.makeText(getActivity(), "Whoot it workded", Toast.LENGTH_LONG);
-				}
-				else
-				{
-					Toast.makeText(getActivity(), "It didnt work", Toast.LENGTH_LONG);
-				}
+				ParseUser.logInInBackground(email.getText().toString(), password.getText().toString(), new LogInCallback() {
+					  public void done(ParseUser user, ParseException e) {
+					    if (user != null) {
+					    	Fragment newFragment = PlaceholderFragment.newInstance(0);
+							FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+							// Replace whatever is in the fragment_container view with
+							// this fragment,
+							// and add the transaction to the back stack
+							transaction.replace(R.id.container, newFragment);
+							// Commit the transaction
+							transaction.commit();
+					    } else {
+					     Toast.makeText(getActivity(), "Sign In Failed", Toast.LENGTH_SHORT).show();
+					    }
+					  }
+					});
 				
+			}
+		});
+        
+        signUp.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				ParseUser user = new ParseUser();
+				user.setUsername(email.getText().toString());
+				user.setPassword(password.getText().toString());
+				user.setEmail(email.getText().toString());
+				
+				 
+				user.signUpInBackground(new SignUpCallback() {
+				  public void done(ParseException e) {
+				    if (e == null) {
+				    	Fragment newFragment = PlaceholderFragment.newInstance(0);
+						FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+						// Replace whatever is in the fragment_container view with
+						// this fragment,
+						// and add the transaction to the back stack
+						transaction.replace(R.id.container, newFragment);
+
+						// Commit the transaction
+						transaction.commit();
+				    } else {
+				     Toast.makeText(getActivity(), "Sign-Up Failed!", Toast.LENGTH_SHORT).show();
+				    }
+				  }
+				});
 			}
 		});
         return rootView;

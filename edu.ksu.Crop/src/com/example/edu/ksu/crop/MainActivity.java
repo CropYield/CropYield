@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import com.parse.Parse;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -67,12 +68,9 @@ public class MainActivity extends ActionBarActivity implements
 		
 		// Enable Local Datastore.
 		Parse.enableLocalDatastore(this);
-		 
+		//This will initialize Parse for the application and allow us to add stuff to a DB
 		Parse.initialize(this, "gD6b5jCam6YiHvknBsJr2Vl34oFvThlSdOUZBXkq", "DnsiavpkN6mQPpuh7yZEo8R9o4zpSVNvnSPCRYQc");
 		
-		ParseObject testObject = new ParseObject("TestObject");
-		testObject.put("foo", "bar");
-		testObject.saveInBackground();
 		
 		setContentView(R.layout.activity_main);
 
@@ -83,6 +81,18 @@ public class MainActivity extends ActionBarActivity implements
 		// Set up the drawer.
 		mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
 				(DrawerLayout) findViewById(R.id.drawer_layout));
+		
+		ParseUser currentUser = ParseUser.getCurrentUser();
+		if(currentUser != null){
+			
+		} else {
+			FragmentManager fragmentManager = getSupportFragmentManager();
+			fragmentManager
+			.beginTransaction()
+			.replace(R.id.container,
+					SignInFragment.newInstance(3))
+			.commit();
+		}
 	}
 
 	@Override
