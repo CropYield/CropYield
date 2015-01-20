@@ -60,6 +60,8 @@ public class MainActivity extends ActionBarActivity implements
 	 * {@link #restoreActionBar()}.
 	 */
 	private CharSequence mTitle;
+	
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -228,6 +230,7 @@ public class MainActivity extends ActionBarActivity implements
 		private static final String ARG_SECTION_NUMBER = "section_number";
 		Button yieldCalculator;
 		Button planTrip;
+		Button logOut;
 
 		Fragment newFragment;
 		FragmentTransaction transaction;
@@ -254,6 +257,32 @@ public class MainActivity extends ActionBarActivity implements
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_main, container,
 					false);
+			
+			logOut = (Button) rootView.findViewById(R.id.buttonSignOut);
+			logOut.setOnClickListener(new View.OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					ParseUser.logOut();
+					//getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+					Fragment newFragment = SignInFragment
+							.newInstance(3);
+					FragmentTransaction transaction = getFragmentManager()
+							.beginTransaction();
+
+					// Replace whatever is in the
+					// fragment_container view with
+					// this fragment,
+					// and add the transaction to the back stack
+					
+					transaction.replace(R.id.container,
+							newFragment);
+					// Commit the transaction
+					transaction.commit();
+					
+				}
+			});
+			
 
 			yieldCalculator = (Button) rootView
 					.findViewById(R.id.YieldCalculator);
