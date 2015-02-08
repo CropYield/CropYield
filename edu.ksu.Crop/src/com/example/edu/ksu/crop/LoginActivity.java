@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.LogInCallback;
+import com.parse.ParseAnonymousUtils;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.RequestPasswordResetCallback;
@@ -77,7 +78,7 @@ public class LoginActivity extends Activity {
     }
 
     public void anonymousUser(View v) {
-    	// Do something
+    	new Anonymous_User(LoginActivity.this ).execute();
     }
 
     private boolean checkEmailValue() {
@@ -192,6 +193,62 @@ class Change_Password extends AsyncTask<Void, Void, Void> {
     protected void onPostExecute(Void results) {
         super.onPostExecute(results);
         progress.dismiss();
+    }
+}
+class Anonymous_User extends AsyncTask<Void, Void, Void> {
+    Activity mActivity;
+    ProgressDialog progress;
+    Boolean mLoginFailed;
+
+    public Anonymous_User( Activity activity ) {
+        mActivity = activity;
+
+        progress = new ProgressDialog( mActivity );
+
+    }
+
+    protected void onPreExecute() {
+        super.onPreExecute();
+        progress.setCancelable(true);
+        progress.setMessage("Logging in Anonymously");
+        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progress.show();
+    }
+
+    protected Void doInBackground(Void... params) {
+        mLoginFailed = false;
+    	ParseAnonymousUtils.logIn(new LogInCallback() {
+    		public void done(ParseUser user, ParseException e) {
+    			if (e != null) {
+    				Log.d("SORGHUMYIELD:ANONLOGIN: ", "Anonymous Login Failed");
+                    mLoginFailed = true;
+    			} else {
+    				Log.d("SORGHUMYIELD:ANONLOGIN: ", "Anonymous Login Successful");
+    			}
+    		}
+    	});
+      ParseUser currentUser = null;
+      while( currentUser == null && mLoginFailed == false ) {
+          try {
+              Thread.sleep(1500);
+          } catch (InterruptedException e) {
+          }
+          currentUser = ParseUser.getCurrentUser();
+      }
+    	return null;
+    }
+
+    protected void onPostExecute(Void results) {
+        super.onPostExecute(results);
+        if( mLoginFailed == false ) {
+            Intent mainIntent = new Intent(mActivity.getApplicationContext(), MainActivity.class);
+            Log.d("SORGHUMYIELD", "In Anon_User PostExecute");
+            progress.dismiss();
+            mActivity.startActivity(mainIntent);
+            mActivity.finish();
+        } else {
+            progress.dismiss();
+        }
     }
 }
 
