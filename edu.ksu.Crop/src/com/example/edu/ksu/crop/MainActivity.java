@@ -68,11 +68,7 @@ public class MainActivity extends ActionBarActivity implements
 		super.onCreate(savedInstanceState);
 		
 		
-		// Enable Local Datastore.
-		Parse.enableLocalDatastore(this);
-		//This will initialize Parse for the application and allow us to add stuff to a DB
-		Parse.initialize(this, "gD6b5jCam6YiHvknBsJr2Vl34oFvThlSdOUZBXkq", "DnsiavpkN6mQPpuh7yZEo8R9o4zpSVNvnSPCRYQc");
-		
+
 		
 		setContentView(R.layout.activity_main);
 

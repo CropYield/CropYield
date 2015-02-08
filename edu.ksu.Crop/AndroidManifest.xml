@@ -8,7 +8,7 @@
         android:minSdkVersion="12"
         android:targetSdkVersion="19" />
     
-    
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.CAMERA" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -18,26 +18,33 @@
 	<uses-permission android:name="android.permission.ACCESS_GPS" />
 	<uses-permission android:name="android.permission.ACCESS_ASSISTED_GPS" />
 	<uses-permission android:name="android.permission.ACCESS_LOCATION" />
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	
 	
 	
 	<uses-feature android:name="android.hardware.camera" />
 	
     <application
+        android:name="com.example.edu.ksu.crop.CropYield"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
+        
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait"
             android:label="@string/app_name" >
+
+        </activity>
+        
+		<activity
+		    android:name=".LoginActivity"
+		    android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity> 
         <activity 
             android:name="SoilFragment"
             android:screenOrientation="portrait" >
