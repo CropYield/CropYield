@@ -55,6 +55,19 @@
             android:layout_height="wrap_content"
             android:text="Sign Up" />
 
+        <TextView
+            android:id="@+id/textViewOrAgain"
+           android:layout_width="fill_parent"
+            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:text="or" />
+
+        <Button
+            android:id="@+id/buttonReset"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Reset Password" />
+
     </LinearLayout>
 
 </RelativeLayout>

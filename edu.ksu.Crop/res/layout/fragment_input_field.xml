@@ -4,30 +4,72 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    
-     	<TextView
-            android:id="@+id/textHeads"
+    <TextView
+        android:id="@+id/textFieldName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Field Name" />
+
+    <EditText
+        android:id="@+id/editFieldName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Field Name" />
+
+    <TextView
+        android:id="@+id/textHeads"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Heads per 1/1000th Acre" />
+
+    <EditText
+        android:id="@+id/editHPA"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="50"
+        android:inputType="number" >
+
+        <requestFocus />
+    </EditText>
+
+    <TextView
+        android:id="@+id/textViewSheet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Do you have the mandatory CropYield sheet?" />
+
+    <RadioGroup
+        android:id="@+id/radioHasSheetGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <RadioButton
+            android:id="@+id/radioYes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Heads per 1/1000th Acre" />
+            android:text="Yes" />
 
-        <EditText
-            android:id="@+id/editHPA"
-            android:layout_width="match_parent"
+        <RadioButton
+            android:id="@+id/radioNo"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="number"
-            android:hint="50" >
+            android:checked="true"
+            android:text="No" />
+    </RadioGroup>
 
-            <requestFocus />
-        </EditText>
+    <Button
+        android:id="@+id/buttonHelpInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Help/Print Sheet" />
 
-        <Button
-            android:id="@+id/buttonNext"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Next (Take Pictures)" />
-        
-      
-    
+    <Button
+        android:id="@+id/buttonNext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        android:text="Next (Take Pictures)" />
+
 </LinearLayout>

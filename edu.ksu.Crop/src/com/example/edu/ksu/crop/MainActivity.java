@@ -11,11 +11,11 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -34,11 +34,13 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-
 import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 //import com.example.edu.ksu.crop.MainActivity.WeatherFragment.PictureFragment;
 
@@ -56,10 +58,16 @@ public class MainActivity extends ActionBarActivity implements
 	 * {@link #restoreActionBar()}.
 	 */
 	private CharSequence mTitle;
+	
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		
+
+		
 		setContentView(R.layout.activity_main);
 
 		mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager()
@@ -69,6 +77,7 @@ public class MainActivity extends ActionBarActivity implements
 		// Set up the drawer.
 		mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
 				(DrawerLayout) findViewById(R.id.drawer_layout));
+		
 	}
 
 	@Override
@@ -92,12 +101,11 @@ public class MainActivity extends ActionBarActivity implements
 					.replace(R.id.container,
 							PlaceholderFragment.newInstance(position + 1))
 					.commit();
-		} else if (position == 3) {
-					fragmentManager
-					.beginTransaction()
-					.replace(R.id.container,
-							SignInFragment.newInstance(position + 1))
-					.commit();
+//		} else if (position == 3) {
+//			fragmentManager
+//					.beginTransaction()
+//					.replace(R.id.container,
+//							SignInFragment.newInstance(position + 1)).commit();
 		} else if (position == 4) {
 			try {
 				fragmentManager
@@ -121,7 +129,7 @@ public class MainActivity extends ActionBarActivity implements
 							ResearchFragment.newInstance(position + 1))
 					.commit();
 		} else if (position == 7) {
-			
+
 		} else {
 			fragmentManager
 					.beginTransaction()
@@ -180,6 +188,19 @@ public class MainActivity extends ActionBarActivity implements
 		return super.onCreateOptionsMenu(menu);
 	}
 
+	private void logoutCurrentUser() {
+		ParseUser currentUser = ParseUser.getCurrentUser();
+		Intent intent = new Intent(this, LoginActivity.class);
+		if (currentUser != null) {
+			currentUser.logOut();
+			ParseObject.unpinAllInBackground();
+			Toast.makeText(this,  "User " + currentUser.getUsername() + " logged out", Toast.LENGTH_LONG).show();
+		}
+		startActivity(intent);
+		finish();
+	}
+	
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
@@ -188,16 +209,16 @@ public class MainActivity extends ActionBarActivity implements
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
 			return true;
+		} else if (id == R.id.action_logout) {
+			logoutCurrentUser();
 		}
 		return super.onOptionsItemSelected(item);
 	}
 
-	
-	
 	/**
-	 * The Placeholder Fragment is actually the view for the home page. 
-	 * This is the page that contains the two buttons that you would normally click
-	 * to navigate to either the Yield Calculator or the Plan Trip area.
+	 * The Placeholder Fragment is actually the view for the home page. This is
+	 * the page that contains the two buttons that you would normally click to
+	 * navigate to either the Yield Calculator or the Plan Trip area.
 	 */
 	public static class PlaceholderFragment extends Fragment {
 		/**
@@ -207,6 +228,7 @@ public class MainActivity extends ActionBarActivity implements
 		private static final String ARG_SECTION_NUMBER = "section_number";
 		Button yieldCalculator;
 		Button planTrip;
+		Button logOut;
 
 		Fragment newFragment;
 		FragmentTransaction transaction;
@@ -225,21 +247,35 @@ public class MainActivity extends ActionBarActivity implements
 		public PlaceholderFragment() {
 		}
 
-		//This sets the functionality of the two buttons and where they navigate
-		//when they are clicked.
+		// This sets the functionality of the two buttons and where they
+		// navigate
+		// when they are clicked.
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_main, container,
 					false);
-
-			yieldCalculator = (Button) rootView.findViewById(R.id.YieldCalculator);
-			planTrip = 		  (Button) rootView.findViewById(R.id.PlanTrip);
+		
 			
+
+			yieldCalculator = (Button) rootView
+					.findViewById(R.id.YieldCalculator);
+			planTrip = (Button) rootView.findViewById(R.id.PlanTrip);
+
 			planTrip.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
 					// Create new fragment and transaction
-					newFragment = PlanTripFragment.newInstance(10);//Instance has something to do with title, will work on this later during clearn up
+					newFragment = PlanTripFragment.newInstance(10);// Instance
+																	// has
+																	// something
+																	// to do
+																	// with
+																	// title,
+																	// will work
+																	// on this
+																	// later
+																	// during
+																	// clearn up
 					transaction = getFragmentManager().beginTransaction();
 					transaction.replace(R.id.container, newFragment);
 					transaction.addToBackStack(null);
@@ -247,7 +283,7 @@ public class MainActivity extends ActionBarActivity implements
 				}
 			});
 
-			//Sets the button to navigate to the start of the Yield Calculator
+			// Sets the button to navigate to the start of the Yield Calculator
 			yieldCalculator.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -259,8 +295,6 @@ public class MainActivity extends ActionBarActivity implements
 				}
 			});
 
-			
-
 			return rootView;
 		}
 
@@ -269,7 +303,7 @@ public class MainActivity extends ActionBarActivity implements
 			super.onAttach(activity);
 			((MainActivity) activity).onSectionAttached(getArguments().getInt(
 					ARG_SECTION_NUMBER));
-			
+
 		}
 	}
 
@@ -615,8 +649,8 @@ public class MainActivity extends ActionBarActivity implements
 	}
 
 	/*
-	 * This is for the that is available in the side-menu, it can be used
-	 * to calculate output based off of a few different things.
+	 * This is for the that is available in the side-menu, it can be used to
+	 * calculate output based off of a few different things.
 	 */
 	public static class CalculateFragment extends Fragment implements
 			Button.OnClickListener {
