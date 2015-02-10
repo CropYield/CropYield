@@ -4,13 +4,11 @@
     tools:context="com.example.edu.ksu.crop.MainActivity" >
 
     <item
-        android:id="@+id/action_example"
-        android:title="@string/action_example"
-        app:showAsAction="withText|ifRoom"/>
-    <item
         android:id="@+id/action_settings"
-        android:orderInCategory="100"
+        android:orderInCategory="99"
         android:title="@string/action_settings"
         app:showAsAction="never"/>
 
+	<item android:id="@+id/action_logout" android:orderInCategory="100" android:title="Logout"></item>
+	
 </menu>

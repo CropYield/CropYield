@@ -8,18 +8,14 @@ import java.util.Scanner;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.parse.Parse;
-import com.parse.ParseObject;
-import com.parse.ParseUser;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -38,11 +34,13 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-
 import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 //import com.example.edu.ksu.crop.MainActivity.WeatherFragment.PictureFragment;
 
@@ -68,11 +66,7 @@ public class MainActivity extends ActionBarActivity implements
 		super.onCreate(savedInstanceState);
 		
 		
-		// Enable Local Datastore.
-		Parse.enableLocalDatastore(this);
-		//This will initialize Parse for the application and allow us to add stuff to a DB
-		Parse.initialize(this, "gD6b5jCam6YiHvknBsJr2Vl34oFvThlSdOUZBXkq", "DnsiavpkN6mQPpuh7yZEo8R9o4zpSVNvnSPCRYQc");
-		
+
 		
 		setContentView(R.layout.activity_main);
 
@@ -84,17 +78,6 @@ public class MainActivity extends ActionBarActivity implements
 		mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
 				(DrawerLayout) findViewById(R.id.drawer_layout));
 		
-		ParseUser currentUser = ParseUser.getCurrentUser();
-		if(currentUser != null){
-			
-		} else {
-			FragmentManager fragmentManager = getSupportFragmentManager();
-			fragmentManager
-			.beginTransaction()
-			.replace(R.id.container,
-					SignInFragment.newInstance(3))
-			.commit();
-		}
 	}
 
 	@Override
@@ -118,11 +101,11 @@ public class MainActivity extends ActionBarActivity implements
 					.replace(R.id.container,
 							PlaceholderFragment.newInstance(position + 1))
 					.commit();
-		} else if (position == 3) {
-			fragmentManager
-					.beginTransaction()
-					.replace(R.id.container,
-							SignInFragment.newInstance(position + 1)).commit();
+//		} else if (position == 3) {
+//			fragmentManager
+//					.beginTransaction()
+//					.replace(R.id.container,
+//							SignInFragment.newInstance(position + 1)).commit();
 		} else if (position == 4) {
 			try {
 				fragmentManager
@@ -205,6 +188,19 @@ public class MainActivity extends ActionBarActivity implements
 		return super.onCreateOptionsMenu(menu);
 	}
 
+	private void logoutCurrentUser() {
+		ParseUser currentUser = ParseUser.getCurrentUser();
+		Intent intent = new Intent(this, LoginActivity.class);
+		if (currentUser != null) {
+			currentUser.logOut();
+			ParseObject.unpinAllInBackground();
+			Toast.makeText(this,  "User " + currentUser.getUsername() + " logged out", Toast.LENGTH_LONG).show();
+		}
+		startActivity(intent);
+		finish();
+	}
+	
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
@@ -213,6 +209,8 @@ public class MainActivity extends ActionBarActivity implements
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
 			return true;
+		} else if (id == R.id.action_logout) {
+			logoutCurrentUser();
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -257,31 +255,7 @@ public class MainActivity extends ActionBarActivity implements
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_main, container,
 					false);
-			
-			logOut = (Button) rootView.findViewById(R.id.buttonSignOut);
-			logOut.setOnClickListener(new View.OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-					ParseUser.logOut();
-					//getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-					Fragment newFragment = SignInFragment
-							.newInstance(3);
-					FragmentTransaction transaction = getFragmentManager()
-							.beginTransaction();
-
-					// Replace whatever is in the
-					// fragment_container view with
-					// this fragment,
-					// and add the transaction to the back stack
-					
-					transaction.replace(R.id.container,
-							newFragment);
-					// Commit the transaction
-					transaction.commit();
-					
-				}
-			});
+		
 			
 
 			yieldCalculator = (Button) rootView
