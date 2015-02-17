@@ -2,30 +2,36 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-    
-    <ImageView
-        android:id="@+id/item_imageView"
-        android:background="@android:color/darker_gray"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_margin="5dp"
-    />
+
     <TextView
-        android:id="@+id/item_titleTextView"
+        android:id="@+id/txtView_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/item_imageView"
-        android:text="title text"
-    />
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/txtView_name"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="18dp"
+        android:text="01/01/01 01:01:01" />
+
     <TextView
-        android:id="@+id/item_descriptionTextView"
+        android:id="@+id/txtView_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/item_imageView"
-        android:layout_below="@id/item_titleTextView"
-        android:layout_marginTop="5dp"
-        android:text="description text"
-    />
-    
+        android:layout_alignLeft="@+id/txtView_date"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/txtView_date"
+        android:text="FieldName" />
+
+    <TextView
+        android:id="@+id/txtView_yield"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/txtView_date"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="15dp"
+        android:gravity="center"
+        android:text="123.4bu/a"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </RelativeLayout>
