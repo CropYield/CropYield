@@ -26,6 +26,7 @@ public class InputFragment extends Fragment {
 	
 	EditText fieldName;
 	EditText headsPerAcre;
+	EditText editFieldSize;
 	
 	RadioGroup hasSheet;
 	
@@ -57,6 +58,7 @@ public class InputFragment extends Fragment {
 		fieldName = (EditText) rootView.findViewById(R.id.editFieldName);
 		hasSheet = (RadioGroup) rootView.findViewById(R.id.radioHasSheetGroup);
 		helpbutton = (Button) rootView.findViewById(R.id.buttonHelpInput);
+		editFieldSize = (EditText) rootView.findViewById(R.id.editFieldSize);
 		
 		helpbutton.setOnClickListener(new OnClickListener() {
 			
@@ -66,7 +68,7 @@ public class InputFragment extends Fragment {
 				 Intent intent = new Intent();
 			        intent.setAction(Intent.ACTION_VIEW);
 			        intent.addCategory(Intent.CATEGORY_BROWSABLE);
-			        intent.setData(Uri.parse("http://www.google.com"));
+			        intent.setData(Uri.parse("http://www.google.com"));//This needs to be changed
 			        startActivity(intent);
 				
 			}
@@ -92,6 +94,7 @@ public class InputFragment extends Fragment {
 			public void onClick(View v) {
 				int headsPer = 0;
 				String fieldNameString = "";
+				double fieldSize = 0.0;
 				try {
 					headsPer = Integer.parseInt(headsPerAcre.getText()
 							.toString());
@@ -111,14 +114,27 @@ public class InputFragment extends Fragment {
 					return;
 				}
 				
+				try {
+					fieldSize = Double.parseDouble(editFieldSize.getText().toString());
+				} catch (Exception E) {
+					Toast.makeText(getActivity(),
+							"Please enter size of field.", Toast.LENGTH_LONG)
+							.show();
+					return;
+				}
+				
+				
+				
 				
 				if (headsPer != 0 && !fieldNameString.isEmpty()) {
 					headsPer = Integer.parseInt(headsPerAcre.getText()
 							.toString());
 					fieldNameString = fieldName.getText().toString();
 
+					
 					dataPassThrough.setFieldName(fieldNameString);
-					dataPassThrough.SetHeadsPerAcre(headsPer);// Set the head
+					dataPassThrough.SetHeadsPerAcre(headsPer);
+					dataPassThrough.setFieldSize(fieldSize);// Set the head
 																// per to pass
 																// data through
 																// to next image
@@ -126,6 +142,7 @@ public class InputFragment extends Fragment {
 																// part
 					newFragment = PictureFragment.newInstance(4,
 							dataPassThrough);
+					
 					transaction = getFragmentManager().beginTransaction();
 
 					// Replace whatever is in the fragment_container view with
