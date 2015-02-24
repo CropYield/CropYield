@@ -9,6 +9,7 @@ import com.parse.ParseGeoPoint;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.util.Log;

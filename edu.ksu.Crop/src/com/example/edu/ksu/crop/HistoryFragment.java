@@ -18,7 +18,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseGeoPoint;
@@ -54,10 +56,15 @@ public class HistoryFragment extends Fragment {
 				.findViewById(R.id.listView_HistoryFragment_list);
 		LoadHistoryAsync lha = new LoadHistoryAsync(getActivity(), list, this);
 		lha.execute();
-
-		// list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-		// public void onItemClick(AdapterView<?> adapterView, View view, int i,
-		// long l) {
+		
+		 list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			 public void onItemClick(AdapterView<?> adapterView, View view, int i,
+				long l) {
+				 Toast.makeText(getActivity(), "thisisatest", Toast.LENGTH_LONG).show();
+			 }
+		 });
+		
+		
 		// ArrayList<String> builderOptions = new ArrayList<String>();
 		// builderOptions.add("Revisit their profile");
 		// builderOptions.add("Send them an email");
