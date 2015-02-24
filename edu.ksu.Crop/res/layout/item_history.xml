@@ -13,18 +13,7 @@
         android:contentDescription="TODO"
         android:src="@drawable/ic_launcher" />
   
-    <TextView 
-        android:id="@+id/txtView_HistoryItem_FieldName"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/txtView_HistoryItem_DateZip"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignWithParentIfMissing="true"
-        android:layout_toRightOf="@id/imgView_HistoryItem_FieldIcon"
-        android:gravity="center_vertical"
-        android:text="Field Name"
-        android:textSize="16sp" />
+
     <TextView
         android:id="@+id/txtView_HistoryItem_DateZip"
         android:layout_width="fill_parent"
@@ -37,6 +26,17 @@
         android:text="01/01/01 - 00000"
         android:textSize="12sp" />
 
-
+    <TextView 
+        android:id="@+id/txtView_HistoryItem_FieldName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/txtView_HistoryItem_DateZip"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_toRightOf="@id/imgView_HistoryItem_FieldIcon"
+        android:gravity="center_vertical"
+        android:text="Field Name"
+        android:textSize="16sp" />
 
 </RelativeLayout> 
