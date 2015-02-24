@@ -3,12 +3,17 @@ package com.example.edu.ksu.crop;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.location.Location;
+
 public class DataSet {
 	
 	private String fieldName = "";
 	private int headsPerPartAcre = 0;
 	private List<Double> areas = new ArrayList<Double>();
 	private int imageAreaCounter = 0;
+	private Location loction;
+	private Double sizeOfField;
+	private int photosAnalyzed;
 	
 	public DataSet(){
 		
@@ -19,7 +24,7 @@ public class DataSet {
 	}
 	
 	//Returns the value for heads in the current acre set
-	public int ReturnHeadsPerAcre(){
+	public int getHeadsPerAcre(){
 		return headsPerPartAcre;
 	}
 	
@@ -56,6 +61,30 @@ public class DataSet {
 	//Return the name of the field
 	public String getFieldName(){
 		return fieldName;
+	}
+	
+	public void setLocation(Location location){
+		this.loction = location;
+	}
+	
+	public Location getLocation(){
+		return this.loction;
+	}
+	
+	public void setFieldSize(double fieldSize){
+		this.sizeOfField = fieldSize;
+	}
+	
+	public Double getFieldSize(){
+		return this.sizeOfField;
+	}
+	
+	public void setPhotosAnalyzed(int count){
+		this.photosAnalyzed = count;
+	}
+	
+	public int getPhotoAnalyzed(){
+		return this.photosAnalyzed;
 	}
 	
 	

@@ -208,10 +208,12 @@ public class PictureFragment extends Fragment {
 	 */
 	private void finishPictureFragment() {
 		String photoPath;
+		int imageCounter = currentPhotoPath.size();
 		for(int i = 0; i < currentPhotoPath.size(); i++ ) {
 			photoPath = currentPhotoPath.pop();
 			data.AddAreas(cd.AreaDetection(photoPath));
 		}
+		data.setPhotosAnalyzed(imageCounter);
 		Fragment newFragment = FinalFragment.newInstance(10, data);//Instance has something to do with title, will work on this later during clearn up
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
 		transaction.replace(R.id.container, newFragment);
