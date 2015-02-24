@@ -129,7 +129,11 @@ public class MainActivity extends ActionBarActivity implements
 							ResearchFragment.newInstance(position + 1))
 					.commit();
 		} else if (position == 7) {
-
+			fragmentManager
+			.beginTransaction()
+			.replace(R.id.container,
+					HistoryFragment.newInstance(position + 1))
+			.commit();
 		} else {
 			fragmentManager
 					.beginTransaction()
