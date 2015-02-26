@@ -14,6 +14,8 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,12 +59,17 @@ public class HistoryFragment extends Fragment {
 		LoadHistoryAsync lha = new LoadHistoryAsync(getActivity(), list, this);
 		lha.execute();
 		
-		 list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			 public void onItemClick(AdapterView<?> adapterView, View view, int i,
-				long l) {
-				 Toast.makeText(getActivity(), "thisisatest", Toast.LENGTH_LONG).show();
-			 }
-		 });
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, DetailedHistoryFragment.newInstance(6, (Trip)list.getAdapter().getItem( position )))
+                        .addToBackStack("DetailedHistoryFromHistoryList")
+                        .commit();
+            }
+        });
 		
 		
 		// ArrayList<String> builderOptions = new ArrayList<String>();
