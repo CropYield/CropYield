@@ -74,6 +74,7 @@ public class TripAdapter extends ArrayAdapter<Trip> {
         try {
         	List<Address> addresses = geocoder.getFromLocation(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]), 1);	
         	String zipCode = addresses.get(0).getPostalCode();
+        	if(zipCode == null) { zipCode = "No Zipcode"; }
         	description = zipCode + " - " + trip.getDate();
         } catch(Exception ex) {
         	Log.d("TripAdapter", " error thrown Geocoding");
