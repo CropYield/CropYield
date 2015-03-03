@@ -291,7 +291,7 @@ public class MainActivity extends ActionBarActivity implements
 			yieldCalculator.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					newFragment = HeadInputFragment.newInstance(7);
+					newFragment = InputFragment.newInstance(7);
 					transaction = getFragmentManager().beginTransaction();
 					transaction.replace(R.id.container, newFragment);
 					transaction.addToBackStack(null);
