@@ -37,7 +37,6 @@ public class PlanTripFragment extends Fragment {
 	Fragment newFragment;
 	FragmentTransaction transaction;
 	private ArrayList<String> listOfWeatherData = new ArrayList<String>();
-	private WeatherDataSource datasource;
 
 	public static DataSet dataPassThrough;
 
@@ -61,7 +60,7 @@ public class PlanTripFragment extends Fragment {
 		saveButton = (Button) rootView.findViewById(R.id.buttonSaveInfo);
 		zipcode = (EditText) rootView.findViewById(R.id.etZipcode);
 
-		datasource = new WeatherDataSource(getActivity());
+		
 
 		saveButton.setOnClickListener(new View.OnClickListener() {
 
@@ -75,16 +74,7 @@ public class PlanTripFragment extends Fragment {
 							Toast.LENGTH_SHORT).show();
 				}
 
-				try {
-					new retrieve_weatherTask2().execute();
-					/* Show a toast notifying user that weather has downloaded */
-					Activity context = getActivity();
-					Toast toast = Toast.makeText(context, "Weather information has been stored", Toast.LENGTH_LONG);
-					toast.show();
-				} catch (Exception e) {
-					Toast.makeText(getActivity(), "Failed to save information",
-							Toast.LENGTH_SHORT).show();
-				}
+				
 
 				
 
@@ -101,121 +91,6 @@ public class PlanTripFragment extends Fragment {
 				ARG_SECTION_NUMBER));
 	}
 
-	protected class retrieve_weatherTask2 extends
-			AsyncTask<Void, String, HashMap<Integer, ArrayList<String>>> {
-
-		@Override
-		public HashMap<Integer, ArrayList<String>> doInBackground(Void... arg0) {
-			JSONObject jsonObject;
-			JSONArray jsonArray;
-			ArrayList<String> dailyWeatherIcon = new ArrayList<String>();
-
-			try {
-				WeatherData weather;
-				jsonArray = getJsonArray();// Gets the weather
-				listOfWeatherData = new ArrayList<String>();
-				datasource.open();
-				for (int i = 0; i < 7; i++) {
-					weather = new WeatherData();
-
-					jsonObject = jsonArray.getJSONObject(i);
-
-					weather.setDate(jsonObject.getString("validTime")
-							.substring(0, 10));
-					weather.setHigh(jsonObject.getString("maxTempF"));
-					weather.setLow(jsonObject.getString("minTempF"));
-					weather.setPOP(jsonObject.getString("pop") + "%");
-					weather.setPrimary(getPrimaryWeather(jsonObject
-							.getString("weatherPrimaryCoded")));
-					datasource.createWeather(weather.getDate(),
-							weather.getHigh(), weather.getLow(),
-							weather.getPOP(), weather.getPrimary());
-				}
-
-			} catch (Exception e) {
-				e.printStackTrace();
-
-			}
-
-			return null;
-		}
-
-		protected void onPostExecute(
-				HashMap<Integer, ArrayList<String>> forecast) {
-			try {
-				
-
-			} catch (Exception e) {
-			
-			}
-		}
-
-		private String getPrimaryWeather(String primaryWeatherCode) {
-			String[] weatherCodeSplit = primaryWeatherCode.split(":");
-			primaryWeatherCode = weatherCodeSplit[2];
-			try {
-				if (primaryWeatherCode.equalsIgnoreCase("CL")
-						|| primaryWeatherCode.equalsIgnoreCase("FW"))
-					primaryWeatherCode = "1";// sunny
-
-				else if (primaryWeatherCode.equalsIgnoreCase("OV")
-						|| primaryWeatherCode.equalsIgnoreCase("BK"))
-					primaryWeatherCode = "2"; // cloudy
-
-				else if (primaryWeatherCode.equalsIgnoreCase("R")
-						|| primaryWeatherCode.equalsIgnoreCase("L")
-						|| primaryWeatherCode.equalsIgnoreCase("RW")
-						|| primaryWeatherCode.equalsIgnoreCase("RS"))
-					primaryWeatherCode = "3";// rain
-
-				else if (primaryWeatherCode.equalsIgnoreCase("T"))
-					primaryWeatherCode = "4";// Thunderstorms
-
-				else if (primaryWeatherCode.equalsIgnoreCase("BS")
-						|| primaryWeatherCode.equalsIgnoreCase("RS")
-						|| primaryWeatherCode.equalsIgnoreCase("SI")
-						|| primaryWeatherCode.equalsIgnoreCase("S")
-						|| primaryWeatherCode.equalsIgnoreCase("S"))
-					primaryWeatherCode = "5";// Snow
-
-				else if (primaryWeatherCode.equalsIgnoreCase("BD")
-						|| primaryWeatherCode.equalsIgnoreCase("BN")
-						|| primaryWeatherCode.equalsIgnoreCase("BY"))
-					primaryWeatherCode = "6";// windy
-
-				else
-					primaryWeatherCode = "7";// Partly cloudy by default
-
-				return primaryWeatherCode;
-			} catch (Exception ex) {
-				ex.printStackTrace();
-				return "7";
-			}
-		}
-
-		private JSONArray getJsonArray() {
-			JSONObject jsonObject;
-			JSONArray jsonArray, jsonArray2 = new JSONArray();
-			try {
-				String str = new String();
-				URL url = new URL(INITAL_HALF + zipcodeString + FINAL_HALF);
-				Scanner scan = new Scanner(url.openStream());
-				while (scan.hasNext())
-					str += scan.nextLine();
-				scan.close();
-				jsonObject = new JSONObject(str);
-				jsonArray = jsonObject.getJSONArray("response");
-				jsonObject = jsonArray.getJSONObject(0);
-				jsonObject = new JSONObject(jsonObject.toString());
-				jsonArray2 = jsonObject.getJSONArray("periods");
-				return jsonArray2;
-
-			} catch (Exception e) {
-				e.printStackTrace();
-				return jsonArray2;
-			}
-		}
-
-	}
+	
 
 }
