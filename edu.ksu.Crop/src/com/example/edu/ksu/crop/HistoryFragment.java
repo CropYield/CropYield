@@ -144,7 +144,7 @@ class LoadHistoryAsync extends AsyncTask<Void, Void, ArrayList<Trip>> {
         				String.valueOf(tripsList.get(i).getNumber("calculatedYield")),
         				String.valueOf(tripsList.get(i).getNumber("headsPerAcre")),
         				tripsList.get(i).getParseGeoPoint("location").toString(),
-        				String.valueOf(tripsList.get(i).getNumber("headsPerAcre")),
+        				String.valueOf(tripsList.get(i).getNumber("photosAnalyzed")),
         				String.valueOf(tripsList.get(i).getNumber("rowSize")),
         				String.valueOf(tripsList.get(i).getNumber("sizeOfField")),
         				tripsList.get(i).getUpdatedAt().toString()
