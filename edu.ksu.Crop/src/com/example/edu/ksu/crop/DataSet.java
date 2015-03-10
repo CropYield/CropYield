@@ -14,7 +14,7 @@ public class DataSet {
 	private Location loction;
 	private Double sizeOfField;
 	private int photosAnalyzed;
-	
+	private Double rowSize;
 	public DataSet(){
 		
 	}
@@ -28,6 +28,13 @@ public class DataSet {
 		return headsPerPartAcre;
 	}
 	
+	public void SetRowSize(Double d) {
+		rowSize = d;
+	}
+	
+	public Double getRowSize() {
+		return rowSize;
+	}
 	//Add a calculated area to the total
 	public void AddAreas(double value){
 		areas.add(value);

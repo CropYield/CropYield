@@ -3,6 +3,7 @@ package com.example.edu.ksu.crop;
 import java.util.Set;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,6 +31,7 @@ public class InputFragment extends Fragment {
 	EditText editFieldSize;
 	
 	RadioGroup hasSheet;
+	RadioGroup rowSize;
 	
 	Fragment newFragment;
 	FragmentTransaction transaction;
@@ -57,8 +60,11 @@ public class InputFragment extends Fragment {
 		nextButton = (Button) rootView.findViewById(R.id.buttonNext);
 		fieldName = (EditText) rootView.findViewById(R.id.editFieldName);
 		hasSheet = (RadioGroup) rootView.findViewById(R.id.radioHasSheetGroup);
+		rowSize = (RadioGroup) rootView.findViewById(R.id.radioRowSizeGroup);
 		helpbutton = (Button) rootView.findViewById(R.id.buttonHelpInput);
 		editFieldSize = (EditText) rootView.findViewById(R.id.editFieldSize);
+		
+		
 		
 		helpbutton.setOnClickListener(new OnClickListener() {
 			
@@ -79,6 +85,7 @@ public class InputFragment extends Fragment {
 			
 			@Override
 			public void onCheckedChanged(RadioGroup group, int checkedId) {
+				hideKeyboard();
 				if(checkedId == R.id.radioYes){
 					nextButton.setEnabled(true);
 				} else {
@@ -88,6 +95,19 @@ public class InputFragment extends Fragment {
 			}
 		});
 
+//		rowSize.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+//			
+//			@Override
+//			public void onCheckedChanged(RadioGroup group, int checkedId) {
+//				if(checkedId == R.id.radioYes){
+//					nextButton.setEnabled(true);
+//				} else {
+//					nextButton.setEnabled(false);
+//				}
+//				
+//			}
+//		});
+		
 		nextButton.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -122,6 +142,15 @@ public class InputFragment extends Fragment {
 							.show();
 					return;
 				}
+
+				int rowSizeButtonSelected = rowSize.getCheckedRadioButtonId();
+				double rowSizeVal = 7.5;
+				
+				if(rowSizeButtonSelected == 2) {
+					rowSizeVal = 15.0;
+				} else if(rowSizeButtonSelected == 3) {
+					rowSizeVal = 30.0;
+				}
 				
 				
 				
@@ -134,6 +163,7 @@ public class InputFragment extends Fragment {
 					
 					dataPassThrough.setFieldName(fieldNameString);
 					dataPassThrough.SetHeadsPerAcre(headsPer);
+					dataPassThrough.SetRowSize(rowSizeVal);
 					dataPassThrough.setFieldSize(fieldSize);// Set the head
 																// per to pass
 																// data through
@@ -165,6 +195,14 @@ public class InputFragment extends Fragment {
 		return rootView;
 	}
 
+	private void hideKeyboard() {    
+	    // Check if no view has focus: 
+	    View view = getActivity().getCurrentFocus();
+	    if (view != null) {
+	        InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+	        inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+	    } 
+	} 
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);

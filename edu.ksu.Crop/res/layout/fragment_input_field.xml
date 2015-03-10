@@ -74,6 +74,35 @@
             android:text="No" />
     </RadioGroup>
 
+<RadioGroup
+    android:id="@+id/radioRowSizeGroup"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+
+        <RadioButton
+            android:id="@+id/radio7point5Inches"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="7.5 inch rows"
+            android:drawableRight="@drawable/ic_launcher" />
+
+        <RadioButton
+            android:id="@+id/radio15Inches"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="15 inch rows"
+            android:drawableRight="@drawable/ic_launcher"/>
+    
+        <RadioButton
+            android:id="@+id/radio30Inches"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="30 inch rows"
+            android:drawableRight="@drawable/ic_launcher"/>
+
+</RadioGroup>
+    
     <Button
         android:id="@+id/buttonHelpInput"
         android:layout_width="match_parent"

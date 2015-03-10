@@ -180,6 +180,7 @@ public class FinalFragment extends Fragment implements OnSeekBarChangeListener {
 				dataToPush.put("sizeOfField", data.getFieldSize());
 				dataToPush.put("headsPerAcre", data.getHeadsPerAcre());
 				dataToPush.put("photosAnalyzed", data.getPhotoAnalyzed());
+				dataToPush.put("rowSize",  data.getRowSize());
 				dataToPush.put("calculatedYield", averageBUA);
 				dataToPush.put("user", ParseUser.getCurrentUser());
 				dataToPush.saveEventually();
