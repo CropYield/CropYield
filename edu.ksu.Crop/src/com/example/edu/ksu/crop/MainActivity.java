@@ -39,6 +39,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.Parse;
+import com.parse.ParseAnalytics;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
@@ -58,15 +60,16 @@ public class MainActivity extends ActionBarActivity implements
 	 * {@link #restoreActionBar()}.
 	 */
 	private CharSequence mTitle;
-	
+	private String mId = "gD6b5jCam6YiHvknBsJr2Vl34oFvThlSdOUZBXkq";
+	private String mKey = "DnsiavpkN6mQPpuh7yZEo8R9o4zpSVNvnSPCRYQc";
 	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		
 
+		Parse.initialize(this, mId, mKey);
+		ParseAnalytics.trackAppOpened(getIntent());
 		
 		setContentView(R.layout.activity_main);
 
@@ -581,7 +584,8 @@ public class MainActivity extends ActionBarActivity implements
 		private final String LONGITUDE = "5.29";
 		private WebView webView;
 		private View rootView;
-
+		private Location location;
+		
 		public static SoilFragment newInstance(int sectionNumber) {
 			SoilFragment fragment = new SoilFragment();
 			Bundle args = new Bundle();
@@ -592,6 +596,15 @@ public class MainActivity extends ActionBarActivity implements
 
 		public SoilFragment() {
 		}
+		
+		private Location obtainLocation() {
+			getActivity();
+			LocationManager locationManager = (LocationManager) getActivity()
+					.getSystemService(Context.LOCATION_SERVICE);
+			Location location = locationManager
+					.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+			return location;
+		}
 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -599,6 +612,18 @@ public class MainActivity extends ActionBarActivity implements
 
 			rootView = inflater.inflate(R.layout.fragment_soil, container,
 					false);
+			
+			ParseAnalytics.trackEventInBackground("Test Soil Opened");
+			
+			ParseUser currentUser = ParseUser.getCurrentUser();
+			ParseObject soilObject = new ParseObject("Soil");
+			if (currentUser != null){
+				soilObject.put("User", currentUser.getUsername());		
+			}else 
+				soilObject.put("User", "Guest");
+			location = obtainLocation();
+			soilObject.put("Location", location.getLatitude() + ", " + location.getLatitude());
+			soilObject.saveInBackground();
 
 			return rootView;
 			// new retrieve_soilTask().execute();

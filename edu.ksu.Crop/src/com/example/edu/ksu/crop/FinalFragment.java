@@ -1,6 +1,8 @@
 package com.example.edu.ksu.crop;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.content.Context;
 import android.location.Location;
@@ -24,6 +26,7 @@ import android.widget.Toast;
 import com.example.edu.ksu.crop.MainActivity.WeatherFragment;
 import com.jjoe64.graphview.*;
 import com.parse.Parse;
+import com.parse.ParseAnalytics;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
@@ -170,6 +173,11 @@ public class FinalFragment extends Fragment implements OnSeekBarChangeListener {
 
 			@Override
 			public void onClick(View v) {
+				
+				Map<String, String> dimensions = new HashMap<String, String>();
+				dimensions.put("category", "saved");
+				ParseAnalytics.trackEvent("SavedData", dimensions);
+				
 				// Save data from dataset
 				
 				data.setLocation(getCurrentLocation(true));
