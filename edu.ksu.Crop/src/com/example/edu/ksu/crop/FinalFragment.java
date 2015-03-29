@@ -9,6 +9,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.edu.ksu.crop.MainActivity.SoilFragment;
 import com.example.edu.ksu.crop.MainActivity.WeatherFragment;
 import com.jjoe64.graphview.*;
 import com.parse.Parse;
@@ -39,7 +41,7 @@ public class FinalFragment extends Fragment implements OnSeekBarChangeListener {
 	static double grainNum;
 	static double averageBUA;
 	TextView bpaTV;
-	Button weather;
+	Button weather, soilBtn;
 	Button saveButton;
 
 	/*
@@ -134,7 +136,21 @@ public class FinalFragment extends Fragment implements OnSeekBarChangeListener {
 
 			}
 		});
-
+		soilBtn = (Button) rootView.findViewById(R.id.soilButtonFinal);
+		
+		soilBtn.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				try {					
+					FragmentTransaction transaction = getFragmentManager()
+							.beginTransaction();
+					transaction.replace(R.id.container, SoilFragment.newInstance(5));
+					transaction.addToBackStack(null);
+					transaction.commit();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 		weather = (Button) rootView.findViewById(R.id.weatherButtonFinal);
 
 		weather.setOnClickListener(new View.OnClickListener() {
