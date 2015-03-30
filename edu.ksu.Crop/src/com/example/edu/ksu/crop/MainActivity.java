@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -234,6 +235,8 @@ public class MainActivity extends ActionBarActivity implements
 		Button planTrip;
 		Button logOut;
 
+		ImageView twitterLink;
+		
 		Fragment newFragment;
 		FragmentTransaction transaction;
 
@@ -260,8 +263,26 @@ public class MainActivity extends ActionBarActivity implements
 			View rootView = inflater.inflate(R.layout.fragment_main, container,
 					false);
 		
-			
+			twitterLink = (ImageView) rootView.findViewById(R.id.imageView_twitter);
 
+			twitterLink.setOnClickListener(new View.OnClickListener() { 
+			    @Override 
+			    public void onClick(View v) {
+			    	Intent intent = null;
+			    	try { 
+			    	    // get the Twitter app if possible 
+			    	    getActivity().getPackageManager().getPackageInfo("com.twitter.android", 0);
+			    	    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("twitter://user?user_id=176287044"));
+			    	    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			    	} catch (Exception e) {
+			    	    // no Twitter app, revert to browser 
+			    	    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/KSUCROPS"));
+			    	} 
+			    	getActivity().startActivity(intent);
+
+			    } 
+			}); 
+			
 			yieldCalculator = (Button) rootView
 					.findViewById(R.id.YieldCalculator);
 			planTrip = (Button) rootView.findViewById(R.id.PlanTrip);

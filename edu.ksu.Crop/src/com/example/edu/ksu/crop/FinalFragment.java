@@ -1,32 +1,45 @@
 package com.example.edu.ksu.crop;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.edu.ksu.crop.MainActivity.SoilFragment;
 import com.example.edu.ksu.crop.MainActivity.WeatherFragment;
 import com.jjoe64.graphview.*;
 import com.parse.Parse;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 
 public class FinalFragment extends Fragment implements OnSeekBarChangeListener {
 
@@ -39,7 +52,7 @@ public class FinalFragment extends Fragment implements OnSeekBarChangeListener {
 	static double grainNum;
 	static double averageBUA;
 	TextView bpaTV;
-	Button weather;
+	Button weather, soilBtn;
 	Button saveButton;
 
 	/*
@@ -134,7 +147,21 @@ public class FinalFragment extends Fragment implements OnSeekBarChangeListener {
 
 			}
 		});
-
+		soilBtn = (Button) rootView.findViewById(R.id.soilButtonFinal);
+		
+		soilBtn.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				try {					
+					FragmentTransaction transaction = getFragmentManager()
+							.beginTransaction();
+					transaction.replace(R.id.container, SoilFragment.newInstance(5));
+					transaction.addToBackStack(null);
+					transaction.commit();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 		weather = (Button) rootView.findViewById(R.id.weatherButtonFinal);
 
 		weather.setOnClickListener(new View.OnClickListener() {
@@ -192,6 +219,7 @@ public class FinalFragment extends Fragment implements OnSeekBarChangeListener {
 					Toast.makeText(getActivity(), "Data will be saved when data connection is available.", Toast.LENGTH_LONG).show();
 				}
 				
+				finishAppOptions();
 				
 				
 				
@@ -202,6 +230,97 @@ public class FinalFragment extends Fragment implements OnSeekBarChangeListener {
 		return rootView;
 	}
 
+	private void finishAppOptions() {
+		CharSequence options[] = new CharSequence[] { "Start New Field", "Email a Report", "Close App"};
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		builder.setTitle("Choose Photo Selection Method");
+		builder.setItems(options,  new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int picked) {
+				switch (picked) {
+				case 0:
+					switchToStart();
+					break;
+				case 1:
+					emailReport();
+					break;
+				case 2:
+					System.exit(0);
+					break;
+				}
+			}
+		});
+		builder.show();
+	}
+
+	private void switchToStart() {
+		FragmentManager fm = getActivity().getSupportFragmentManager();
+		for(int i = 0; i < fm.getBackStackEntryCount(); ++i) {    
+		    fm.popBackStack();
+		}
+		
+		FragmentTransaction transaction = getFragmentManager()
+				.beginTransaction();
+		transaction.replace(R.id.container, InputFragment.newInstance(5));
+		transaction.addToBackStack(null);
+		transaction.commit();
+	}
+	
+    private void emailReport() {
+    	AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+
+    	alert.setTitle("Enter Email Address");
+
+    	// Set an EditText view to get user input 
+    	final EditText input = new EditText(getActivity());
+    	alert.setView(input);
+
+    	alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+    	public void onClick(DialogInterface dialog, int whichButton) {
+    	  String value = input.getText().toString();
+    	  value = value.replace(" ", "");
+    	  Pattern p = Pattern.compile(".+@.+\\.[a-z]+");
+    	  Matcher m = p.matcher(value);
+    	  boolean matchFound = m.matches();
+    	  if (matchFound) {
+    	      createEmail(value);
+    	  } else {
+    		  Toast.makeText(getActivity(), "Value is not an email",  Toast.LENGTH_LONG).show();
+    	  }
+    	  }
+    	});
+
+    	alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+    	  public void onClick(DialogInterface dialog, int whichButton) {
+
+    	  }
+    	});
+    	
+    	alert.show();
+    }
+	
+    @SuppressLint("SimpleDateFormat") private void createEmail(String email) {
+        final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+        
+		DateFormat df = new SimpleDateFormat("EEE, d MMM yyyy, HH:mm"); 
+		
+        emailIntent.setType("text/HTML");
+        emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{email});
+        emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Sorghum Yield Report for Field " + data.getFieldName());
+           emailIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml("<h1><small>Here's Your Report!</small></h1>\n" +
+                "\n" +
+                "Calculated Yield: " + averageBUA + "<br>" +
+                "Date: " + df.format(Calendar.getInstance().getTime()) + "<br>" +
+                "Coordinates: " + data.getLocation().getLatitude() + ", " + data.getLocation().getLongitude() + "<br>" +
+                "Heads per Acre: " + data.getHeadsPerAcre() + "<br>" +
+                "Row Size: " + data.getRowSize() + "<br>" +
+                "Size of Field: " + data.getFieldSize() + "<br>" +
+                "Photos Analyzed: " + data.getPhotoAnalyzed() + "<br></p>"
+                ));
+        
+        startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+    }
+    
 	@Override
 	public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
 		// TODO Auto-generated method stub
