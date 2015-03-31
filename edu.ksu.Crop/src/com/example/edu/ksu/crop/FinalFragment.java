@@ -1,6 +1,8 @@
 package com.example.edu.ksu.crop;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.content.Context;
 import android.location.Location;
@@ -24,6 +26,7 @@ import android.widget.Toast;
 import com.example.edu.ksu.crop.MainActivity.WeatherFragment;
 import com.jjoe64.graphview.*;
 import com.parse.Parse;
+import com.parse.ParseAnalytics;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
@@ -192,8 +195,10 @@ public class FinalFragment extends Fragment implements OnSeekBarChangeListener {
 					Toast.makeText(getActivity(), "Data will be saved when data connection is available.", Toast.LENGTH_LONG).show();
 				}
 				
-				
-				
+				//track user saving data
+				Map<String, String> parseAnalytics = new HashMap<String, String>();
+				parseAnalytics.put("category", "saved");
+				ParseAnalytics.trackEvent("SavedData", parseAnalytics);
 				
 
 			}

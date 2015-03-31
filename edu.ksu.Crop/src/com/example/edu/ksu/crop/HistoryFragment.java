@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -15,20 +17,16 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import com.parse.FindCallback;
-import com.parse.ParseGeoPoint;
+import com.parse.ParseAnalytics;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseException;
 import com.parse.ParseUser;
 
 public class HistoryFragment extends Fragment {
@@ -58,6 +56,15 @@ public class HistoryFragment extends Fragment {
 				.findViewById(R.id.listView_HistoryFragment_list);
 		LoadHistoryAsync lha = new LoadHistoryAsync(getActivity(), list, this);
 		lha.execute();
+		
+		Map<String, String> parseAnalytics = new HashMap<String, String>();
+		parseAnalytics.put("category", "history");
+		ParseAnalytics.trackEvent("History", parseAnalytics);
+		
+		//use this, among others, if we want more information on email
+		/*ParseObject historyObject = new ParseObject("Emailed");
+		ParseUser currentUser = ParseUser.getCurrentUser();
+		historyObject.saveInBackground();*/
 		
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

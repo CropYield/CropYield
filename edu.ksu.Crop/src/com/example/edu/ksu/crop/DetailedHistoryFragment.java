@@ -4,8 +4,10 @@ package com.example.edu.ksu.crop;
  * Created by HaydenKinney on 2/25/15.
  */
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,7 +31,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.ParseAnalytics;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 
 public class DetailedHistoryFragment extends Fragment {
@@ -182,6 +186,10 @@ public class DetailedHistoryFragment extends Fragment {
                 "Photos Analyzed: " + trip.getPhotosAnalyzed() + "<br></p>"
                 ));
         }
+        Map<String, String> parseAnalytics = new HashMap<String, String>();
+		parseAnalytics.put("category", "Emailed Data");
+		ParseAnalytics.trackEvent("Emailed Data", parseAnalytics);
+		
         startActivity(Intent.createChooser(emailIntent, "Send mail..."));
     }
 }
