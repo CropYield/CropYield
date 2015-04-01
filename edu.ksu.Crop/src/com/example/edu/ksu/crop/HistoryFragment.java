@@ -57,17 +57,15 @@ public class HistoryFragment extends Fragment {
 		LoadHistoryAsync lha = new LoadHistoryAsync(getActivity(), list, this);
 		lha.execute();
 		
-		Map<String, String> dimensions = new HashMap<String, String>();
-		dimensions.put("category", "history");
-		ParseAnalytics.trackEvent("History", dimensions);
+
+		Map<String, String> parseAnalytics = new HashMap<String, String>();
+		parseAnalytics.put("category", "history");
+		ParseAnalytics.trackEvent("History", parseAnalytics);
 		
+		//use this, among others, if we want more information on email
+		/*ParseObject historyObject = new ParseObject("Emailed");
 		ParseUser currentUser = ParseUser.getCurrentUser();
-		ParseObject historyObject = new ParseObject("History");
-		if (currentUser != null){
-			historyObject.put("User", currentUser.getUsername());
-		}else 
-			historyObject.put("User", "Guest");
-		historyObject.saveInBackground();
+		historyObject.saveInBackground();*/
 		
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

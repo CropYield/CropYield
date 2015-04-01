@@ -12,11 +12,19 @@
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:text="Yield Calculator" />
-    
+
     <Button
         android:id="@+id/PlanTrip"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:text="Plan Trip" />
+
+    <ImageView
+        android:id="@+id/imageView_twitter"
+        android:layout_marginTop="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/sorghum_app_logo" />
 
 </LinearLayout>
