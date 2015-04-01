@@ -73,6 +73,12 @@
         android:text="Weather" />
 
     <Button
+        android:id="@+id/soilButtonFinal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Soil" />
+        
+    <Button
         android:id="@+id/buttonSave"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

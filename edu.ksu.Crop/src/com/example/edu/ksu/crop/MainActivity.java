@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -237,6 +238,8 @@ public class MainActivity extends ActionBarActivity implements
 		Button planTrip;
 		Button logOut;
 
+		ImageView twitterLink;
+		
 		Fragment newFragment;
 		FragmentTransaction transaction;
 
@@ -263,8 +266,26 @@ public class MainActivity extends ActionBarActivity implements
 			View rootView = inflater.inflate(R.layout.fragment_main, container,
 					false);
 		
-			
+			twitterLink = (ImageView) rootView.findViewById(R.id.imageView_twitter);
 
+			twitterLink.setOnClickListener(new View.OnClickListener() { 
+			    @Override 
+			    public void onClick(View v) {
+			    	Intent intent = null;
+			    	try { 
+			    	    // get the Twitter app if possible 
+			    	    getActivity().getPackageManager().getPackageInfo("com.twitter.android", 0);
+			    	    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("twitter://user?user_id=176287044"));
+			    	    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			    	} catch (Exception e) {
+			    	    // no Twitter app, revert to browser 
+			    	    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/KSUCROPS"));
+			    	} 
+			    	getActivity().startActivity(intent);
+
+			    } 
+			}); 
+			
 			yieldCalculator = (Button) rootView
 					.findViewById(R.id.YieldCalculator);
 			planTrip = (Button) rootView.findViewById(R.id.PlanTrip);
@@ -337,9 +358,10 @@ public class MainActivity extends ActionBarActivity implements
 																				// for
 																				// each
 																				// listview
-		private ArrayList<String> listOfWeatherData = new ArrayList<String>();
+		private ArrayList<WeatherData> listOfWeatherData;
 		@SuppressLint("UseSparseArrays")
 		private HashMap<Integer, ArrayList<String>> dictFiveDayForecast = new HashMap<Integer, ArrayList<String>>();
+		WeatherData weatherData;
 		private double latitude, longitude = 0.0;
 
 		public static WeatherFragment newInstance(int sectionNumber) {
@@ -400,55 +422,61 @@ public class MainActivity extends ActionBarActivity implements
 			Activity context = getActivity();
 			CharSequence text = (CharSequence) message;
 			int duration = length;
-
 			Toast toast = Toast.makeText(context, text, duration);
 			toast.show();
 		}
 
 		protected class retrieve_weatherTask extends
-				AsyncTask<Void, String, HashMap<Integer, ArrayList<String>>> {
+				AsyncTask<Void, String, ArrayList<WeatherData>> {
 			@Override
-			public HashMap<Integer, ArrayList<String>> doInBackground(
+			public ArrayList<WeatherData> doInBackground(
 					Void... arg0) {
 				JSONObject jsonObject;
 				JSONArray jsonArray;
-				ArrayList<String> dailyWeatherIcon = new ArrayList<String>();
+				
 				try {
 
 					jsonArray = getJsonArray();
-					listOfWeatherData = new ArrayList<String>();
+					listOfWeatherData = new ArrayList<WeatherData>();
 					for (int i = 0; i < LENGTH_OF_FORECAST; i++) {
-
+						
+						weatherData = new WeatherData();
 						jsonObject = jsonArray.getJSONObject(i);
-						listOfWeatherData.add(jsonObject.getString("validTime")
-								.substring(0, 10));
-						listOfWeatherData.add(jsonObject.getString("minTempF"));
-						listOfWeatherData.add(jsonObject.getString("maxTempF"));
-						listOfWeatherData
-								.add(jsonObject.getString("pop") + "%");
-						// listOfWeatherData.add(jsonObject.getString("weatherPrimary"));
-						dailyWeatherIcon.add(getPrimaryWeather(jsonObject
+						weatherData.setId(i);
+						weatherData.setDate((jsonObject.getString("validTime")
+								.substring(0, 10)));
+						weatherData.setLow(jsonObject.getString("minTempF"));
+						weatherData.setHigh(jsonObject.getString("maxTempF"));
+						weatherData.setPOP(jsonObject.getString("pop") + "%");
+						weatherData.setPrimary(getPrimaryWeather(jsonObject
 								.getString("weatherPrimaryCoded")));
+						
+						listOfWeatherData.add(weatherData);
 
 					}
-					dictFiveDayForecast.put(0, listOfWeatherData);
-					dictFiveDayForecast.put(1, dailyWeatherIcon);
-					return dictFiveDayForecast;
+					return listOfWeatherData;
 				} catch (Exception e) {
 					e.printStackTrace();
-					return dictFiveDayForecast;
+					return listOfWeatherData;
 				}
 			}
 
 			protected void onPostExecute(
-					HashMap<Integer, ArrayList<String>> forecast) {
+					ArrayList<WeatherData> listOfWeatherData) {
 				try {
+					WeatherData wd = new WeatherData();
 					ArrayList<String> weatherInfo = new ArrayList<String>();
 					ArrayList<String> dailyWeatherIcon = new ArrayList<String>();
 					ArrayList<Integer> dailyWeatherDrawables = new ArrayList<Integer>();
-
-					weatherInfo.addAll(forecast.get(0));
-					dailyWeatherIcon.addAll(forecast.get(1));
+					for(int i = 0; i < LENGTH_OF_FORECAST; i++){
+						
+						wd = listOfWeatherData.get(i);
+						dailyWeatherIcon.add(wd.getPrimary());
+						weatherInfo.add(wd.getDate());
+						weatherInfo.add(wd.getLow());
+						weatherInfo.add(wd.getHigh());
+						weatherInfo.add(wd.getPOP());
+					}
 
 					for (int i = 0; i < dailyWeatherIcon.size(); i++) {
 						if (dailyWeatherIcon.get(i).equals("1"))// sunny
@@ -463,8 +491,7 @@ public class MainActivity extends ActionBarActivity implements
 							dailyWeatherDrawables.add(R.drawable.snow48);
 						else if (dailyWeatherIcon.get(i).equals("6"))// windy
 							dailyWeatherDrawables.add(R.drawable.windy48);
-						else
-							// partly cloudy
+						else// partly cloudy
 							dailyWeatherDrawables
 									.add(R.drawable.partlycloudyday48);
 					}
@@ -476,10 +503,7 @@ public class MainActivity extends ActionBarActivity implements
 					iv_highExample.setImageResource(R.drawable.up48);
 					iv_popExample.setImageResource(R.drawable.littlerain48);
 					listView.setAdapter(new CustomAdapter(getActivity(),
-							weatherImages, dailyWeatherDrawables, weatherInfo));// add
-																				// conditional
-																				// weather
-																				// here
+							weatherImages, dailyWeatherDrawables, weatherInfo));
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -606,6 +630,7 @@ public class MainActivity extends ActionBarActivity implements
 			return location;
 		}
 
+		
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
