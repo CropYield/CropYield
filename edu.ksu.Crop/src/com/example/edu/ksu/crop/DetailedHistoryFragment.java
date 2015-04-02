@@ -192,4 +192,10 @@ public class DetailedHistoryFragment extends Fragment {
 		
         startActivity(Intent.createChooser(emailIntent, "Send mail..."));
     }
+    
+    public void onResume() { 
+        super.onResume(); 
+        getActivity().getActionBar().setTitle(trip.getFieldName());
+    } 
+    
 }
