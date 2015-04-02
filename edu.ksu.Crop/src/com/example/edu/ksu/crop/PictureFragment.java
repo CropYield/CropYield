@@ -505,7 +505,7 @@ public class PictureFragment extends Fragment {
 			currentPictures.push(bitmap);
 		}
 		photoCount++;
-		imageCounter.setText("Image Counter: " + photoCount + "/10");
+		imageCounter.setText("Image Counter: " + photoCount);
 		// imageView.setImageBitmap(rotatedBitmap);
 	}
 
@@ -530,7 +530,7 @@ public class PictureFragment extends Fragment {
 				imageView.setImageBitmap(currentPictures.get(0));
 			}
 			photoCount--;
-			imageCounter.setText("Image Counter: " + photoCount + "/10");
+			imageCounter.setText("Image Counter: " + photoCount);
 			setPreviousNextButtonEnabledStatus();
 		} catch (Exception EX) {
 			sendToast("Error removing picture", Toast.LENGTH_LONG);
