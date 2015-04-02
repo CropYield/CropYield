@@ -73,11 +73,6 @@ public class PlanTripFragment extends Fragment {
 					Toast.makeText(getActivity(), "Must be valid Zip Code",
 							Toast.LENGTH_SHORT).show();
 				}
-
-				
-
-				
-
 			}
 		});
 
