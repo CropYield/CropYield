@@ -88,28 +88,15 @@ public class MainActivity extends ActionBarActivity implements
 	public void onNavigationDrawerItemSelected(int position) {
 		// update the main content by replacing fragments
 		FragmentManager fragmentManager = getSupportFragmentManager();
+		Fragment tempFragment = PlaceholderFragment.newInstance(position + 1);
 		if (position == 0) {
-			fragmentManager
-					.beginTransaction()
-					.replace(R.id.container,
-							PlaceholderFragment.newInstance(position + 1))
-					.commit();
+			tempFragment = PlaceholderFragment.newInstance(position + 1);
 		} else if (position == 1) {
-			fragmentManager
-					.beginTransaction()
-					.replace(R.id.container,
-							WeatherFragment.newInstance(position + 1)).commit();
+			tempFragment = WeatherFragment.newInstance(position + 1);
 		} else if (position == 2) {
-			fragmentManager
-					.beginTransaction()
-					.replace(R.id.container,
-							PlaceholderFragment.newInstance(position + 1))
-					.commit();
+			tempFragment = PlaceholderFragment.newInstance(position + 1);
 //		} else if (position == 3) {
-//			fragmentManager
-//					.beginTransaction()
-//					.replace(R.id.container,
-//							SignInFragment.newInstance(position + 1)).commit();
+//			
 		} else if (position == 4) {
 			try {
 				fragmentManager
@@ -139,12 +126,12 @@ public class MainActivity extends ActionBarActivity implements
 					HistoryFragment.newInstance(position + 1))
 			.commit();
 		} else {
-			fragmentManager
-					.beginTransaction()
-					.replace(R.id.container,
-							PlaceholderFragment.newInstance(position + 1))
-					.commit();
+			tempFragment = PlaceholderFragment.newInstance(position + 1);
 		}
+		fragmentManager
+		.beginTransaction()
+		.replace(R.id.container, tempFragment).commit();
+		
 	}
 
 	public void onSectionAttached(int number) {
