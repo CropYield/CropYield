@@ -45,7 +45,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 
 public class FinalFragment extends Fragment implements OnSeekBarChangeListener {
-
+	private boolean saved = false;
 	private static final String ARG_SECTION_NUMBER = "section_number";
 	GraphViewSeries exampleSeries;
 	SeekBar seekBarHeads;
@@ -201,42 +201,40 @@ public class FinalFragment extends Fragment implements OnSeekBarChangeListener {
 
 			@Override
 			public void onClick(View v) {
-				
-				Map<String, String> dimensions = new HashMap<String, String>();
-				dimensions.put("category", "saved");
-				ParseAnalytics.trackEvent("SavedData", dimensions);
-				
-				// Save data from dataset
-				
-				data.setLocation(getCurrentLocation(true));
-				ParseObject dataToPush = new ParseObject("Trip");
-				dataToPush.put("fieldName", data.getFieldName());
-				ParseGeoPoint point = new ParseGeoPoint(data.getLocation().getLatitude(), data.getLocation().getLongitude());
-				dataToPush.put("location", point);
-				dataToPush.put("sizeOfField", data.getFieldSize());
-				dataToPush.put("headsPerAcre", data.getHeadsPerAcre());
-				dataToPush.put("photosAnalyzed", data.getPhotoAnalyzed());
-				dataToPush.put("rowSize",  data.getRowSize());
-				dataToPush.put("calculatedYield", averageBUA);
-				dataToPush.put("user", ParseUser.getCurrentUser());
-				dataToPush.saveEventually();
-				
-				if(netCheckin()){
-					Toast.makeText(getActivity(), "Saving Data.", Toast.LENGTH_LONG).show();
-				} else
-				{
-					Toast.makeText(getActivity(), "Data will be saved when data connection is available.", Toast.LENGTH_LONG).show();
-				}
-				
-				//track user saving data
-				Map<String, String> parseAnalytics = new HashMap<String, String>();
-				parseAnalytics.put("category", "saved");
-				ParseAnalytics.trackEvent("SavedData", parseAnalytics);
-				finishAppOptions();
-				
-				
-				
+				if( !saved ) {
+					Map<String, String> dimensions = new HashMap<String, String>();
+					dimensions.put("category", "saved");
+					ParseAnalytics.trackEvent("SavedData", dimensions);
+					
+					// Save data from dataset
+					
+					data.setLocation(getCurrentLocation(true));
+					ParseObject dataToPush = new ParseObject("Trip");
+					dataToPush.put("fieldName", data.getFieldName());
+					ParseGeoPoint point = new ParseGeoPoint(data.getLocation().getLatitude(), data.getLocation().getLongitude());
+					dataToPush.put("location", point);
+					dataToPush.put("sizeOfField", data.getFieldSize());
+					dataToPush.put("headsPerAcre", data.getHeadsPerAcre());
+					dataToPush.put("photosAnalyzed", data.getPhotoAnalyzed());
+					dataToPush.put("rowSize",  data.getRowSize());
+					dataToPush.put("calculatedYield", averageBUA);
+					dataToPush.put("user", ParseUser.getCurrentUser());
+					dataToPush.saveEventually();
+					saved = true;
 
+					if(netCheckin()){
+						Toast.makeText(getActivity(), "Saving Data.", Toast.LENGTH_LONG).show();
+					} else
+					{
+						Toast.makeText(getActivity(), "Data will be saved when data connection is available.", Toast.LENGTH_LONG).show();
+					}
+					
+					//track user saving data
+					Map<String, String> parseAnalytics = new HashMap<String, String>();
+					parseAnalytics.put("category", "saved");
+					ParseAnalytics.trackEvent("SavedData", parseAnalytics);
+				}
+				finishAppOptions();
 			}
 		});
 
@@ -247,7 +245,7 @@ public class FinalFragment extends Fragment implements OnSeekBarChangeListener {
 		CharSequence options[] = new CharSequence[] { "Start New Field", "Email a Report", "Close App"};
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		builder.setTitle("Choose Photo Selection Method");
+		builder.setTitle("Saving... What next?");
 		builder.setItems(options,  new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int picked) {
 				switch (picked) {
