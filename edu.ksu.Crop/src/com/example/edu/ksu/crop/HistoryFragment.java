@@ -32,6 +32,7 @@ import com.parse.ParseUser;
 public class HistoryFragment extends Fragment {
 	private static final String ARG_SECTION_NUMBER = "section_number";
 
+
 	ListView list;
 	ArrayList<Trip> matchesList;
 
@@ -118,6 +119,8 @@ public class HistoryFragment extends Fragment {
 		
 	}
 
+     
+	
 }
 
 class LoadHistoryAsync extends AsyncTask<Void, Void, ArrayList<Trip>> {
@@ -138,6 +141,7 @@ class LoadHistoryAsync extends AsyncTask<Void, Void, ArrayList<Trip>> {
 
 	protected void onPreExecute() {
 		super.onPreExecute();
+
 		progressDialog.setCancelable(true);
 		progressDialog.setMessage("Loading Matches");
 		progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -197,6 +201,7 @@ class LoadHistoryAsync extends AsyncTask<Void, Void, ArrayList<Trip>> {
 		TripAdapter customAdapter = new TripAdapter(mActivity,
 				R.layout.item_history, tripsArray);
 		historyList.setAdapter(customAdapter);
+
 		progressDialog.cancel();
 	}
 }

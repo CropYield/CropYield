@@ -269,7 +269,7 @@ class Login_User extends AsyncTask<Void, Void, Void> {
     protected void onPreExecute() {
         super.onPreExecute();
         progress.setCancelable(true);
-        progress.setMessage("Attempting Log In");
+        progress.setMessage("Logging In");
         progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progress.show();
     }

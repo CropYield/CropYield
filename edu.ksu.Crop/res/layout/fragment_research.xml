@@ -17,13 +17,15 @@
             android:text="0 sq. in"
             android:padding="10dp"
             android:textAppearance="?android:attr/textAppearanceMedium" />
+
         <TextView
             android:id="@+id/textViewSeedCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:text="Not Sure Discuss Thur."
+            android:text="0.0 seeds"
             android:textAppearance="?android:attr/textAppearanceMedium" />
+
     </LinearLayout>
 
     <ImageView

@@ -23,6 +23,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -161,7 +162,6 @@ public class MainActivity extends ActionBarActivity implements
 		if (currentUser != null) {
 			currentUser.logOut();
 			ParseObject.unpinAllInBackground();
-			Toast.makeText(this,  "User " + currentUser.getUsername() + " logged out", Toast.LENGTH_LONG).show();
 		}
 		startActivity(intent);
 		finish();
@@ -232,14 +232,10 @@ public class MainActivity extends ActionBarActivity implements
 			    public void onClick(View v) {
 			    	Intent intent = null;
 			    	try { 
-			    	    // get the Twitter app if possible 
-			    	    getActivity().getPackageManager().getPackageInfo("com.twitter.android", 0);
-			    	    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("twitter://user?user_id=176287044"));
-			    	    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			    	} catch (Exception e) {
-			    	    // no Twitter app, revert to browser 
 			    	    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/KSUCROPS"));
-			    	} 
+			    	} catch (Exception ex) {
+			    		Log.d("SorgYield: ", "Broke opening twitter: " + ex.toString());
+			    	}
 			    	getActivity().startActivity(intent);
 
 			    } 
