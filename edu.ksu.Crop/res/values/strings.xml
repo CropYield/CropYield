@@ -3,13 +3,11 @@
 
     <string name="app_name">CropYield</string>
     <string name="title_section1">Home</string>
-    <string name="title_section2">Weather</string>
-    <string name="title_section3">Plan Trip</string>
-    <string name="title_section4">Take Pictures</string>
-    <string name="title_section5">Soil Report</string>
-    <string name="title_section6">Calculator</string>
-    <string name="title_section7">Research</string>
-    <string name="title_section8">History</string>
+    <string name="title_section2">History</string>
+    <string name="title_section3">Weather</string>
+    <string name="title_section4">Soil Info</string>
+    <string name="title_section5">Calculator</string>
+    <string name="title_section6">Research</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example"></string>

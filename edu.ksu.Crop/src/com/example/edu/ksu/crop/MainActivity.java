@@ -92,15 +92,15 @@ public class MainActivity extends ActionBarActivity implements
 		if (position == 0) {
 			tempFragment = PlaceholderFragment.newInstance(position + 1);
 		} else if (position == 1) {
-			tempFragment = WeatherFragment.newInstance(position + 1);
-		} else if (position == 2) {
-			tempFragment = SoilFragment.newInstance(position + 1);
-		} else if (position == 3) {
-			tempFragment = CalculateFragment.newInstance(position + 1);
-		} else if (position == 4) {
-			tempFragment = ResearchFragment.newInstance(position + 1);
-		} else if (position == 5) {
 			tempFragment = HistoryFragment.newInstance(position + 1);
+		} else if (position == 2) {
+			tempFragment = WeatherFragment.newInstance(position + 1);
+		} else if (position == 3) {
+			tempFragment = SoilFragment.newInstance(position + 1);
+		} else if (position == 4) {
+			tempFragment = CalculateFragment.newInstance(position + 1);
+		} else if (position == 5) {
+			tempFragment = ResearchFragment.newInstance(position + 1);
 		} else {
 			tempFragment = PlaceholderFragment.newInstance(position + 1);
 		}
@@ -122,19 +122,13 @@ public class MainActivity extends ActionBarActivity implements
 			mTitle = getString(R.string.title_section3);
 			break;
 		case 4:
-			mTitle = getString(R.string.title_section8);
+			mTitle = getString(R.string.title_section4);
 			break;
 		case 5:
 			mTitle = getString(R.string.title_section5);
 			break;
 		case 6:
 			mTitle = getString(R.string.title_section6);
-			break;
-		case 7:
-			mTitle = getString(R.string.title_section7);
-			break;
-		case 8:
-			mTitle = getString(R.string.title_section8);
 			break;
 		}
 	}
