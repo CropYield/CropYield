@@ -396,8 +396,15 @@ public class MainActivity extends ActionBarActivity implements
 					.findViewById(R.id.tv_popExample);
 			listView = (ListView) rootView.findViewById(R.id.listView);
 			Location location = obtainLocation(false);
+			try {
 			latitude = location.getLatitude();
 			longitude = location.getLongitude();
+			} catch (NullPointerException np) {
+				latitude = 39.1917; 
+				longitude = -96.5917;
+				sendToast("Unable to obtain location, defaulting to Manhattan, KS"
+						, Toast.LENGTH_LONG);
+			}
 
 			new retrieve_weatherTask().execute();
 			Toast.makeText(getActivity(), "Retrieving Weather",
