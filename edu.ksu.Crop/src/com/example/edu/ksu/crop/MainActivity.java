@@ -568,8 +568,8 @@ public class MainActivity extends ActionBarActivity implements
 		 * Returns a new instance of this fragment for the given section number.
 		 */
 
-		private final String LATITUDE = "44.50";// some random spot in spain
-		private final String LONGITUDE = "5.29";
+		private double latitude = 0.00;
+		private double longitude = 0.00;
 		private WebView webView;
 		private View rootView;
 		private Location location;
@@ -611,7 +611,15 @@ public class MainActivity extends ActionBarActivity implements
 			}else 
 				soilObject.put("User", "Guest");
 			location = obtainLocation();
-			soilObject.put("Location", location.getLatitude() + ", " + location.getLatitude());
+			try {
+				latitude = location.getLatitude();
+				longitude = location.getLongitude();
+			} catch (Exception e){
+				latitude = 0.00;
+				longitude = 0.00;
+				e.printStackTrace();
+			}
+			soilObject.put("Location", latitude + ", " + longitude);
 			soilObject.saveInBackground();
 
 			return rootView;
