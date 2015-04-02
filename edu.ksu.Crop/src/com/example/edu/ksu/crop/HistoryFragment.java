@@ -30,7 +30,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 public class HistoryFragment extends Fragment {
-	private static final String ARG_SECTION_NUMBER = "";
+	private static final String ARG_SECTION_NUMBER = "section_number";
 
 	ListView list;
 	ArrayList<Trip> matchesList;
@@ -103,6 +103,14 @@ public class HistoryFragment extends Fragment {
 		// });
 
 		return rootView;
+	}
+	
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		((MainActivity) activity).onSectionAttached(getArguments().getInt(
+				ARG_SECTION_NUMBER));
+
 	}
 
 	public void asyncResult(ArrayList<Trip> trips) {

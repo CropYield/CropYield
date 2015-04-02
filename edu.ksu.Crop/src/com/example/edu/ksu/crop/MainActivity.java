@@ -48,7 +48,7 @@ import com.parse.ParseUser;
 //import com.example.edu.ksu.crop.MainActivity.WeatherFragment.PictureFragment;
 
 public class MainActivity extends ActionBarActivity implements
-		NavigationDrawerFragment.NavigationDrawerCallbacks {
+			NavigationDrawerFragment.NavigationDrawerCallbacks  {
 
 	/**
 	 * Fragment managing the behaviors, interactions and presentation of the
@@ -61,15 +61,14 @@ public class MainActivity extends ActionBarActivity implements
 	 * {@link #restoreActionBar()}.
 	 */
 	private CharSequence mTitle;
-	private String mId = "gD6b5jCam6YiHvknBsJr2Vl34oFvThlSdOUZBXkq";
-	private String mKey = "DnsiavpkN6mQPpuh7yZEo8R9o4zpSVNvnSPCRYQc";
+
 	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		Parse.initialize(this, mId, mKey);
+		
 		ParseAnalytics.trackAppOpened(getIntent());
 		
 		setContentView(R.layout.activity_main);
@@ -88,25 +87,28 @@ public class MainActivity extends ActionBarActivity implements
 	public void onNavigationDrawerItemSelected(int position) {
 		// update the main content by replacing fragments
 		FragmentManager fragmentManager = getSupportFragmentManager();
-		Fragment tempFragment = PlaceholderFragment.newInstance(position + 1);
+		Fragment newFragment = PlaceholderFragment.newInstance(position + 1);
 		if (position == 0) {
-			tempFragment = PlaceholderFragment.newInstance(position + 1);
+			newFragment = PlaceholderFragment.newInstance(position + 1);
 		} else if (position == 1) {
-			tempFragment = HistoryFragment.newInstance(position + 1);
+			newFragment = HistoryFragment.newInstance(position + 1);
 		} else if (position == 2) {
-			tempFragment = WeatherFragment.newInstance(position + 1);
+			newFragment = WeatherFragment.newInstance(position + 1);
 		} else if (position == 3) {
-			tempFragment = SoilFragment.newInstance(position + 1);
+			newFragment = SoilFragment.newInstance(position + 1);
 		} else if (position == 4) {
-			tempFragment = CalculateFragment.newInstance(position + 1);
+			newFragment = CalculateFragment.newInstance(position + 1);
 		} else if (position == 5) {
-			tempFragment = ResearchFragment.newInstance(position + 1);
+			newFragment = ResearchFragment.newInstance(position + 1);
 		} else {
-			tempFragment = PlaceholderFragment.newInstance(position + 1);
+			newFragment = PlaceholderFragment.newInstance(position + 1);
 		}
-		fragmentManager
-		.beginTransaction()
-		.replace(R.id.container, tempFragment).commit();
+		
+		FragmentTransaction transaction;
+		transaction = fragmentManager.beginTransaction();
+		transaction.replace(R.id.container, newFragment);
+		transaction.addToBackStack(null);
+		transaction.commit();
 		
 	}
 
@@ -279,9 +281,12 @@ public class MainActivity extends ActionBarActivity implements
 					transaction.commit();
 				}
 			});
+			 
 
 			return rootView;
 		}
+		
+		 
 
 		@Override
 		public void onAttach(Activity activity) {
