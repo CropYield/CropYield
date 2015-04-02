@@ -160,7 +160,6 @@ public class MainActivity extends ActionBarActivity implements
 		if (currentUser != null) {
 			currentUser.logOut();
 			ParseObject.unpinAllInBackground();
-			Toast.makeText(this,  "User " + currentUser.getUsername() + " logged out", Toast.LENGTH_LONG).show();
 		}
 		startActivity(intent);
 		finish();
