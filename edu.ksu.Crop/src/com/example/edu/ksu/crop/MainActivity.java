@@ -94,37 +94,13 @@ public class MainActivity extends ActionBarActivity implements
 		} else if (position == 1) {
 			tempFragment = WeatherFragment.newInstance(position + 1);
 		} else if (position == 2) {
-			tempFragment = PlaceholderFragment.newInstance(position + 1);
-//		} else if (position == 3) {
-//			
+			tempFragment = SoilFragment.newInstance(position + 1);
+		} else if (position == 3) {
+			tempFragment = CalculateFragment.newInstance(position + 1);
 		} else if (position == 4) {
-			try {
-				fragmentManager
-						.beginTransaction()
-						.replace(R.id.container,
-								SoilFragment.newInstance(position + 1))
-						.commit();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			tempFragment = ResearchFragment.newInstance(position + 1);
 		} else if (position == 5) {
-			fragmentManager
-					.beginTransaction()
-					.replace(R.id.container,
-							CalculateFragment.newInstance(position + 1))
-					.commit();
-		} else if (position == 6) {
-			fragmentManager
-					.beginTransaction()
-					.replace(R.id.container,
-							ResearchFragment.newInstance(position + 1))
-					.commit();
-		} else if (position == 7) {
-			fragmentManager
-			.beginTransaction()
-			.replace(R.id.container,
-					HistoryFragment.newInstance(position + 1))
-			.commit();
+			tempFragment = HistoryFragment.newInstance(position + 1);
 		} else {
 			tempFragment = PlaceholderFragment.newInstance(position + 1);
 		}
