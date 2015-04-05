@@ -110,33 +110,23 @@ public class FinalFragment extends Fragment implements OnSeekBarChangeListener {
 				container, false);
 
 		seekBarHeads = (SeekBar) rootView.findViewById(R.id.seekBarHeadsPer);
-		bpaTV = (TextView) rootView.findViewById(R.id.textViewValueBPAF);
-		String tempVal4 = String.format("%.2f", averageBUA) + " bu/acre";
-		bpaTV.setText(tempVal4);
+
 
 		chart = (BarChart) rootView.findViewById(R.id.chart);
 		chart.setScaleEnabled(false);
-		chart.getAxisLeft().setAxisMinValue(60);
-		chart.getAxisLeft().setAxisMaxValue(200);
-		chart.getAxisRight().setAxisMinValue(60);
-		chart.getAxisRight().setAxisMaxValue(200);
+		chart.getAxisLeft().setAxisMinValue(20);
+		chart.getAxisLeft().setAxisMaxValue(240);
+		chart.getAxisRight().setAxisMinValue(20);
+		chart.getAxisRight().setAxisMaxValue(240);
 		chart.getAxisLeft().setStartAtZero(false);
 		chart.getAxisRight().setStartAtZero(false);
 		chart.getXAxis().setPosition(XAxisPosition.BOTTOM);
 		chart.setDescription("");
 		CalculateValues(headsPerAcreInt, grainNum, seedsPerPound);
 
-//		exampleSeries = new GraphViewSeries(CalculateValues(headsPerAcreInt,
-//				grainNum, seedsPerPound));
-//
-//		GraphView graphView = new BarGraphView(getActivity(),
-//				"Projeced Bushels Per Acre");
-//		graphView.addSeries(exampleSeries); // data
-//		graphView.setHorizontalLabels(new String[] { "Low Yield",
-//				"Average Yield", "High Yield" });
-//		LinearLayout layout = (LinearLayout) rootView
-//				.findViewById(R.id.widget44);
-//		layout.addView(graphView);
+		bpaTV = (TextView) rootView.findViewById(R.id.textViewValueBPAF);
+		String tempVal4 = String.format("%.2f", averageBUA) + " bu/acre";
+		bpaTV.setText(tempVal4);
 
 		seekBarHeads.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
