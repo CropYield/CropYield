@@ -84,7 +84,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="7.5 inch rows"
-            android:drawableRight="@drawable/ic_launcher" />
+            android:drawableRight="@drawable/ic_7point5inch" />
 
         <RadioButton
             android:id="@+id/radio15Inches"
@@ -92,14 +92,14 @@
             android:layout_height="wrap_content"
             android:checked="true"
             android:text="15 inch rows"
-            android:drawableRight="@drawable/ic_launcher"/>
+            android:drawableRight="@drawable/ic_15inch"/>
     
         <RadioButton
             android:id="@+id/radio30Inches"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="30 inch rows"
-            android:drawableRight="@drawable/ic_launcher"/>
+            android:drawableRight="@drawable/ic_30inch"/>
 
 </RadioGroup>
     
