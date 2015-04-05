@@ -4,11 +4,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
      <LinearLayout
-        android:id="@+id/widget44"
         android:layout_width="match_parent"
-        android:layout_height="240dp"
+        android:layout_height="220dp"
         android:orientation="vertical" >
 
+       <com.github.mikephil.charting.charts.BarChart
+        	android:id="@+id/chart"
+        	android:layout_width="match_parent"
+        	android:layout_height="match_parent" />
     </LinearLayout>
 
 
