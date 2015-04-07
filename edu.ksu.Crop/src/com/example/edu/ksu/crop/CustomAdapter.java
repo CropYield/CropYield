@@ -89,7 +89,7 @@ public class CustomAdapter extends BaseAdapter{
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                Toast.makeText(context, "You Clicked "+weatherInfo.indexOf(position), Toast.LENGTH_LONG).show();
+                //Toast.makeText(context, "You Clicked "+weatherInfo.indexOf(position), Toast.LENGTH_LONG).show();
             }
         });
          
