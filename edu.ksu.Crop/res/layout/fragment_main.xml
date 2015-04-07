@@ -12,13 +12,15 @@
         android:id="@+id/YieldCalculator"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:text="Yield Calculator" />
+        android:text="Yield Calculator"
+        android:textSize="25dp" />
 
     <Button
         android:id="@+id/PlanTrip"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:text="Plan Trip" />
+        android:text="Plan Trip"
+        android:textSize="25dp" />
 
     <ImageView
         android:id="@+id/imageView_twitter"
