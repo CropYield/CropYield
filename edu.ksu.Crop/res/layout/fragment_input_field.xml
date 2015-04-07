@@ -85,12 +85,16 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:text="Size of Row" />
+	    
+
+	    
 	
 	<RadioGroup
 	    android:id="@+id/radioRowSizeGroup"
-	    android:layout_width="wrap_content"
+	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:orientation="horizontal" >
+	    android:orientation="horizontal"
+	    android:paddingRight="5dp" >
 	
 	        <RadioButton
 	            android:id="@+id/radio7point5Inches"
