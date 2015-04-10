@@ -68,6 +68,13 @@ public class PlanTripFragment extends Fragment {
 			public void onClick(View v) {
 				try {
 					zipcodeString = zipcode.getText().toString();
+					if(zipcodeString.length() == 5){
+						Toast.makeText(getActivity(), "Zip Code saved",
+								Toast.LENGTH_SHORT).show();
+					}else{
+						Toast.makeText(getActivity(), "Must be valid Zip Code",
+								Toast.LENGTH_SHORT).show();
+					}
 
 				} catch (Exception e) {
 					Toast.makeText(getActivity(), "Must be valid Zip Code",

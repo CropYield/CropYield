@@ -74,7 +74,7 @@ public class InputFragment extends Fragment {
 				 Intent intent = new Intent();
 			        intent.setAction(Intent.ACTION_VIEW);
 			        intent.addCategory(Intent.CATEGORY_BROWSABLE);
-			        intent.setData(Uri.parse("http://www.google.com"));//This needs to be changed
+			        intent.setData(Uri.parse("http://www.sorghumyield.cis.ksu.edu"));//This needs to be changed
 			        startActivity(intent);
 				
 			}

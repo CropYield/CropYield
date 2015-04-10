@@ -98,7 +98,7 @@
 	
 	        <RadioButton
 	            android:id="@+id/radio7point5Inches"
-	            android:layout_width="wrap_content"
+	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"
 	            android:text="7.5in"
 	            android:layout_weight="1"
@@ -106,7 +106,7 @@
 	
 	        <RadioButton
 	            android:id="@+id/radio15Inches"
-	            android:layout_width="wrap_content"
+	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"
 	            android:checked="true"
 	            android:text="15in"
@@ -115,7 +115,7 @@
 	    
 	        <RadioButton
 	            android:id="@+id/radio30Inches"
-	            android:layout_width="wrap_content"
+	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"
 	            android:text="30in"
 	            android:layout_weight="1"
