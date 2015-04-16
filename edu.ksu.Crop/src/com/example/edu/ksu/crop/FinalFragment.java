@@ -3,6 +3,7 @@ package com.example.edu.ksu.crop;
 import java.util.HashMap;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +35,7 @@ import android.widget.Toast;
 
 import com.example.edu.ksu.crop.MainActivity.SoilFragment;
 import com.example.edu.ksu.crop.MainActivity.WeatherFragment;
-import com.jjoe64.graphview.*;
+//import com.jjoe64.graphview.*;
 import com.parse.Parse;
 import com.parse.ParseAnalytics;
 import com.parse.ParseGeoPoint;
@@ -44,10 +45,17 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.XAxis.XAxisPosition;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+
 public class FinalFragment extends Fragment implements OnSeekBarChangeListener {
 	private boolean saved = false;
 	private static final String ARG_SECTION_NUMBER = "section_number";
-	GraphViewSeries exampleSeries;
+//	GraphViewSeries exampleSeries;
+	BarChart chart;
 	SeekBar seekBarHeads;
 	static DataSet data;
 	static int seedsPerPound = 15500;
@@ -72,7 +80,6 @@ public class FinalFragment extends Fragment implements OnSeekBarChangeListener {
 		data = dataSet;
 		headsPerAcreInt = data.getHeadsPerAcre();
 		grainNum = data.ReturnGrainNumber();
-		CalculateValues(headsPerAcreInt, grainNum, seedsPerPound);
 		Bundle args = new Bundle();
 		args.putInt(ARG_SECTION_NUMBER, sectionNumber);
 		fragment.setArguments(args);
@@ -103,21 +110,23 @@ public class FinalFragment extends Fragment implements OnSeekBarChangeListener {
 				container, false);
 
 		seekBarHeads = (SeekBar) rootView.findViewById(R.id.seekBarHeadsPer);
+
+
+		chart = (BarChart) rootView.findViewById(R.id.chart);
+		chart.setScaleEnabled(false);
+		chart.getAxisLeft().setAxisMinValue(20);
+		chart.getAxisLeft().setAxisMaxValue(240);
+		chart.getAxisRight().setAxisMinValue(20);
+		chart.getAxisRight().setAxisMaxValue(240);
+		chart.getAxisLeft().setStartAtZero(false);
+		chart.getAxisRight().setStartAtZero(false);
+		chart.getXAxis().setPosition(XAxisPosition.BOTTOM);
+		chart.setDescription("");
+		CalculateValues(headsPerAcreInt, grainNum, seedsPerPound);
+
 		bpaTV = (TextView) rootView.findViewById(R.id.textViewValueBPAF);
 		String tempVal4 = String.format("%.2f", averageBUA) + " bu/acre";
 		bpaTV.setText(tempVal4);
-
-		exampleSeries = new GraphViewSeries(CalculateValues(headsPerAcreInt,
-				grainNum, seedsPerPound));
-
-		GraphView graphView = new BarGraphView(getActivity(),
-				"Projeced Bushels Per Acre");
-		graphView.addSeries(exampleSeries); // data
-		graphView.setHorizontalLabels(new String[] { "Low Yield",
-				"Average Yield", "High Yield" });
-		LinearLayout layout = (LinearLayout) rootView
-				.findViewById(R.id.widget44);
-		layout.addView(graphView);
 
 		seekBarHeads.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
@@ -125,8 +134,7 @@ public class FinalFragment extends Fragment implements OnSeekBarChangeListener {
 			public void onStopTrackingTouch(SeekBar seekBar) {
 				// TODO Auto-generated method stub
 				// Graph stuff
-				exampleSeries.resetData(CalculateValues(headsPerAcreInt,
-						grainNum, seedsPerPound));
+				CalculateValues(headsPerAcreInt,grainNum, seedsPerPound);
 				String tempVal = String.format("%.2f", averageBUA) + " bu/acre";
 				bpaTV.setText(tempVal);
 
@@ -143,8 +151,7 @@ public class FinalFragment extends Fragment implements OnSeekBarChangeListener {
 					boolean fromUser) {
 				// TODO Auto-generated method stub
 				seedsPerPound = UpdateGraphView(progress, 22500, 9000);
-				exampleSeries.resetData(CalculateValues(headsPerAcreInt,
-						grainNum, seedsPerPound));
+				CalculateValues(headsPerAcreInt,grainNum, seedsPerPound);
 
 				// tvHeads.setText(progress);
 
@@ -361,15 +368,27 @@ public class FinalFragment extends Fragment implements OnSeekBarChangeListener {
 	 * is used to implement the interface from android-graphview. See
 	 * android-graphview.org for documentation.
 	 */
-	private static GraphViewData[] CalculateValues(int HPA, double d, int SPP) {
+	private void CalculateValues(int HPA, double d, int SPP) {
 		double lowBUA, highBUA;
 		averageBUA = (double) ((((HPA * d) * 1000) / SPP) / 56);
 		lowBUA = averageBUA * .85;
 		highBUA = averageBUA * 1.15;
+		ArrayList<BarEntry> bE = new ArrayList<BarEntry>();
+        bE.add(new BarEntry((float)lowBUA, 0));		
+        bE.add(new BarEntry((float)averageBUA, 1));		
+        bE.add(new BarEntry((float)highBUA, 2));		
 
-		return new GraphViewData[] { new GraphViewData(1, lowBUA),
-				new GraphViewData(2, averageBUA), new GraphViewData(3, highBUA) };
-
+        BarDataSet set1 = new BarDataSet(bE, "CalculatedValues");
+        
+        ArrayList<BarDataSet> bD = new ArrayList<BarDataSet>();
+        bD.add(set1);
+        
+		ArrayList<String> xVals = new ArrayList<String>();
+		xVals.add("Low Yield"); xVals.add("Medium Yield"); xVals.add("High Yield");
+		BarData inpBD = new BarData(xVals, bD);
+		chart.setData(inpBD);
+		
+		chart.invalidate();
 	}
 
 	/*

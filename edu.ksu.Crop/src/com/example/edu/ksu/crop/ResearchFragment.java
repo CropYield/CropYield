@@ -301,8 +301,10 @@ public class ResearchFragment extends Fragment {
 		choosePicture.setEnabled(true);
 		if (currentPhotoPath.size() > 0) {
 			deletePicture.setEnabled(true);
+			finish.setEnabled(true);
 		} else {
 			deletePicture.setEnabled(false);
+			finish.setEnabled(false);
 		}
 	}
 

@@ -355,8 +355,10 @@ public class PictureFragment extends Fragment {
 		}
 		if (currentPictures.size() > 0) {
 			deletePicture.setEnabled(true);
+			finish.setEnabled(true);
 		} else {
 			deletePicture.setEnabled(false);
+			finish.setEnabled(false);
 		}
 	}
 

@@ -1,119 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+<ScrollView 
+      xmlns:android="http://schemas.android.com/apk/res/android"
+      android:id="@+id/scroll" 
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content">
+      
+	<LinearLayout 
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:orientation="vertical" >
+	
+	    <TextView
+	        android:id="@+id/textFieldName"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="Field Name" />
+	
+	    <EditText
+	        android:id="@+id/editFieldName"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:ems="10"
+	        android:hint="Field Name" />
+	
+	    <TextView
+	        android:id="@+id/textHeads"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="Heads per 1/1000th Acre" />
+	
+	    <EditText
+	        android:id="@+id/editHPA"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:ems="10"
+	        android:hint="50"
+	        android:inputType="number" >
+	    </EditText>
+	    
+	    <TextView
+	        android:id="@+id/textAcres"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="Size of Field(acres)" />
+	    
+	    <EditText
+	        android:id="@+id/editFieldSize"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:ems="10"
+	        android:hint="5"
+	        android:inputType="number" >
+	    </EditText>
+	
+	    <TextView
+	        android:id="@+id/textViewSheet"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="Do you have the mandatory CropYield sheet?" />
+	
+	    
+	
+	    <RadioGroup
+	        android:id="@+id/radioHasSheetGroup"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" >
+	
+	        <RadioButton
+	            android:id="@+id/radioYes"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="Yes" />
+	
+	        <RadioButton
+	            android:id="@+id/radioNo"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:checked="true"
+	            android:text="No" />
+	    </RadioGroup>
+	    
+	    <TextView
+	        android:id="@+id/textViewRadio"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="Size of Row" />
+	    
 
-    <TextView
-        android:id="@+id/textFieldName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Field Name" />
-
-    <EditText
-        android:id="@+id/editFieldName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Field Name" />
-
-    <TextView
-        android:id="@+id/textHeads"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Heads per 1/1000th Acre" />
-
-    <EditText
-        android:id="@+id/editHPA"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="50"
-        android:inputType="number" >
-    </EditText>
-    
-    <TextView
-        android:id="@+id/textAcres"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Size of Field(acres)" />
-    
-    <EditText
-        android:id="@+id/editFieldSize"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="5"
-        android:inputType="number" >
-    </EditText>
-
-    <TextView
-        android:id="@+id/textViewSheet"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Do you have the mandatory CropYield sheet?" />
-
-    
-
-    <RadioGroup
-        android:id="@+id/radioHasSheetGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
-
-        <RadioButton
-            android:id="@+id/radioYes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Yes" />
-
-        <RadioButton
-            android:id="@+id/radioNo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="No" />
-    </RadioGroup>
-
-<RadioGroup
-    android:id="@+id/radioRowSizeGroup"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content" >
-
-        <RadioButton
-            android:id="@+id/radio7point5Inches"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="7.5 inch rows"
-            android:drawableRight="@drawable/ic_launcher" />
-
-        <RadioButton
-            android:id="@+id/radio15Inches"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="15 inch rows"
-            android:drawableRight="@drawable/ic_launcher"/>
-    
-        <RadioButton
-            android:id="@+id/radio30Inches"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="30 inch rows"
-            android:drawableRight="@drawable/ic_launcher"/>
-
-</RadioGroup>
-    
-    <Button
-        android:id="@+id/buttonHelpInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Help/Print Sheet" />
-
-    <Button
-        android:id="@+id/buttonNext"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:enabled="false"
-        android:text="Next (Take Pictures)" />
-
-</LinearLayout>
+	    
+	
+	<RadioGroup
+	    android:id="@+id/radioRowSizeGroup"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal"
+	    android:paddingRight="5dp" >
+	
+	        <RadioButton
+	            android:id="@+id/radio7point5Inches"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:text="7.5in"
+	            android:layout_weight="1"
+	            android:drawableTop="@drawable/ic_7point5inch" />
+	
+	        <RadioButton
+	            android:id="@+id/radio15Inches"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:checked="true"
+	            android:text="15in"
+	            android:layout_weight="1"
+	            android:drawableTop="@drawable/ic_15inch" />
+	    
+	        <RadioButton
+	            android:id="@+id/radio30Inches"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:text="30in"
+	            android:layout_weight="1"
+	            android:drawableTop="@drawable/ic_30inch" />
+	
+	</RadioGroup>
+	    
+	    <Button
+	        android:id="@+id/buttonHelpInput"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Help/Print Sheet" />
+	
+	    <Button
+	        android:id="@+id/buttonNext"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:enabled="false"
+	        android:text="Next (Take Pictures)" />
+	
+	</LinearLayout>
+</ScrollView>

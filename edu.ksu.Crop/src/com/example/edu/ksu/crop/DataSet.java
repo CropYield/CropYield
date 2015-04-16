@@ -57,7 +57,7 @@ public class DataSet {
 	
 	//Equation supplied as of 10/06/14 This is using inches for the equation.
 	public double ReturnGrainNumber(){
-		return 120 * AverageArea() - 400;
+		return 113.6 * AverageArea() - 255.8;
 	}
 	
 	//Set the name of the field
